@@ -89,21 +89,17 @@ An AI-proposed role is not an actual security role, and a table relationship doe
 
 **⏸️ Pause at [08:15 — Describe the business problem](https://youtu.be/BvRKiWRBNqA?t=495).**
 
-In your open plan description box, enter the fictional example below:
+In the plan description box, copy the exact fictional request Twinkle reads aloud in the podcast (capitalization and line breaks are formatted for copying):
 
 ```text
 SunnyVerse Solar Operations needs to track proposed solar sites,
-gather feasibility observations and internal permit packages,
-and coordinate review decisions. Internal Solar Operations
-Reviewers decide whether a submission can move to the next stage.
-An independent partner may submit comments only for site reviews
-explicitly authorized for that partner. Confidential feasibility
-findings and permit attachments must stay restricted to approved
-internal personnel. Authorized owners must be able to view the
-review status and relevant history. Propose the required user
-roles, information structure, process and only the technologies
-needed for this scope. Do not assume the external partner requires
-broad Dataverse access or a public portal.
+gather feasibility observations, and coordinate internal review decisions.
+Internal reviewers approve the next stage.
+An independent partner may provide technical comments strictly on the
+records deliberately shared with it.
+Confidential assessments and permit attachments must remain restricted
+entirely to authorized internal users.
+The status of every review must be visible to its authorized owners.
 ```
 
 Then select **Generate** if you are following along in an eligible environment.
@@ -125,15 +121,14 @@ When the video reaches **[11:28 — Editing roles](https://youtu.be/BvRKiWRBNqA?
 3. Review proposed changes through **Review** or **Keep**, as applicable.
 4. Select **Looks good** only after the requirements accurately describe the business process and access boundaries.
 
-If the proposal suggests unrestricted contractor access, this fictional correction is ready to copy:
+If a broad contractor role appears, this is the exact example correction spoken in the podcast (formatted for copying):
 
 ```text
-Limit the external partner role to submitting comments on site
-reviews explicitly authorized for that partner. Do not grant that
-role access to internal feasibility findings, confidential permit
-packages or unrelated site reviews. Keep advancement decisions
-with approved Solar Operations Reviewers. Remove any requirement
-that automatically shares all documents with external users.
+Redraft the contractor role. The contractor must only submit comments
+for specifically authorized site reviews and is explicitly barred from
+reading internal feasibility findings or confidential permit packages.
+Internal access is strictly reserved for the Solar Operations Reviewer.
+Remove any automatic document sharing.
 ```
 
 **Check your result:** No suggested business requirement grants outside participants broad access to confidential information. These requirements do not themselves configure security; actual permissions must be designed and tested separately.
