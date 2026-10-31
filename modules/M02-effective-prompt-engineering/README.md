@@ -5,7 +5,7 @@
 
 > **No hands-on lab in this module.** The hydropower handoff and prompt examples are explanations, not assignments. This guide helps you follow the narration and recognize what makes a prompt useful and factually defensible. You do **not** need to sign in to Power Apps or configure an AI tool.
 >
-> **Listen with timestamps:** [Watch the Module 02 podcast on YouTube](https://youtu.be/q4C4eKex1pg). The links below open the episode at the corresponding time, as mapped from the supplied `2T.sbv` subtitles. The player may vary slightly from subtitle timing.
+> **Listen with timestamps:** [Watch the Module 02 podcast on YouTube](https://youtu.be/q4C4eKex1pg). The links below open the episode at the corresponding topic. Video playback times may vary slightly.
 
 ## 1. Follow the podcast by timestamp
 
@@ -107,7 +107,7 @@ These are **reading checks**, not a scored assessment or mandatory learner assig
 
 ## 5. Three important interpretations of the narration
 
-The generated podcast uses some emphatic shortcuts. Keep the following distinctions in mind:
+Keep the following distinctions in mind while listening:
 
 - **Generating is not the same as looking up facts.** A model can produce text from learned patterns, but modern AI systems *can also* use search, retrieval, tools, and cited sources. Do not interpret “there is no library” as a claim that all AI products lack retrieval.
 - **A setting or prompt does not guarantee truth.** Search, reasoning modes, stricter wording, or lower sampling randomness may influence responses; none establishes a missing inspection result. Compare the answer with authoritative evidence.
@@ -123,4 +123,4 @@ The generated podcast uses some emphatic shortcuts. Keep the following distincti
 
 **Official learning reference:** [Microsoft Learn — Create effective prompts for generative AI training tools](https://learn.microsoft.com/en-us/training/modules/create-prompts-for-generative-ai-training-tools/)  
 **Creator:** [SunnyVerse AI Labs](https://www.youtube.com/@SunnyVerseAILabs) · Independent educational companion · All SunnyVerse operations scenarios and data are fictional.  
-**Timestamp basis:** The supplied `2T.sbv` subtitles; episode end about 41:11. Times may vary slightly from player display.
+**Episode runtime:** Approximately 41:11. YouTube chapter positions may vary slightly.
