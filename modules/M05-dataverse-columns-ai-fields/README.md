@@ -9,7 +9,7 @@
 
 **Module 5 begins with a required setup step:** Create a new Dataverse table named **Battery Inspection** using the instructions below. Learners following this course from Module 1 have not created this table in Modules 1–4. Complete the setup **before starting the Module 5 podcast**. Table creation is a supporting step added to make this guide self-contained; the podcast starts with the table already prepared. Work only in an approved learning environment using fictional data.
 
-**Important:** The early column-type examples explain how fields are configured. The **main guided exercise begins at [49:57](https://youtu.be/_kPVgWgKZ-E?t=2997)**. If you have already created a field while following an earlier example, **verify and reuse it**; do not create a duplicate with the same name. Prompt columns and row summaries may be unavailable depending on environment, licensing and rollout.
+**Follow the lesson in order:** The examples before [49:57](https://youtu.be/_kPVgWgKZ-E?t=2997) explain how fields and AI features work. **Do not create Battery Unit Label, Finding Description, or sample records during those explanations.** The guided exercise creates those columns at **50:28** and **50:52**. After finishing the exercise, you can add fictional practice records and revisit the optional AI demonstrations. Prompt columns and row summaries may depend on licensing, feature availability, and credits.
 
 ## Module 5 setup: Create the Battery Inspection table
 
@@ -51,13 +51,13 @@
 | [23:49](https://youtu.be/_kPVgWgKZ-E?t=1429) | Column properties | ⏸️ Inspect |
 | [24:48](https://youtu.be/_kPVgWgKZ-E?t=1488) | Required levels | 👀 Watch |
 | [27:25](https://youtu.be/_kPVgWgKZ-E?t=1645) | Form fill assistance versus Prompt | 👀 Watch |
-| [28:08](https://youtu.be/_kPVgWgKZ-E?t=1688) | Temperature, status, finding examples | 🔎 Optional |
-| [31:37](https://youtu.be/_kPVgWgKZ-E?t=1897) | Create a Prompt column | 🔎 Optional |
-| [32:37](https://youtu.be/_kPVgWgKZ-E?t=1957) | Prompt wording and source fields | 🔎 Optional |
-| [34:19](https://youtu.be/_kPVgWgKZ-E?t=2059) | Test generated content against a record | 🔎 Optional |
-| [35:32](https://youtu.be/_kPVgWgKZ-E?t=2132) | Remove temporary test restriction | 🔎 Optional |
+| [28:08](https://youtu.be/_kPVgWgKZ-E?t=1688) | Temperature, status, finding examples | 👀 Watch; no build yet |
+| [31:37](https://youtu.be/_kPVgWgKZ-E?t=1897) | Prompt column demonstration | 👀 Watch; revisit after 52:44 |
+| [32:37](https://youtu.be/_kPVgWgKZ-E?t=1957) | Prompt wording and source fields | 👀 Watch |
+| [34:19](https://youtu.be/_kPVgWgKZ-E?t=2059) | Test generated content against a record | 👀 Watch; revisit after 52:44 |
+| [35:32](https://youtu.be/_kPVgWgKZ-E?t=2132) | Remove temporary test restriction | 👀 Watch |
 | [37:37](https://youtu.be/_kPVgWgKZ-E?t=2257) | Execution filters versus test filters | 👀 Watch |
-| [39:21](https://youtu.be/_kPVgWgKZ-E?t=2361) | Configure row summary | 🔎 Optional |
+| [39:21](https://youtu.be/_kPVgWgKZ-E?t=2361) | Row summary demonstration | 👀 Watch; revisit after 52:44 |
 | [41:29](https://youtu.be/_kPVgWgKZ-E?t=2489) | Solution-aware row-summary configuration | 👀 Watch |
 | [42:30](https://youtu.be/_kPVgWgKZ-E?t=2550) | Primary name versus GUID | 👀 Watch |
 | [46:34](https://youtu.be/_kPVgWgKZ-E?t=2794) | Autonumber patterns | 👀 Watch |
@@ -121,91 +121,39 @@
 
 **▶️ [Resume at 28:08](https://youtu.be/_kPVgWgKZ-E?t=1688).**
 
-## 3. Three ordinary-field examples (optional early practice)
+## 3. Watch the column examples — do not build ahead
 
-**🔎 At [28:08](https://youtu.be/_kPVgWgKZ-E?t=1688)** the hosts describe three field configurations. If you follow now, use **Battery Inspection** and save each column; otherwise note the settings and continue to the later guided exercise.
+**👀 At [28:08](https://youtu.be/_kPVgWgKZ-E?t=1688), continue watching.** Twinkle and Celestyn demonstrate how to choose ordinary field types. You are not yet at the module's guided creation steps.
 
-| Column | Data type | Specific details spoken in the episode |
+| Column discussed | Type | What you should understand now |
 |---|---|---|
-| **Battery Temperature** | **Decimal number** | Description: `Recorded measurement in degrees Celsius`; one decimal place is an example of suitable precision |
-| **Inspection Status** | **Choice** (one selection) | Options: `Open`, `Review required`, `Closed` |
-| **Finding Description** | **Multiple lines of text**, or appropriate text-area format | Description should convey that this is authoritative, human-entered evidence of equipment condition |
+| **Battery Temperature** | Decimal number | Measurement in degrees Celsius; example precision of one decimal place |
+| **Inspection Status** | Single-select Choice | Options: `Open`, `Review required`, `Closed` |
+| **Finding Description** | Multiple lines of text / Text area | Inspector-entered evidence, not an AI conclusion |
 
-1. Use **New column**, enter each name and select the specified type.
-2. Add the description and any supported constraints. Ensure `Closed` is never decided by an AI summary.
-3. **Save** and verify the definition appears in **Columns**. A form or view may require separate changes before end users can see it.
+**Do not create these columns or enter practice records at this point.** In particular, **Finding Description** belongs to the guided exercise at [50:52](https://youtu.be/_kPVgWgKZ-E?t=3052). The optional **Battery Temperature** and **Inspection Status** columns can be created **after** the guided exercise, only if you want to test the advanced AI examples.
 
-**✅ Check:** If you created **Finding Description** here, reuse it at [50:52](https://youtu.be/_kPVgWgKZ-E?t=3052); **do not add a duplicate**.
+**▶️ [Continue at 31:37](https://youtu.be/_kPVgWgKZ-E?t=1897).**
 
+## 4. Watch the Prompt column demonstration — practice later
 
-### Practice record for the optional AI demonstrations
+**👀 Watch [31:37](https://youtu.be/_kPVgWgKZ-E?t=1897) through [38:16](https://youtu.be/_kPVgWgKZ-E?t=2296) without creating a field or test record.**
 
-**Extra learner practice data (not spoken in the episode):** To follow the **Prompt column test at [34:19](https://youtu.be/_kPVgWgKZ-E?t=2059)** and the **row-summary preview at [39:21](https://youtu.be/_kPVgWgKZ-E?t=2361)** in real time, you need at least one saved fictional Battery Inspection row.
+The hosts explain how a Prompt column uses referenced Dataverse fields to generate stored AI text, how the testing controls work, and why generated claims require human verification. **Battery Unit Label** is not created until [50:28](https://youtu.be/_kPVgWgKZ-E?t=3028), so do **not** create it early simply to test the prompt now.
 
-1. Complete the three optional column examples above: **Battery Temperature**, **Inspection Status**, and **Finding Description**. For this *optional early exploration only*, also create **Battery Unit Label** as **Single line of text**. This extra preparation is not an additional podcast exercise; the guided practice teaches Battery Unit Label at **[50:28](https://youtu.be/_kPVgWgKZ-E?t=3028)**. When you reach that moment, **verify and reuse** the existing column instead of creating it twice.
-2. Open **Battery Inspection → Edit data / Data** (the label varies by maker experience), then choose **New row**. The table's primary-name field is still called **Name** at this point.
-3. Enter **Practice record A** using the values below, then **Save**. Choose the existing **Inspection Status** value from its Choice list rather than typing a new choice.
+After the guided exercise, the [optional Prompt practice](#9-optional-ai-practice-revisit-the-earlier-demonstrations) provides a complete fictional test record and the configuration steps from this segment.
 
-| Field | Practice record A — enter before Prompt testing |
-|---|---|
-| **Name** (later **Inspection Record Name**) | `BESS-07 Surface Review` |
-| **Battery Unit Label** | `BESS-07` |
-| **Finding Description** | `Visual surface mark observed on the battery unit housing. Maintenance review requested. No corrective work has been documented.` |
-| **Inspection Status** | `Review required` |
-| **Battery Temperature** (optional Decimal) | `31.2` |
+**▶️ [Continue at 38:16](https://youtu.be/_kPVgWgKZ-E?t=2296).**
 
-**✅ Check:** The saved row appears under **Battery Inspection**. Its original observation is stored in **Finding Description**; no repair, safety approval or completion is implied.
+## 5. Watch the row-summary explanation — practice later
 
-If you prefer to follow the main guided column exercise **before** adding any early fields or rows, that's fine: skip this preparation now, complete **[49:57](https://youtu.be/_kPVgWgKZ-E?t=2997)**, add **Inspection Status** (and optionally **Battery Temperature**), enter the practice records, and then return to the AI demonstrations. **Do not duplicate columns.**
+**👀 Watch [38:16](https://youtu.be/_kPVgWgKZ-E?t=2296) through [42:30](https://youtu.be/_kPVgWgKZ-E?t=2550). No build is needed yet.**
 
-You can also [download the optional sample-record CSV](resources/M05_Battery_Inspection_Practice_Records.csv) for copy/paste reference. **Manual entry is recommended** for two records; the CSV is not a claim that the podcast teaches a data import.
+A **row summary** is an AI-generated overview shown within a model-driven app experience; unlike a Prompt column, it is not a separately stored generated field. It needs a meaningful record for testing, which you will enter **after the main guided exercise**.
 
-**▶️ [Resume at 29:56](https://youtu.be/_kPVgWgKZ-E?t=1796).**
+When you finish creating the columns and enter the sample records, return to the [optional Row Summary practice](#optional-b-row-summary).
 
-## 4. Prompt column: stored AI text (optional advanced walkthrough)
-
-**🔎 Pause at [31:37](https://youtu.be/_kPVgWgKZ-E?t=1897) only if you have an eligible environment.** This is a feature walkthrough, not a requirement to spend credits or create a new app.
-
-**Prepare:** For a live Prompt test, use **Practice record A — `BESS-07 Surface Review`** from the [sample-record setup](#practice-record-for-the-optional-ai-demonstrations) above. It supplies the mapped inputs **Finding Description**, **Inspection Status** and **Battery Unit Label**. Without those fields and a saved row, the preview has no example data. If you skipped early practice, first complete the guided column exercise at [49:57](https://youtu.be/_kPVgWgKZ-E?t=2997), add the optional Inspection Status Choice, save the record, then return here. Copilot/AI Prompts feature enablement, geography, permissions and credits may apply.
-
-1. Open **Battery Inspection → New → Column**.
-2. Set **Display name:** `Battery Review Brief`.
-3. Set **Description:** `AI-generated summary requiring human review`.
-4. Set **Data type:** **Prompt**. Clear **Allow form fill assistance** if shown.
-5. Select **Add new prompt** (if available). The episode describes a maximum of **five Prompt columns per table**.
-6. Compose the following instructions, combining the sentences the hosts actually prescribe at [32:37](https://youtu.be/_kPVgWgKZ-E?t=1957) and [32:54](https://youtu.be/_kPVgWgKZ-E?t=1974):
-
-```text
-Describe the inspection finding and review status in no more than three plain-English sentences. Use only the selected Battery Inspection input fields. If no corrective work is explicitly recorded, say Corrective work not documented. Never say the inspection is approved or safe unless that exact status is present in the source fields.
-```
-
-7. Choose **Add content**, select the table, and insert the **Finding Description**, **Inspection Status** and **Battery Unit Label** columns as supported input references. Do not map confidential fields just because the picker shows them. Formula, File, Image and Prompt columns are not supported effective prompt inputs.
-8. For **Test**, select **Practice record A** (`BESS-07 Surface Review`) as the example record where your editor permits. In the older **Filter knowledge → Filter attribute** experience described by the episode, choose the identifying **Name** field (or **Inspection Record Name** after renaming) and enter `BESS-07 Surface Review`. If your editor instead uses a required record-ID variable, choose the saved practice row through that interface; do not substitute its display name where a GUID is required. Select **Test** and compare the response with the record's **Finding Description** and **Inspection Status**. Review **Knowledge used** where offered. If the response claims a repair is complete, the unit is safe, or the inspection is approved, that is unsupported; revise the instruction and retest.
-9. The podcast describes **Filter knowledge → Filter attribute** to target an inspection by name, followed by **No filter** after testing. **Current Microsoft documentation may instead require the default `PromptColumnRecordId` text variable, filtered to a primary identifier, to be retained for saving.** Follow the controls and validation shown in your actual editor: do not delete a required record variable or save a test-only restriction as a production rule. [Current Prompt column documentation](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/prompt-column).
-10. Save the **prompt**, then save the **column**. The generated value can appear **asynchronously**, not necessarily at row-save time.
-
-**✅ Check:** The AI field is clearly distinguishable from the inspector's original observation. If a value is blank, inspect the column's actual **PromptColumnStatus / PromptColumnDetails** companion fields, available credits, referenced inputs, and access—not merely whether the row exists.
-
-**Do not confuse filters:** The temporary test-record selection is different from a configured **Apply filter → Add filter → OK / Save** condition that controls when a prompt should execute (discussed at [37:37](https://youtu.be/_kPVgWgKZ-E?t=2257)).
-
-**▶️ [Resume at 38:16](https://youtu.be/_kPVgWgKZ-E?t=2296).**
-
-## 5. Row summary: read-time assistance, not a stored column
-
-**🔎 Watch at [38:16](https://youtu.be/_kPVgWgKZ-E?t=2296); optionally inspect the maker interface at [39:21](https://youtu.be/_kPVgWgKZ-E?t=2361).**
-
-Unlike **Battery Review Brief**, a **row summary** is an AI-generated overview displayed in the model-driven app experience. It is **not** a dedicated stored Prompt column or proof of approval.
-
-If your environment enables row summaries, use **Practice record A — `BESS-07 Surface Review`** for the preview. It contains a written finding and the Choice value **Review required**. If you did not enter this row yet, follow the [sample-record preparation](#practice-record-for-the-optional-ai-demonstrations) before testing.
-
-1. In **Tables → Battery Inspection → Customizations**, select **Row summary**. If disabled, hover for the reason; a data row may be required.
-2. In the **Prompt** area, select **Add** or type `/` to insert only appropriate column references.
-3. For an **additional practice prompt** (not a quote from the episode), use: `Summarize the inspection finding and current review status in two short sentences using only the selected record fields. If no completed corrective work is recorded, say corrective work not documented. Do not claim the battery is safe, repaired or approved.` Do not ask AI to calculate authoritative elapsed days or safety decisions.
-4. Select **Test prompt**, review the preview using the available record, then select **Apply to main forms** if appropriate.
-
-**✅ Check:** The output is a reading aid. A release to another environment may also require adding the correct **AI Skill Config** component through **Solution → Add existing → More → Other → AI Skill Config**, followed by a separate destination-environment review. Do not add unrelated system rows. [Microsoft row-summary documentation](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/configure-form-row-summary).
-
-**▶️ [Resume at 42:30](https://youtu.be/_kPVgWgKZ-E?t=2550).**
+**▶️ [Continue at 42:30](https://youtu.be/_kPVgWgKZ-E?t=2550).**
 
 ## 6. Before the main exercise: primary name, GUID, number and key
 
@@ -241,7 +189,7 @@ If your environment enables row summaries, use **Practice record A — `BESS-07 
 
 **⏸️ [50:52 — Add Finding Description](https://youtu.be/_kPVgWgKZ-E?t=3052)**
 
-1. Add a column named `Finding Description` **if it does not already exist**.
+1. Add a new column named `Finding Description`. This is its first creation in the guided exercise.
 2. Select the text format that offers a **Text area**, or **Multiple lines of text** for longer, multi-paragraph observations.
 3. If you choose a character limit, document why that limit meets the actual observation requirement.
 4. Save and verify that the column appears once.
@@ -277,10 +225,9 @@ If your environment enables row summaries, use **Practice record A — `BESS-07 
 BAT-{SEQNUM:4}
 ```
 
-6. Save the Autonumber column. **Check existing-row behavior rather than assuming retroactive backfill.**
-7. **Extra verification record (not narrated):** Now open **Battery Inspection → Edit data / Data → New row**, and create **Practice record B** with **Inspection Record Name** `BESS-08 Connector Review`, **Battery Unit Label** `BESS-08`, and **Finding Description** `Connector enclosure showed no visible damage during inspection. Review remains open; no corrective work has been documented.`. If you created **Inspection Status**, select `Open`; if you created **Battery Temperature**, enter `28.4`. Save. **Leave Inspection Ticket Number system-generated**—do not type a ticket manually.
+6. Save the Autonumber column. **Do not enter sample data yet.** You will verify the generated ticket number after finishing the guided exercise.
 
-**✅ Check:** The **new Practice record B** receives a system-generated **Inspection Ticket Number** according to your configured format. Older Practice record A may behave differently; inspect it rather than assuming it was backfilled. The ticket number is not the underlying GUID.
+**✅ Check:** The **Inspection Ticket Number** column exists with the configured Autonumber format. Verify actual generated values later, when you add the practice records in Section 8. The ticket number is not the underlying GUID.
 
 **▶️ [Resume at 52:12](https://youtu.be/_kPVgWgKZ-E?t=3132).**
 
@@ -288,21 +235,108 @@ BAT-{SEQNUM:4}
 
 **⏸️ [52:12 — Inspection Record Name Key](https://youtu.be/_kPVgWgKZ-E?t=3132)**
 
-1. Before creating the key, confirm the two saved practice rows have **different Inspection Record Name** values: `BESS-07 Surface Review` and `BESS-08 Connector Review`. If you skipped optional row setup, enter at least **one** uniquely named practice row now. Duplicate names can prevent key activation.
+1. Check that the **Inspection Record Name** column exists and is eligible as an alternate-key column. The new learning table should not have duplicate records yet; practice records are added **after** this guided exercise. If you already have records for another reason, confirm that their names are unique.
 2. Open **Battery Inspection → Schema → Keys → New key**.
 3. **Display name:** `Inspection Record Name Key`.
 4. Select **Inspection Record Name**, the renamed primary-name column, as the **only key column** for this exercise.
 5. Select **Save**, then inspect the key's status. The background indexing job may take time.
 
-**✅ Check:** The key reaches **Active**, not merely `Pending` or `In Progress`. **Negative test:** try to save another practice row with the already-used **Inspection Record Name** `BESS-07 Surface Review` and a different Battery Unit Label, for example `BESS-09`. **Expected outcome:** the save is rejected as a duplicate key. This is an attempted test only—**do not add that duplicate row to your dataset**. If the duplicate is accepted, confirm the key is actually **Active** and that you selected the right column. [Microsoft alternate-key guidance](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-portal).
+**✅ Check:** The key reaches **Active**, not merely `Pending` or `In Progress`. If activation is pending, inspect the status again before testing uniqueness. **You will test a duplicate name only after adding the fictional practice records in Section 8.** [Microsoft alternate-key guidance](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-portal).
 
-**▶️ [Resume at 52:44](https://youtu.be/_kPVgWgKZ-E?t=3164)** to compare expected results.
+**▶️ [Resume at 52:44](https://youtu.be/_kPVgWgKZ-E?t=3164)** to review the result with the hosts. Continue through the [53:50 recap](https://youtu.be/_kPVgWgKZ-E?t=3230), then create the practice data in Section 8.
 
-## 8. Final verification and troubleshooting
+## 8. After the guided exercise — enter practice records
+
+**🛠️ Additional learner practice, after [52:44 — Verification](https://youtu.be/_kPVgWgKZ-E?t=3164).** These two fictional rows and the following optional test steps support the module, but are **not** values dictated by the podcast. **Do not perform them before the 50:28 and 50:52 column-creation steps.**
+
+At this point the module's guided exercise has created **Battery Unit Label**, **Finding Description**, the renamed **Inspection Record Name**, **Inspection Ticket Number**, and **Inspection Record Name Key**. Use the finished table rather than creating any of these again.
+
+### Prepare additional fields for optional AI testing
+
+**Only if you want to test the earlier Prompt and row-summary demonstrations**, add the following **optional** columns now, based on the examples discussed at [28:08](https://youtu.be/_kPVgWgKZ-E?t=1688):
+
+| Additional column | Type | Values or settings |
+|---|---|---|
+| **Inspection Status** | Choice (one value) | `Open`, `Review required`, `Closed` |
+| **Battery Temperature** | Decimal number | Description: `Recorded measurement in degrees Celsius`; one decimal place if suitable |
+
+**✅ Check:** The five guided-exercise components remain in place, and you add only the optional columns that were not already created. **Do not recreate Finding Description or Battery Unit Label.**
+
+### Enter two fictional practice records
+
+In **Battery Inspection → Edit data / Data**, create the following rows **manually**, selecting Choice values from the options you configured. The **Inspection Record Name** field is the renamed primary-name display label. **Do not type a value in Inspection Ticket Number**; Dataverse generates it.
+
+| Field | Practice record A | Practice record B |
+|---|---|---|
+| **Inspection Record Name** | `BESS-07 Surface Review` | `BESS-08 Connector Review` |
+| **Battery Unit Label** | `BESS-07` | `BESS-08` |
+| **Finding Description** | `Visual surface mark observed on the battery unit housing. Maintenance review requested. No corrective work has been documented.` | `Connector enclosure showed no visible damage during inspection. Review remains open; no corrective work has been documented.` |
+| **Inspection Status** *(if added)* | `Review required` | `Open` |
+| **Battery Temperature** *(if added)* | `31.2` | `28.4` |
+| **Inspection Ticket Number** | *Leave blank; system-generated* | *Leave blank; system-generated* |
+
+**✅ Verify:** Both rows save with different Inspection Record Name values. New rows should receive generated ticket values according to your configured autonumber format. If the alternate key is still pending, check that it reaches **Active** before testing duplicate names.
+
+**Alternate-key negative test (extra learner practice):** After the key is **Active**, attempt to save another row named `BESS-07 Surface Review` with a different Battery Unit Label such as `BESS-09`. The duplicate should be rejected. **Do not add a duplicate record to the dataset.**
+
+[Download the two sample records as CSV](resources/M05_Battery_Inspection_Practice_Records.csv) for reference or copy/paste. Manual entry is simplest for two records; importing CSV is **not** part of this podcast's guided exercise.
+
+**▶️ Next:** If you want the optional AI experiments, return to [31:37 — Prompt column](https://youtu.be/_kPVgWgKZ-E?t=1897) and use Section 9. Otherwise continue to the final checklist.
+
+## 9. Optional AI practice — revisit the earlier demonstrations
+
+**These practical tests come after the main guided exercise** to preserve the column-creation order. The concepts were discussed earlier at [31:37](https://youtu.be/_kPVgWgKZ-E?t=1897) and [39:21](https://youtu.be/_kPVgWgKZ-E?t=2361). If the features are unavailable, you may complete Module 5 without these optional tests.
+
+### Optional A — Prompt column: stored AI text
+
+**🔁 After finishing the main exercise and Section 8, replay [31:37 — Prompt column](https://youtu.be/_kPVgWgKZ-E?t=1897)** if your environment supports this optional AI feature. The column and sample data now exist, so you can test without building ahead or spending credits unintentionally.
+
+**Prepare:** Use **Practice record A — `BESS-07 Surface Review`**, created in Section 8 **after** the guided exercise. The fields **Finding Description**, **Battery Unit Label**, and optional **Inspection Status** are now present. If you did not create the optional Inspection Status Choice or save a row, complete that preparation before testing a prompt that references those inputs. Copilot/AI Prompts feature enablement, geography, permissions, and credits may apply.
+
+1. Open **Battery Inspection → New → Column**.
+2. Set **Display name:** `Battery Review Brief`.
+3. Set **Description:** `AI-generated summary requiring human review`.
+4. Set **Data type:** **Prompt**. Clear **Allow form fill assistance** if shown.
+5. Select **Add new prompt** (if available). The episode describes a maximum of **five Prompt columns per table**.
+6. Compose the following instructions, combining the sentences the hosts actually prescribe at [32:37](https://youtu.be/_kPVgWgKZ-E?t=1957) and [32:54](https://youtu.be/_kPVgWgKZ-E?t=1974):
+
+```text
+Describe the inspection finding and review status in no more than three plain-English sentences. Use only the selected Battery Inspection input fields. If no corrective work is explicitly recorded, say Corrective work not documented. Never say the inspection is approved or safe unless that exact status is present in the source fields.
+```
+
+7. Choose **Add content**, select the table, and insert the **Finding Description**, **Inspection Status** and **Battery Unit Label** columns as supported input references. Do not map confidential fields just because the picker shows them. Formula, File, Image and Prompt columns are not supported effective prompt inputs.
+8. For **Test**, select **Practice record A** (`BESS-07 Surface Review`) as the example record where your editor permits. In the older **Filter knowledge → Filter attribute** experience described by the episode, choose the identifying **Name** field (or **Inspection Record Name** after renaming) and enter `BESS-07 Surface Review`. If your editor instead uses a required record-ID variable, choose the saved practice row through that interface; do not substitute its display name where a GUID is required. Select **Test** and compare the response with the record's **Finding Description** and **Inspection Status**. Review **Knowledge used** where offered. If the response claims a repair is complete, the unit is safe, or the inspection is approved, that is unsupported; revise the instruction and retest.
+9. The podcast describes **Filter knowledge → Filter attribute** to target an inspection by name, followed by **No filter** after testing. **Current Microsoft documentation may instead require the default `PromptColumnRecordId` text variable, filtered to a primary identifier, to be retained for saving.** Follow the controls and validation shown in your actual editor: do not delete a required record variable or save a test-only restriction as a production rule. [Current Prompt column documentation](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/prompt-column).
+10. Save the **prompt**, then save the **column**. The generated value can appear **asynchronously**, not necessarily at row-save time.
+
+**✅ Check:** The AI field is clearly distinguishable from the inspector's original observation. If a value is blank, inspect the column's actual **PromptColumnStatus / PromptColumnDetails** companion fields, available credits, referenced inputs, and access—not merely whether the row exists.
+
+**Do not confuse filters:** The temporary test-record selection is different from a configured **Apply filter → Add filter → OK / Save** condition that controls when a prompt should execute (discussed at [37:37](https://youtu.be/_kPVgWgKZ-E?t=2257)).
+
+**▶️ [Replay the row-summary explanation at 38:16](https://youtu.be/_kPVgWgKZ-E?t=2296)** if continuing the optional AI practice.
+
+### Optional B — Row summary: read-time assistance, not a stored column
+
+**🔁 After Section 8, replay [39:21 — Row summary](https://youtu.be/_kPVgWgKZ-E?t=2361)** if the feature is available and you want to follow the optional demonstration using a saved row.
+
+Unlike **Battery Review Brief**, a **row summary** is an AI-generated overview displayed in the model-driven app experience. It is **not** a dedicated stored Prompt column or proof of approval.
+
+If your environment enables row summaries, use **Practice record A — `BESS-07 Surface Review`** from Section 8. It contains a written finding and, if you added the optional Choice field, the value **Review required**. Create that practice row **after** the guided exercise, not before it.
+
+1. In **Tables → Battery Inspection → Customizations**, select **Row summary**. If disabled, hover for the reason; a data row may be required.
+2. In the **Prompt** area, select **Add** or type `/` to insert only appropriate column references.
+3. For an **additional practice prompt** (not a quote from the episode), use: `Summarize the inspection finding and current review status in two short sentences using only the selected record fields. If no completed corrective work is recorded, say corrective work not documented. Do not claim the battery is safe, repaired or approved.` Do not ask AI to calculate authoritative elapsed days or safety decisions.
+4. Select **Test prompt**, review the preview using the available record, then select **Apply to main forms** if appropriate.
+
+**✅ Check:** The output is a reading aid. A release to another environment may also require adding the correct **AI Skill Config** component through **Solution → Add existing → More → Other → AI Skill Config**, followed by a separate destination-environment review. Do not add unrelated system rows. [Microsoft row-summary documentation](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/configure-form-row-summary).
+
+**✅ Check:** The preview is a descriptive reading aid, not a statement that any repair, approval, or safety check is complete.
+
+## 10. Final verification and troubleshooting
 
 **⏸️ At [52:44](https://youtu.be/_kPVgWgKZ-E?t=3164)** check the actual saved state, not just whether you clicked Save.
 
-- [ ] The original **Battery Inspection** table is in the intended environment and solution.
+- [ ] The **Battery Inspection** table was created during Module 5 setup in the intended environment and solution.
 - [ ] `Battery Unit Label` exists with **Single line of text**.
 - [ ] `Finding Description` exists with an appropriate longer-text configuration.
 - [ ] Primary-name **display label** is now `Inspection Record Name`; its schema name was not changed.
@@ -312,7 +346,7 @@ BAT-{SEQNUM:4}
 
 **If the alternate key is `Failed`** (discussed at [53:18](https://youtu.be/_kPVgWgKZ-E?t=3198)), check duplicate/blank sample values, eligible column type, field security and system job details. A visible key name does **not** prove that uniqueness is enforced. If the Prompt field is empty, inspect actual execution status, credits, input changes, feature permissions and error details.
 
-**▶️ [Resume at 53:50](https://youtu.be/_kPVgWgKZ-E?t=3230)** for the recap. **Module 6** moves on to Dataverse security roles and teams.
+**▶️ [Review the 53:50 podcast recap](https://youtu.be/_kPVgWgKZ-E?t=3230)** if needed. **Module 6** moves on to Dataverse security roles and teams.
 
 ---
 
