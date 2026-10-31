@@ -8,10 +8,11 @@ Welcome! These companions help you follow the Twinkle & Celestyn **Design & Trou
 2. [Module 02 — Effective prompt engineering](../modules/M02-effective-prompt-engineering/README.md) · [YouTube](https://youtu.be/q4C4eKex1pg)
 3. [Module 03 — Power Apps Plans](../modules/M03-power-apps-plans/README.md) · [YouTube](https://youtu.be/BvRKiWRBNqA)
 4. [Module 04 — Dataverse tables, relationships and data imports](../modules/M04-dataverse-tables-relationships/README.md) · [YouTube](https://youtu.be/eAd0rOf68Ms)
+5. [Module 05 — Dataverse columns, Prompt fields and alternate keys](../modules/M05-dataverse-columns-ai-fields/README.md) · [YouTube](https://youtu.be/_kPVgWgKZ-E)
 
 Open a module page beside the podcast. Click a blue timestamp to jump to the corresponding passage. Pause when an activity requires attention, then return to the audio.
 
-**Modules 1–2** explain foundations and prompting without requiring a formal build. **Module 3** introduces Power Apps Plans with optional follow-along steps. **Module 4** teaches Dataverse configuration, relationships and imports with a genuine build-along guide. Follow each module's activity indicators and verification checkpoints.
+**Modules 1–2** explain foundations and prompting without requiring a formal build. **Module 3** introduces Power Apps Plans with optional follow-along steps. **Module 4** teaches Dataverse tables, relationships and imports. **Module 5** continues with Dataverse column choices, AI-assisted fields, autonumbering and alternate keys, including guided practice. Follow each module's activity indicators and verification checkpoints.
 
 ## Practice safely
 
