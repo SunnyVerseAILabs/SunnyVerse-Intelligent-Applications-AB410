@@ -283,7 +283,7 @@ In **Battery Inspection → Edit data / Data**, create the following rows **manu
 
 **▶️ Next:** If you want the optional AI experiments, return to [31:37 — Prompt column](https://youtu.be/_kPVgWgKZ-E?t=1897) and use Section 9. Otherwise continue to the final checklist.
 
-## 9. Optional AI practice — revisit the earlier demonstrations
+## 9. Optional AI practice: revisit the earlier demonstrations
 
 **These practical tests come after the main guided exercise** to preserve the column-creation order. The concepts were discussed earlier at [31:37](https://youtu.be/_kPVgWgKZ-E?t=1897) and [39:21](https://youtu.be/_kPVgWgKZ-E?t=2361). If the features are unavailable, you may complete Module 5 without these optional tests.
 
@@ -315,7 +315,7 @@ Describe the inspection finding and review status in no more than three plain-En
 
 **▶️ [Replay the row-summary explanation at 38:16](https://youtu.be/_kPVgWgKZ-E?t=2296)** if continuing the optional AI practice.
 
-### Optional B — Row summary: read-time assistance, not a stored column
+### Optional B: Row summary
 
 **🔁 After Section 8, replay [39:21 — Row summary](https://youtu.be/_kPVgWgKZ-E?t=2361)** if the feature is available and you want to follow the optional demonstration using a saved row.
 
