@@ -1,16 +1,13 @@
-# Local and private creator files
-*.tmp
-*.bak
+# Standard local-only files
 .DS_Store
 Thumbs.db
+*.tmp
+*.bak
+*.log
 .env
 .env.*
 !.env.example
 __pycache__/
 *.pyc
-# Keep internal production materials and credential files out of commits
-*NotebookLM*Prompt*
-*Production_Master*
-*Creator_Master*
-*.secret
 *.key
+*.secret
