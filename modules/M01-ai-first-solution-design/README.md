@@ -113,7 +113,7 @@ At [47:34](https://youtu.be/ejxXypKOmpk?t=2854), built-in assistance and managed
 
 ## 7. Where the actual build work starts
 
-This module establishes **what belongs in the solution**. **Module 02** introduces effective prompting (still concept-focused); **Module 03** covers Power Apps Plans; **Modules 04–06** develop Dataverse modeling and access; **Modules 07–08** introduce canvas-app building and customization; later modules cover model-driven apps, portals and automation. Each future guide will contain click-by-click steps **only where the source and audio actually teach a practical procedure**.
+This module establishes **what belongs in the solution**. **Module 02** introduces effective prompting (still concept-focused); **Module 03** covers Power Apps Plans; **Modules 04–06** develop Dataverse modeling and access; **Modules 07–08** introduce canvas-app building and customization; later modules cover model-driven apps, portals and automation. Later guides include step-by-step instructions where the lesson teaches a practical procedure.
 
 ---
 
