@@ -40,7 +40,7 @@ Read the [learner quick-start](docs/START-HERE.md), choose a module below, play 
 | M16 | Approvals and business process flows | Coming soon | Link coming soon |
 | M17 | Grounded AI prompts | Coming soon | Link coming soon |
 
-**Guide status:** M01, M02 and M03 are published at present. Additional podcast episodes may already exist; links and guides will be added after editorial verification. Official unit exercises determine whether a module is conceptual or hands-on.
+**Guide status:** M01, M02 and M03 are available. Additional learner guides and episode links will appear here as they are released.
 
 ## The SunnyVerse learning world
 
@@ -64,6 +64,6 @@ Examples use the fictional **SunnyVerse Renewable Group** across **Wind Operatio
 
 ## Rights and attribution
 
-Original SunnyVerse content is © 2026 SunnyVerse AI Labs. All rights reserved. The intended use is personal educational study. A detailed license notice is being reviewed before publication; public access does not mean content is open-source or available for redistribution. Third-party materials retain their own rights. Microsoft product names are used for educational identification, not to imply affiliation.
+Original SunnyVerse content is © 2026 SunnyVerse AI Labs. All rights reserved. The intended use is personal educational study. Public access does not mean content is open-source or available for redistribution. Third-party materials retain their own rights. Microsoft product names are used for educational identification, not to imply affiliation.
 
 Feedback and corrections can be submitted through this repository's **Issues** tab.
