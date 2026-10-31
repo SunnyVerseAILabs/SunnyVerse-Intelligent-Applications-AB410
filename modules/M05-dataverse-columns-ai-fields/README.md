@@ -137,13 +137,36 @@
 
 **✅ Check:** If you created **Finding Description** here, reuse it at [50:52](https://youtu.be/_kPVgWgKZ-E?t=3052); **do not add a duplicate**.
 
+
+### Practice record for the optional AI demonstrations
+
+**Extra learner practice data (not spoken in the episode):** To follow the **Prompt column test at [34:19](https://youtu.be/_kPVgWgKZ-E?t=2059)** and the **row-summary preview at [39:21](https://youtu.be/_kPVgWgKZ-E?t=2361)** in real time, you need at least one saved fictional Battery Inspection row.
+
+1. Complete the three optional column examples above: **Battery Temperature**, **Inspection Status**, and **Finding Description**. For this *optional early exploration only*, also create **Battery Unit Label** as **Single line of text**. This extra preparation is not an additional podcast exercise; the guided practice teaches Battery Unit Label at **[50:28](https://youtu.be/_kPVgWgKZ-E?t=3028)**. When you reach that moment, **verify and reuse** the existing column instead of creating it twice.
+2. Open **Battery Inspection → Edit data / Data** (the label varies by maker experience), then choose **New row**. The table's primary-name field is still called **Name** at this point.
+3. Enter **Practice record A** using the values below, then **Save**. Choose the existing **Inspection Status** value from its Choice list rather than typing a new choice.
+
+| Field | Practice record A — enter before Prompt testing |
+|---|---|
+| **Name** (later **Inspection Record Name**) | `BESS-07 Surface Review` |
+| **Battery Unit Label** | `BESS-07` |
+| **Finding Description** | `Visual surface mark observed on the battery unit housing. Maintenance review requested. No corrective work has been documented.` |
+| **Inspection Status** | `Review required` |
+| **Battery Temperature** (optional Decimal) | `31.2` |
+
+**✅ Check:** The saved row appears under **Battery Inspection**. Its original observation is stored in **Finding Description**; no repair, safety approval or completion is implied.
+
+If you prefer to follow the main guided column exercise **before** adding any early fields or rows, that's fine: skip this preparation now, complete **[49:57](https://youtu.be/_kPVgWgKZ-E?t=2997)**, add **Inspection Status** (and optionally **Battery Temperature**), enter the practice records, and then return to the AI demonstrations. **Do not duplicate columns.**
+
+You can also [download the optional sample-record CSV](resources/M05_Battery_Inspection_Practice_Records.csv) for copy/paste reference. **Manual entry is recommended** for two records; the CSV is not a claim that the podcast teaches a data import.
+
 **▶️ [Resume at 29:56](https://youtu.be/_kPVgWgKZ-E?t=1796).**
 
 ## 4. Prompt column: stored AI text (optional advanced walkthrough)
 
 **🔎 Pause at [31:37](https://youtu.be/_kPVgWgKZ-E?t=1897) only if you have an eligible environment.** This is a feature walkthrough, not a requirement to spend credits or create a new app.
 
-**Prepare:** Your `Battery Inspection` table should already include `Finding Description`, `Inspection Status`, and `Battery Unit Label` if you intend to map those inputs. If `Battery Unit Label` is not yet created, return to this feature **after** the formal exercise at [50:28](https://youtu.be/_kPVgWgKZ-E?t=3028), rather than inventing a new step out of order. You also need a fictional row with suitable input values before testing. Copilot/AI Prompts enablement, geography, permissions and credits may apply.
+**Prepare:** For a live Prompt test, use **Practice record A — `BESS-07 Surface Review`** from the [sample-record setup](#practice-record-for-the-optional-ai-demonstrations) above. It supplies the mapped inputs **Finding Description**, **Inspection Status** and **Battery Unit Label**. Without those fields and a saved row, the preview has no example data. If you skipped early practice, first complete the guided column exercise at [49:57](https://youtu.be/_kPVgWgKZ-E?t=2997), add the optional Inspection Status Choice, save the record, then return here. Copilot/AI Prompts feature enablement, geography, permissions and credits may apply.
 
 1. Open **Battery Inspection → New → Column**.
 2. Set **Display name:** `Battery Review Brief`.
@@ -157,7 +180,7 @@ Describe the inspection finding and review status in no more than three plain-En
 ```
 
 7. Choose **Add content**, select the table, and insert the **Finding Description**, **Inspection Status** and **Battery Unit Label** columns as supported input references. Do not map confidential fields just because the picker shows them. Formula, File, Image and Prompt columns are not supported effective prompt inputs.
-8. Use **Test** and check the response **against the record fields**. Review **Knowledge used** where that panel is offered. A summary stating a repair was completed when no such evidence exists is **wrong**, even if fluent.
+8. For **Test**, select **Practice record A** (`BESS-07 Surface Review`) as the example record where your editor permits. In the older **Filter knowledge → Filter attribute** experience described by the episode, choose the identifying **Name** field (or **Inspection Record Name** after renaming) and enter `BESS-07 Surface Review`. If your editor instead uses a required record-ID variable, choose the saved practice row through that interface; do not substitute its display name where a GUID is required. Select **Test** and compare the response with the record's **Finding Description** and **Inspection Status**. Review **Knowledge used** where offered. If the response claims a repair is complete, the unit is safe, or the inspection is approved, that is unsupported; revise the instruction and retest.
 9. The podcast describes **Filter knowledge → Filter attribute** to target an inspection by name, followed by **No filter** after testing. **Current Microsoft documentation may instead require the default `PromptColumnRecordId` text variable, filtered to a primary identifier, to be retained for saving.** Follow the controls and validation shown in your actual editor: do not delete a required record variable or save a test-only restriction as a production rule. [Current Prompt column documentation](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/prompt-column).
 10. Save the **prompt**, then save the **column**. The generated value can appear **asynchronously**, not necessarily at row-save time.
 
@@ -173,11 +196,11 @@ Describe the inspection finding and review status in no more than three plain-En
 
 Unlike **Battery Review Brief**, a **row summary** is an AI-generated overview displayed in the model-driven app experience. It is **not** a dedicated stored Prompt column or proof of approval.
 
-If your organization enables row summaries and your fictional Battery Inspection table has a suitable row:
+If your environment enables row summaries, use **Practice record A — `BESS-07 Surface Review`** for the preview. It contains a written finding and the Choice value **Review required**. If you did not enter this row yet, follow the [sample-record preparation](#practice-record-for-the-optional-ai-demonstrations) before testing.
 
 1. In **Tables → Battery Inspection → Customizations**, select **Row summary**. If disabled, hover for the reason; a data row may be required.
 2. In the **Prompt** area, select **Add** or type `/` to insert only appropriate column references.
-3. Write a concise descriptive summary request; do not ask AI to decide whether a temperature is safe or to compute authoritative elapsed days.
+3. For an **additional practice prompt** (not a quote from the episode), use: `Summarize the inspection finding and current review status in two short sentences using only the selected record fields. If no completed corrective work is recorded, say corrective work not documented. Do not claim the battery is safe, repaired or approved.` Do not ask AI to calculate authoritative elapsed days or safety decisions.
 4. Select **Test prompt**, review the preview using the available record, then select **Apply to main forms** if appropriate.
 
 **✅ Check:** The output is a reading aid. A release to another environment may also require adding the correct **AI Skill Config** component through **Solution → Add existing → More → Other → AI Skill Config**, followed by a separate destination-environment review. Do not add unrelated system rows. [Microsoft row-summary documentation](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/configure-form-row-summary).
@@ -254,9 +277,10 @@ If your organization enables row summaries and your fictional Battery Inspection
 BAT-{SEQNUM:4}
 ```
 
-6. Save. Newly created practice rows should receive generated numbers. **Check existing-row behavior rather than assuming retroactive backfill.**
+6. Save the Autonumber column. **Check existing-row behavior rather than assuming retroactive backfill.**
+7. **Extra verification record (not narrated):** Now open **Battery Inspection → Edit data / Data → New row**, and create **Practice record B** with **Inspection Record Name** `BESS-08 Connector Review`, **Battery Unit Label** `BESS-08`, and **Finding Description** `Connector enclosure showed no visible damage during inspection. Review remains open; no corrective work has been documented.`. If you created **Inspection Status**, select `Open`; if you created **Battery Temperature**, enter `28.4`. Save. **Leave Inspection Ticket Number system-generated**—do not type a ticket manually.
 
-**✅ Check:** A new test row displays an automatically generated ticket number, with the actual format you configured. A sequential number is not the underlying GUID.
+**✅ Check:** The **new Practice record B** receives a system-generated **Inspection Ticket Number** according to your configured format. Older Practice record A may behave differently; inspect it rather than assuming it was backfilled. The ticket number is not the underlying GUID.
 
 **▶️ [Resume at 52:12](https://youtu.be/_kPVgWgKZ-E?t=3132).**
 
@@ -264,13 +288,13 @@ BAT-{SEQNUM:4}
 
 **⏸️ [52:12 — Inspection Record Name Key](https://youtu.be/_kPVgWgKZ-E?t=3132)**
 
-1. Before proceeding, ensure **all existing practice records have unique, stable `Inspection Record Name` values**. Duplicate names can prevent key activation.
+1. Before creating the key, confirm the two saved practice rows have **different Inspection Record Name** values: `BESS-07 Surface Review` and `BESS-08 Connector Review`. If you skipped optional row setup, enter at least **one** uniquely named practice row now. Duplicate names can prevent key activation.
 2. Open **Battery Inspection → Schema → Keys → New key**.
 3. **Display name:** `Inspection Record Name Key`.
 4. Select **Inspection Record Name**, the renamed primary-name column, as the **only key column** for this exercise.
 5. Select **Save**, then inspect the key's status. The background indexing job may take time.
 
-**✅ Check:** The key reaches **Active**, not merely `Pending` or `In Progress`. Only then try creating a duplicate-name **test** record; the duplicate should be rejected if the constraint is active. [Microsoft alternate-key guidance](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-portal).
+**✅ Check:** The key reaches **Active**, not merely `Pending` or `In Progress`. **Negative test:** try to save another practice row with the already-used **Inspection Record Name** `BESS-07 Surface Review` and a different Battery Unit Label, for example `BESS-09`. **Expected outcome:** the save is rejected as a duplicate key. This is an attempted test only—**do not add that duplicate row to your dataset**. If the duplicate is accepted, confirm the key is actually **Active** and that you selected the right column. [Microsoft alternate-key guidance](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-portal).
 
 **▶️ [Resume at 52:44](https://youtu.be/_kPVgWgKZ-E?t=3164)** to compare expected results.
 
@@ -282,7 +306,7 @@ BAT-{SEQNUM:4}
 - [ ] `Battery Unit Label` exists with **Single line of text**.
 - [ ] `Finding Description` exists with an appropriate longer-text configuration.
 - [ ] Primary-name **display label** is now `Inspection Record Name`; its schema name was not changed.
-- [ ] `Inspection Ticket Number` is **Autonumber** and generates the configured sequence for a new record.
+- [ ] `Inspection Ticket Number` is **Autonumber** and generates a number for a **new** practice record (such as Practice record B).
 - [ ] `Inspection Record Name Key` is **Active** and rejects duplicate names when tested safely.
 - [ ] If configured, `Battery Review Brief` remains a clearly labeled **AI-generated** field—not the original inspection evidence.
 
