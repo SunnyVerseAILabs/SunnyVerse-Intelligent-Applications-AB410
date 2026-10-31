@@ -4,7 +4,7 @@
 **Podcast:** [Play Module 3 on YouTube](https://youtu.be/BvRKiWRBNqA) · **Runtime:** 47:18 · **Learning path:** AI-first foundations  
 **Guide type:** Timestamped conceptual learning companion with an **optional** Power Apps Plans interface walkthrough
 
-> **How to use this guide:** Listen to the episode and click timestamps below to return to the relevant explanation. The times come from the actual `3T.sbv` generated-podcast subtitles; YouTube playback can differ by a few seconds. **This official-aligned module has no dedicated formal Exercise unit.** The screen-side actions describe what the podcast teaches; you do not need to create or deploy an application to complete Module 3. Where a step could change an environment (especially **Save tables**), proceed only with an approved practice environment and appropriate permissions.
+> **How to use this guide:** Listen to the episode and click timestamps below to return to the relevant explanation. The links open the corresponding sections of the episode; YouTube playback can differ by a few seconds. **This is a planning walkthrough rather than a required application-building lab.** The screen-side actions describe what the podcast teaches; you do not need to create or deploy an application to complete Module 3. Where a step could change an environment (especially **Save tables**), proceed only with an approved practice environment and appropriate permissions.
 
 ## Jump to the moment you need
 
@@ -133,7 +133,7 @@ Check that people and systems are assigned the right actions. The editor may all
 
 **🎧 Listen at [15:42](https://youtu.be/BvRKiWRBNqA?t=942)**
 
-After accepting requirements, the **Data Agent** proposes a model. Choose **Edit** to request changes or **Show details** to inspect its diagram and data workspace; return with **Back**. The source illustration uses:
+After accepting requirements, the **Data Agent** proposes a model. Choose **Edit** to request changes or **Show details** to inspect its diagram and data workspace; return with **Back**. For this learning scenario, consider:
 
 | Possible table | What it represents | Important check |
 |---|---|---|
