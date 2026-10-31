@@ -324,7 +324,7 @@ Create an Excel table with **these four headings**, using precisely the two reco
 | Rotor Inspection Quote | Received | 10000 | 60 |
 | Electrical Diagnostic Review | Under Review | 4500 | 40 |
 
-Save the workbook with a descriptive name such as **Wind Service Proposals.xlsx**. A ready-to-use Excel workbook is included with the downloadable companion package. For GitHub, [download the two-row CSV](resources/M04_Wind_Service_Proposals.csv), open it in Excel, and save it as `.xlsx` if required by your importer.
+Save the workbook with a descriptive name such as **Wind Service Proposals.xlsx**. [Download the two-row Excel workbook](downloads/Wind%20Service%20Proposals.xlsx), or use the [CSV version](resources/M04_Wind_Service_Proposals.csv) and save it as `.xlsx` if your import workflow requires an Excel workbook.
 
 **✅ Check:** There is **no** `Weighted Proposal Value` column in the source file. The podcast states these two rows; it does not dictate a third proposal record. All amounts are imaginary.
 
