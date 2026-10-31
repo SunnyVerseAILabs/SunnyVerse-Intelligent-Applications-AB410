@@ -7,18 +7,18 @@
 
 **Start the podcast from the beginning.** A **👀 Watch & understand** section explains a concept: keep watching and refer to its short notes. When you see **⏸️ Pause & build**, pause YouTube, perform the steps in your permitted Power Apps learning environment, verify the result, then select the **▶️ Resume** link. **🔎 Optional exploration** means the hosts explain a feature that you can inspect, but it is not a required additional build.
 
-**Before following the maker activities:** You need a custom Dataverse table named **Battery Inspection**. The earlier modules did **not** create this table. If it is missing from your environment, use the one-time setup below **before starting the podcast exercises**. This preparatory setup is provided for your convenience; it is **not** a step narrated in the Module 5 episode. Use a permitted development environment and fictional data only.
+**Module 5 begins with a required setup step:** Create a new Dataverse table named **Battery Inspection** using the instructions below. Learners following this course from Module 1 have not created this table in Modules 1–4. Complete the setup **before starting the Module 5 podcast**. Table creation is a supporting step added to make this guide self-contained; the podcast starts with the table already prepared. Work only in an approved learning environment using fictional data.
 
 **Important:** The early column-type examples explain how fields are configured. The **main guided exercise begins at [49:57](https://youtu.be/_kPVgWgKZ-E?t=2997)**. If you have already created a field while following an earlier example, **verify and reuse it**; do not create a duplicate with the same name. Prompt columns and row summaries may be unavailable depending on environment, licensing and rollout.
 
-## One-time setup — create Battery Inspection (if missing)
+## Module 5 setup — create the Battery Inspection table
 
-**Do this once before following the Module 5 hands-on steps.** Modules 1–4 did not create this table. If your development environment already has **Battery Inspection**, **skip this section** and use the existing table.
+**Complete this setup before playing the Module 5 podcast.** This course introduces **Battery Inspection** here for the first time. You will create the empty table now, then follow the podcast to configure its columns and key. It is not carried over from Module 4.
 
-This is a **preparation step**, not something Twinkle and Celestyn ask you to build in the podcast. It applies the table-creation skills introduced in [Module 4](../M04-dataverse-tables-relationships/README.md).
+**Why this setup comes first:** Twinkle and Celestyn use an already-prepared table when explaining column settings. The steps below apply the table-creation skills from [Module 4](../M04-dataverse-tables-relationships/README.md) and are **additional learner preparation**, not words or actions attributed to the podcast.
 
 1. Open [Power Apps](https://make.powerapps.com/) and choose your approved **development/learning environment**. Confirm it has Dataverse and you can create custom tables.
-2. Open your intended learning **solution**, then choose **New → Table → Table (advanced properties)** or the corresponding **New table / Standard table** option in your Power Apps interface. Creating it from the solution helps keep the exercise components together.
+2. Open the learning **solution** you used for the Dataverse exercises. Choose **New → Table → Table (advanced properties)**, or the corresponding **New table / Standard table** option in your Power Apps interface, to create a new table in that solution.
 3. Use these starter settings:
 
    | Setting | Enter / select |
@@ -32,7 +32,7 @@ This is a **preparation step**, not something Twinkle and Celestyn ask you to bu
 4. Select **Save / Create**. Open **Battery Inspection → Columns** and confirm the table exists with its original primary-name column.
 5. **Stop here.** Do **not** create `Battery Unit Label`, `Finding Description`, `Inspection Ticket Number`, or `Inspection Record Name Key` during setup. You will add or configure those in the podcast's main guided exercise, starting at **[49:57](https://youtu.be/_kPVgWgKZ-E?t=2997)**. Do not rename the primary-name label yet; the video covers that at **[51:21](https://youtu.be/_kPVgWgKZ-E?t=3081)**.
 
-**✅ Verify:** The **Battery Inspection** table appears in the correct environment and solution, and its primary-name column still has the original label. You can now **[start the Module 5 podcast from 00:00](https://youtu.be/_kPVgWgKZ-E?t=0)**. At **[22:18](https://youtu.be/_kPVgWgKZ-E?t=1338)**, return to this table when the hosts discuss the column designer.
+**✅ Verify before starting the video:** The new **Battery Inspection** table appears in your selected development environment and learning solution. Its primary-name display label is still **Name**, and you have not added the columns or alternate key taught later. **▶️ [Start the Module 5 podcast at 00:00](https://youtu.be/_kPVgWgKZ-E?t=0)**. At **[22:18](https://youtu.be/_kPVgWgKZ-E?t=1338)**, return to this table when the hosts discuss the column designer.
 
 **Optional AI examples:** Prompt-column and row-summary demonstrations later in the episode may require additional fields, a fictional inspection record, or feature entitlements. Those are separate from the minimal table setup above; do not invent columns or records as if they had been created in an earlier module.
 
@@ -100,7 +100,7 @@ This is a **preparation step**, not something Twinkle and Celestyn ask you to bu
 **⏸️ Pause at [22:18](https://youtu.be/_kPVgWgKZ-E?t=1338).**
 
 1. Sign in to [Power Apps](https://make.powerapps.com/) and select the correct **development** environment.
-2. Open the **Battery Inspection** table under **Tables**, preferably from the learning solution where you created or located it. If it is missing, complete the [one-time table setup](#one-time-setup--create-battery-inspection-if-missing) above before proceeding.
+2. Open **Battery Inspection → Columns** from the learning solution where you created the table in [Module 5 setup](#module-5-setup--create-the-battery-inspection-table).
 3. Confirm the solution's actual **publisher and prefix** before adding custom components. `SunnyVerse Renewable Learning Publisher` and `svrg` are *conditional educational examples*, not guaranteed values in your tenant.
 4. Open **Columns → New column**, or use the table's **+ Add column** route if your designer presents it. Inspect the pane without saving an unnecessary field.
 
@@ -198,7 +198,7 @@ If your organization enables row summaries and your fictional Battery Inspection
 
 ## 7. Main guided exercise — configure Battery Inspection
 
-**⏸️ Pause at [49:57 — Guided maker practice](https://youtu.be/_kPVgWgKZ-E?t=2997).** Work in your approved **development** environment with **Battery Inspection** already present. If you did not have the table, complete the [one-time prerequisite setup](#one-time-setup--create-battery-inspection-if-missing) first. Confirm the actual solution publisher rather than assuming `svrg`.
+**⏸️ Pause at [49:57 — Guided maker practice](https://youtu.be/_kPVgWgKZ-E?t=2997).** Return to the **Battery Inspection** table created during the [Module 5 setup](#module-5-setup--create-the-battery-inspection-table) in your approved development environment. Confirm the actual solution publisher rather than assuming `svrg`.
 
 ### Activity A — Battery Unit Label
 
