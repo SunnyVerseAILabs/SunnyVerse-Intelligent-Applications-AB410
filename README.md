@@ -21,7 +21,7 @@ Read the [learner quick-start](docs/START-HERE.md), choose a module below, play 
 | **Path 1 — AI-first foundations** ||||
 | M01 | AI-first solutions and component selection | [Open guide](modules/M01-ai-first-solution-design/README.md) | [Listen](https://youtu.be/ejxXypKOmpk) |
 | M02 | Effective prompt engineering | [Open guide](modules/M02-effective-prompt-engineering/README.md) | [Listen](https://youtu.be/q4C4eKex1pg) |
-| M03 | Power Apps Plans | Coming soon | Link coming soon |
+| M03 | Power Apps Plans | [Open guide](modules/M03-power-apps-plans/README.md) | [Listen](https://youtu.be/BvRKiWRBNqA) |
 | **Path 2 — Dataverse foundations** ||||
 | M04 | Tables and relationships | Coming soon | Link coming soon |
 | M05 | Columns and AI fields | Coming soon | Link coming soon |
@@ -40,7 +40,7 @@ Read the [learner quick-start](docs/START-HERE.md), choose a module below, play 
 | M16 | Approvals and business process flows | Coming soon | Link coming soon |
 | M17 | Grounded AI prompts | Coming soon | Link coming soon |
 
-**Guide status:** Only M01 and M02 are published at present. Additional podcast episodes may already exist; links and guides will be added after editorial verification. Official unit exercises determine whether a module is conceptual or hands-on.
+**Guide status:** M01, M02 and M03 are published at present. Additional podcast episodes may already exist; links and guides will be added after editorial verification. Official unit exercises determine whether a module is conceptual or hands-on.
 
 ## The SunnyVerse learning world
 
