@@ -2,13 +2,13 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–02 — Solution Foundation, Department Master, Campus and Data Halls
+**Published:** Parts 00–03 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
 Welcome to Data Center Operations 360. In this project, you will build a fictional data center operations solution using Microsoft Power Platform. The work is completed in an environment where you have permission to develop, and all practice records are fictional.
 
-Part 00 prepares the solution. Part 01 creates operating departments, and Part 02 adds a fictional campus with two related data halls. Work through the published lessons in order using your own authorized learning environment.
+Part 00 prepares the solution. Part 01 creates departments, Part 02 adds a campus and two related data halls, and Part 03 builds a fictional employee directory with reporting managers. Follow the lessons in order in an authorized learning environment.
 
 Follow the activities in order. The menu labels in your environment may differ slightly; choose the equivalent command and inspect the actual settings before saving.
 
@@ -294,6 +294,117 @@ Alternatively, download [data-halls.csv](./data/data-halls.csv) and use the Data
 The campus table should show **one** Pacific Resilience Campus row. The data hall table should show **two** halls with unique codes, **High** criticality and designed capacities of **2350.00 kW** and **2500.00 kW**. Both Campus lookups should resolve to the existing campus when you reopen the table. The shared `DC Infrastructure Criticality` Global Choice contains High, Medium and Low.
 
 You now have a genuine one-to-many campus-to-hall structure, ready for other fictional operational records to reference. No employee or asset records are needed in this lesson.
+
+
+---
+
+## Part 03 — Build the Employee Directory and Reporting Hierarchy
+
+The campus and data halls now give our fictional facility a location structure. Next, we'll create an employee directory so that later incident and maintenance records can refer to consistent staff profiles and departments. We'll also connect each profile to a campus and, when applicable, to a manager.
+
+You will create one **DC Employee Profile** table, populate **20 fictional employees**, and establish their reporting hierarchy. Download [employee-profiles.csv](./data/employee-profiles.csv). Its **nine headers exactly match the column display names** defined below; the underlying technical schema names use our `svrg` prefix. These are *fictional business profiles*, not real Microsoft Entra accounts, Microsoft 365 recipients, or authenticated approvers.
+
+### S03.01 — Create the DC Employee Profile table
+
+Open [Power Apps](https://make.powerapps.com) and go to **Solutions → SunnyVerse Data Center Operations 360 → New → Table**. Open advanced properties if you need to set the primary name and ownership.
+
+| Table property | Enter |
+| --- | --- |
+| Display name / plural | `DC Employee Profile` / `DC Employee Profiles` |
+| Description | `Fictional staff profiles for department assignment, shift grouping and reporting relationships.` |
+| Primary name column | `Employee Name` |
+| Primary-column description | `Display name of the fictional employee profile.` |
+| Table type / ownership | Standard / **Organization** |
+| Table schema name (target) | `svrg_DCEmployeeProfile` |
+| Primary name schema (target) | `svrg_EmployeeName` |
+
+Organization-owned records fit this shared *fictional staff reference directory*. They do not provide individual Dataverse permissions: genuine access control depends on signed-in identities and security roles. Review the primary name, ownership and generated technical names, then select **Create**. Do not alter the Dataverse-created GUID identifier.
+
+### S03.02 — Add the employee business columns
+
+Open **DC Employee Profile → Schema → Columns → New column**. Add the following fields in order, selecting **Done** for each and **Save table** when prompted. **Employee Name** already exists as the primary name column; it appears here so that its description and CSV mapping are explicit.
+
+| Exact display name / CSV header | Schema name (target) | Description | Type and required level | Other properties |
+| --- | --- | --- | --- | --- |
+| `Employee Name` | `svrg_EmployeeName` | `Display name of the fictional employee profile.` | Primary name, Text; Business required | Created with table; retain generated primary-column settings; no default |
+| `Employee Code` | `svrg_EmployeeCode` | `Stable fictional employee identifier used for data matching.` | Single-line Text; Business required | Format Text; max **20**; Searchable Yes; Simple; no default |
+| `Job Title` | `svrg_JobTitle` | `Role title used to describe the fictional employee's responsibilities.` | Single-line Text; Business required | Format Text; max **100**; Searchable Yes; Simple; no default |
+| `Shift Group` | `svrg_ShiftGroup` | `Fictional roster group assigned to this employee.` | **Single-select Choice; Business required** | Create/use **Global Choice** `DC Shift Group` (target `svrg_DCShiftGroup`); description `Shared fictional employee shift group classification.`; options **A, B, C, D** in that order; generated numeric values; Searchable Yes; **no default** |
+| `Active` | `svrg_Active` | `Whether this fictional employee profile can be assigned new work.` | Yes/No Boolean; Optional | Labels Yes / No; default **Yes**; Searchable No if offered |
+| `Is Synthetic` | `svrg_IsSynthetic` | `Indicates the profile contains fictional training data.` | Yes/No Boolean; Optional | Labels Yes / No; default **Yes**; Searchable No if offered |
+
+For **Shift Group**, choose **Data type → Choice** (not Multi-select Choices). If **DC Shift Group** exists, select that Global Choice. Otherwise use **New choice** in the column editor; specify the exact Global Choice properties and A/B/C/D labels from the table, and save it. **New choice** creates a Global Choice in the modern designer; if the designer instead requires **Sync with global choice = Yes**, use that and select the newly created Global Choice. Do not create an unrelated Local Choice. Leave the default blank so you select each employee's actual group.
+
+For both Yes/No fields, use the Boolean type—neither needs a separate Global Choice. Confirm the column names and types after saving.
+
+### S03.03 — Create the Department, Campus and Manager lookups
+
+Next, create three **many-to-one (N:1)** relationships on **DC Employee Profile**. The first two connect to existing tables; the third is a self-lookup because an employee's manager is another employee profile.
+
+Open **DC Employee Profile → Schema → Relationships → New relationship → Many-to-one**. For each new relationship, choose the **Related table** shown below. Set the generated lookup's display name and properties as indicated.
+
+| Exact lookup display name / CSV header | Schema name (target) | Description | Related table | Requirement and behavior |
+| --- | --- | --- | --- | --- |
+| `Department` | `svrg_Department` | `Operating department to which this fictional employee belongs.` | **DC Department** | Business required; Searchable Yes; Referential — Restrict Delete if available |
+| `Campus` | `svrg_Campus` | `Data center campus where this fictional employee is assigned.` | **DC Campus** | Business required; Searchable Yes; Referential — Restrict Delete if available |
+| `Manager` | `svrg_Manager` | `Fictional employee profile acting as this employee's direct manager.` | **DC Employee Profile** (same table) | **Optional**, since the top-level director has no manager; Searchable Yes; Referential — Restrict Delete if available |
+
+Configure **Department** first, save the relationship/table, then **Campus**, then **Manager**. Confirm **Current table = DC Employee Profile** each time. If a relationship designer labels the lookup with the related table name by default, rename the lookup display name to the exact name in the first column **before saving**, where supported. Record the actual generated relationship name if the interface exposes it.
+
+In **Schema → Columns**, check that precisely one lookup each named **Department**, **Campus**, and **Manager** exists, with the related tables shown above. Do not add a second column through **New column → Lookup** after the relationship already created it; those are alternative ways to define the same relationship.
+
+**Manager is a self-reference**, not a User/Person field. The 20 profiles are fictional data, so selecting a manager here does not grant real access privileges or trigger approval messages to a Microsoft 365 account.
+
+### S03.04 — Add the 20 employee profiles
+
+Use the linked [employee-profiles.csv](./data/employee-profiles.csv) for the practice data. The file has these display-name headers, in this order:
+
+```csv
+Employee Name,Employee Code,Job Title,Department,Campus,Shift Group,Active,Is Synthetic,Manager
+```
+
+Its **Manager** values are initially blank. This is intentional: we first create all 20 employees so the self-lookup has existing records to reference. We'll assign the managers in the next section.
+
+To import, open **DC Employee Profile → Import from CSV** or the available table **Import data** command. Select the file, then **Review Mapping**. Confirm each of the nine columns maps to the corresponding display name. The employee codes are values in **Employee Code**, **not** the Dataverse system ID.
+
+Inspect the important value mappings before starting:
+
+| CSV column | Dataverse field | How to validate the import |
+| --- | --- | --- |
+| `Employee Name`, `Employee Code`, `Job Title` | Text / primary name | Header matches field; codes follow `EMP-000001` through `EMP-000020` |
+| `Department` | Lookup → DC Department | Resolve to existing records by the primary column **Department Name**; all six department names already exist |
+| `Campus` | Lookup → DC Campus | Resolve the existing **Pacific Resilience Campus** record by its primary **Campus Name** |
+| `Shift Group` | Global Choice-backed column | Check that **A, B, C, D** map to existing options; do not create new option labels |
+| `Active`, `Is Synthetic` | Yes/No Boolean | Check `Yes` is accepted as a true/Yes value |
+| `Manager` | Optional self-lookup | Blank for the initial import; skip/ignore the empty source mapping if required |
+
+**Header matching alone doesn't resolve lookup or Choice values.** If an import experience cannot reliably map Department and Campus from their existing primary names, cancel that import and use the editable data grid to create the records from the same CSV; select the actual lookup records using the picker rather than entering text or GUIDs blindly. Choose **one** creation method, not both.
+
+After the import or manual entry, open **DC Employee Profile → Columns and data**. You should see exactly **20** unique Employee Code values, all linked to an existing department and the same existing campus, with a Shift Group selected. Do not start a second import to fix a view filter or an unresolved lookup.
+
+### S03.05 — Connect the reporting managers
+
+All 20 fictional employee records should exist before you assign the **Manager** lookup. Open **DC Employee Profile → Columns and data → Edit** (or open each employee record). Locate the **Manager** field and use its lookup picker to select the proper existing employee profile.
+
+The director **Sophia Carter** keeps Manager **blank**. For everyone else, use the following hierarchy. Each person in the right column has the Manager lookup set to the name in the left column.
+
+| Manager (existing employee profile) | Employees who report to this manager |
+| --- | --- |
+| **Sophia Carter** | Emma Park, Anika Shah, Marcus Johnson, Arjun Davis |
+| **Emma Park** | David Patel, Olivia Nair, Iris Chen, Priya Allen, Liam Santos |
+| **Anika Shah** | Noah Morales |
+| **Marcus Johnson** | Sana Kim, Jordan Wilson, Theo Singh |
+| **David Patel** | Elena Stone, Daniel Lee, Ava Brooks, Mina Reed, Ethan Baker, Maya Iyer |
+
+For example, open **Noah Morales** and set **Manager = Anika Shah**; open **Sana Kim** and select **Marcus Johnson**. Use the lookup picker, not a manually entered employee GUID. Save the updated records. This completes 19 manager links and one top-level employee without a manager.
+
+Dataverse may allow you to select an inappropriate employee as the Manager. Check that nobody manages themselves, that the hierarchy does not contain a cycle, and that the names resolve to the intended records.
+
+### Finish Part 03
+
+Reopen **DC Employee Profile** and confirm there are **20** unique employee codes, each with the correct department, campus and shift group, **19 Manager lookups** that resolve to existing fictional profiles, and **one blank Manager** for Sophia Carter. Both Yes/No fields should show **Yes**. The Department and Campus records from earlier lessons remain unchanged.
+
+This directory is now available for later app screens and work assignments; it is still **fictional directory data**, not user authentication, enterprise security roles or actual approval authority.
 
 ## Microsoft Learn references
 
