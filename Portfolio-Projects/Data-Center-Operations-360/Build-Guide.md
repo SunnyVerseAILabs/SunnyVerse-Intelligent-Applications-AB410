@@ -2,13 +2,13 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–03 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory
+**Published:** Parts 00–04 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
 Welcome to Data Center Operations 360. In this project, you will build a fictional data center operations solution using Microsoft Power Platform. The work is completed in an environment where you have permission to develop, and all practice records are fictional.
 
-Part 00 prepares the solution. Part 01 creates departments, Part 02 adds a campus and two related data halls, and Part 03 builds a fictional employee directory with reporting managers. Follow the lessons in order in an authorized learning environment.
+Part 00 prepares the solution. Part 01 adds departments, Part 02 builds the campus and data halls, Part 03 adds the employee directory, and Part 04 registers equipment and monitoring sensors. Follow the lessons in order in an authorized learning environment.
 
 Follow the activities in order. The menu labels in your environment may differ slightly; choose the equivalent command and inspect the actual settings before saving.
 
@@ -404,6 +404,139 @@ Reopen **DC Employee Profile** and confirm there are **20** unique employee code
 
 This directory is now available for later app screens and work assignments; it is still **fictional directory data**, not user authentication, enterprise security roles or actual approval authority.
 
+
+---
+
+## Part 04 — Build the Asset and Sensor Registry
+
+Our fictional campus now has departments, halls and employees. In this lesson, we'll register the physical equipment that operates inside those halls and connect a smaller set of monitoring sensors to selected assets. **DC Asset** is the parent table for **DC Sensor**; each asset belongs to a data hall, and each sensor belongs to an asset.
+
+We will create **100 assets** and **24 sensors**. Download [assets.csv](./data/assets.csv) and [sensors.csv](./data/sensors.csv). The headers are the exact **Dataverse display names** in the tables below. Technical schema names use the confirmed publisher prefix `svrg`. The two lookup fields, **Data Hall** and **Asset**, require explicit relationship mapping; matching a header alone does not establish a lookup.
+
+### S04.01 — Create the DC Asset table
+
+Open [Power Apps](https://make.powerapps.com), select the same environment as the earlier lessons and navigate to **Solutions → SunnyVerse Data Center Operations 360 → New → Table**. Open advanced table properties if needed.
+
+| Table property | Enter |
+| --- | --- |
+| Display name / plural | `DC Asset` / `DC Assets` |
+| Description | `Fictional data center equipment inventory across the two operating data halls.` |
+| Primary name column | `Asset Name` |
+| Primary-column description | `Display name of this fictional infrastructure asset.` |
+| Table type / ownership | Standard / **Organization** |
+| Table schema name (target) | `svrg_DCAsset` |
+| Primary-name schema (target) | `svrg_AssetName` |
+
+Confirm the primary name and **Organization** ownership before selecting **Create**. Leave the Dataverse-generated primary-key GUID unchanged.
+
+### S04.02 — Configure the Asset columns and Choices
+
+In **DC Asset → Schema → Columns → New column**, add each field in the table. **Asset Name** is already the primary name column—do not create it twice. Select **Done** after each new column and **Save table** when prompted.
+
+| Exact display name / CSV header | Schema name (target) | Description | Type and required level | Other properties |
+| --- | --- | --- | --- | --- |
+| `Asset Name` | `svrg_AssetName` | `Display name of this fictional infrastructure asset.` | Primary Text; Business required | Created with table; no default |
+| `Asset Code` | `svrg_AssetCode` | `Unique fictional equipment inventory code.` | Single-line Text; Business required | Format Text; max 24; Searchable Yes; Simple; no default |
+| `Asset Category` | `svrg_AssetCategory` | `Shared classification of infrastructure equipment.` | **Single-select Choice; Business required** | **New Global Choice** `DC Equipment Category` (target `svrg_DCEquipmentCategory`); description `Reusable fictional infrastructure equipment categories.`; options **UPS, Generator, Cooling Unit, Switchgear, Power Distribution Unit, Server Rack**; keep generated numeric values; Searchable Yes; no default |
+| `Criticality` | `svrg_Criticality` | `Operational importance classification of the asset.` | **Single-select Choice; Business required** | Reuse existing **Global Choice** `DC Infrastructure Criticality` (`svrg_DCInfrastructureCriticality`); High / Medium / Low; Searchable Yes; no default |
+| `Manufacturer` | `svrg_Manufacturer` | `Fictional manufacturer label for the training equipment.` | Single-line Text; Optional | Format Text; max 80; Searchable Yes; Simple; no default |
+| `Model Number` | `svrg_ModelNumber` | `Fictional equipment model reference.` | Single-line Text; Optional | Format Text; max 80; Simple; no default |
+| `Serial Number` | `svrg_SerialNumber` | `Fictional equipment serial reference; never a real serial number.` | Single-line Text; Optional | Format Text; max 40; Searchable Yes; Simple; no default |
+| `Rated Power kW` | `svrg_RatedPowerkW` | `Illustrative equipment nameplate power in kilowatts; not live measured consumption.` | Decimal number; Optional | 2 decimal places; minimum 0; Simple; no default |
+| `Install Date` | `svrg_InstallDate` | `Fictional installation date for equipment lifecycle exercises.` | Date Only; Optional | Use Date only, not Date and Time; no default |
+| `Operational Status` | `svrg_OperationalStatus` | `Current fictional equipment lifecycle state.` | **Single-select Choice; Business required** | **Local Choice** with **In Service, Standby, Under Maintenance, Retired**; keep generated numeric option values; Searchable Yes; no default |
+
+For **Asset Category**, choose **Choice** rather than multi-select. Select the existing **DC Equipment Category** Global Choice if it is already correctly configured; otherwise, use **New choice** in the column editor. Configure its global name, description and six labels as shown in the row. Do not create a local duplicate. For **Criticality**, choose the existing **DC Infrastructure Criticality** Global Choice from Part 02; do not recreate its High/Medium/Low options.
+
+For **Operational Status**, choose **Choice → View more → Local choice** (or the equivalent explicit local option) because this status list belongs only to the Asset column. Enter the four labels from the row. Keep the generated numeric values and no default so each imported record supplies its status. <https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-field-portal>
+
+### S04.03 — Connect each asset to its Data Hall
+
+Open **DC Asset → Schema → Relationships → New relationship → Many-to-one**. Set the **Related table** to the existing **DC Data Hall**, so multiple assets can belong to one hall.
+
+| Exact lookup display name / CSV header | Schema name (target) | Description | Related table | Other properties |
+| --- | --- | --- | --- | --- |
+| `Data Hall` | `svrg_DataHall` | `The existing data hall containing this equipment asset.` | **DC Data Hall** | Business required; Searchable Yes; Referential — Restrict Delete if offered |
+
+Select **Done → Save table** and confirm that **DC Asset → Schema → Columns** contains one **Data Hall** lookup pointing to **DC Data Hall**. If a lookup was created by the relationship editor, do not create a second lookup or a text column with the same name.
+
+### S04.04 — Import the 100 fictional assets
+
+Open **DC Asset → Import from CSV** in a supported Dataverse import experience and choose [assets.csv](./data/assets.csv). The CSV has these exact headers:
+
+```csv
+Asset Name,Asset Code,Asset Category,Criticality,Manufacturer,Model Number,Serial Number,Rated Power kW,Install Date,Operational Status,Data Hall
+```
+
+Select **Review Mapping**. Confirm the simple Text, Decimal and Date headers match their respective columns, and match the **Asset Category**, **Criticality** and **Operational Status** source labels to the *existing* Choice options rather than adding new ones. Ensure Yes/No, currency or other unintended destinations were **not** selected.
+
+**For the Data Hall lookup**, open **Lookup Reference** in the import mapping for the **Data Hall** field. Choose the related **DC Data Hall** table and its primary name **Hall Name** as the search/match column. The source values are **Data Hall 01** and **Data Hall 02**, which already exist in Part 02. Do **not** map them as Dataverse GUIDs or match against the **Hall Code** field. Complete the import only once the wizard shows a valid reference mapping. If your import interface cannot specify lookup reference matching, **do not force the import**; use a supported import experience with lookup mapping or enter records via the Dataverse editable grid and select their real Data Hall records.
+
+Import the file once, then open **Track Progress** or the run results and reopen **DC Asset → Columns and data**. The sample contains exactly **100 assets**: 12 UPS, 8 generators, 20 cooling units, 16 switchgear assets, 24 power distribution units and 20 server racks. **50 assets belong to Data Hall 01 and 50 to Data Hall 02.** Asset codes start with `DC-`; every code and serial number is fictional.
+
+The **Rated Power kW** figures are illustrative equipment nameplate values and must not be summed as though every device represents independent IT capacity. No real equipment controls, telemetry, or work orders are created here.
+
+### S04.05 — Create the DC Sensor table and its columns
+
+Sensors will provide the equipment-linked metadata needed for later monitoring examples. They are **sensor inventory records, not live measurement rows**.
+
+From the same solution choose **New → Table** and enter:
+
+| Table property | Enter |
+| --- | --- |
+| Display name / plural | `DC Sensor` / `DC Sensors` |
+| Description | `Fictional sensor registry linked to data center equipment for later monitoring exercises.` |
+| Primary name column | `Sensor Name` |
+| Primary-column description | `Display name of a fictional monitoring sensor.` |
+| Table type / ownership | Standard / **Organization** |
+| Table schema name (target) | `svrg_DCSensor` |
+| Primary-name schema (target) | `svrg_SensorName` |
+
+Select **Create**. Then open **DC Sensor → Schema → Columns → New column** and configure the fields below. The primary name is already created. Select **Done** after each and **Save table** when prompted.
+
+| Exact display name / CSV header | Schema name (target) | Description | Type and required level | Other properties |
+| --- | --- | --- | --- | --- |
+| `Sensor Name` | `svrg_SensorName` | `Display name of a fictional monitoring sensor.` | Primary Text; Business required | Created with table; no default |
+| `Sensor Code` | `svrg_SensorCode` | `Unique fictional sensor inventory identifier.` | Single-line Text; Business required | Format Text; max 24; Searchable Yes; Simple; no default |
+| `Metric Type` | `svrg_MetricType` | `Type of measurement this sensor would produce.` | **Single-select Choice; Business required** | **Local Choice**: **Output Power, Temperature, Supply Air Temperature, Voltage, Electrical Power, Inlet Temperature**; retain generated numeric values; Searchable Yes; no default |
+| `Unit` | `svrg_Unit` | `Unit in which the fictional sensor reports its measurement.` | Single-line Text; Business required | Format Text; max 16; Simple; no default |
+| `Minimum Acceptable` | `svrg_MinimumAcceptable` | `Illustrative lower acceptable threshold for a sensor measurement.` | Decimal number; Business required | 2 decimal places; Simple; no default |
+| `Maximum Acceptable` | `svrg_MaximumAcceptable` | `Illustrative upper acceptable threshold for a sensor measurement.` | Decimal number; Business required | 2 decimal places; Simple; no default |
+| `Sample Interval Seconds` | `svrg_SampleIntervalSeconds` | `Illustrative sensor collection interval measured in seconds.` | Whole number; Business required | Minimum 1; maximum 3600 if available; Simple; no default |
+| `Enabled` | `svrg_Enabled` | `Whether this fictional sensor is enabled for future simulation.` | Yes/No Boolean; Optional | Labels Yes / No; default Yes; Searchable No if offered |
+
+For **Metric Type**, choose **Choice → View more → Local choice** and enter the six options shown in the table. There is no need to create a separate Global Choice used by no other table. The unit `degC` means degrees Celsius in our synthetic data; `kW` and `V` indicate kilowatts and volts. Set both decimal threshold fields to **2 decimal places** and retain the exact display names for CSV mapping.
+
+### S04.06 — Link sensors to their assets
+
+Open **DC Sensor → Schema → Relationships → New relationship → Many-to-one**, and select **Related table = DC Asset**. A sensor belongs to one asset, while an asset may have many sensors.
+
+| Exact lookup display name / CSV header | Schema name (target) | Description | Related table | Other properties |
+| --- | --- | --- | --- | --- |
+| `Asset` | `svrg_Asset` | `Existing equipment asset monitored by this sensor.` | **DC Asset** | Business required; Searchable Yes; Referential — Restrict Delete if offered |
+
+Select **Done → Save table**, then confirm the **Asset** lookup appears once in **DC Sensor → Schema → Columns**. Do not create a free-text Asset column.
+
+### S04.07 — Import the 24 sensor records
+
+After the 100 asset records exist, open **DC Sensor → Import from CSV** and select [sensors.csv](./data/sensors.csv). Its headers match the Sensor table's column display names:
+
+```csv
+Sensor Name,Sensor Code,Metric Type,Unit,Minimum Acceptable,Maximum Acceptable,Sample Interval Seconds,Enabled,Asset
+```
+
+In **Review Mapping**, match Text, Decimal, Whole Number and Yes/No columns with their correct types. Map each source **Metric Type** label to the matching existing **Local Choice** option. Confirm **Enabled = Yes** resolves to the Boolean Yes value.
+
+For the **Asset** lookup, choose **Lookup Reference → DC Asset → Asset Name**, not the primary-key GUID. The source values, such as `UPS 001` and `Cooling Unit 002`, are existing Asset **primary names** from the earlier import. Do not map them to **Asset Code** or a GUID. Finish only after this lookup reference is correctly configured. If the wizard lacks lookup reference mapping, use a supported import path or enter the sensor rows in the editable grid using the **Asset** record picker.
+
+Review the import progress and reopen the sensor table. You should see **24** sensors, each associated with one of the 100 existing assets. For every sensor record, **Minimum Acceptable** must be less than **Maximum Acceptable**, and **Sample Interval Seconds** should be **60**. These are metadata thresholds, not imported time-series readings.
+
+### Finish Part 04
+
+Reopen **DC Asset** and **DC Sensor**. Confirm **100 distinct Asset Codes**, **50 assets per Data Hall**, and **24 distinct Sensor Codes** whose **Asset** lookups resolve to real DC Asset records. The Asset categories match the six specified options; Criticality uses the existing shared Choice, while Operational Status and Metric Type use their local Choice lists. The earlier Campus, Data Hall, Department and Employee data remain unchanged.
+
+You now have a relational infrastructure registry ready for incident and monitoring exercises. **No live sensor data or external hardware connection is required.**
+
 ## Microsoft Learn references
 
 - [Create a Power Platform solution](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-solution)
@@ -413,5 +546,6 @@ This directory is now available for later app screens and work assignments; it i
 - [Create global choices](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/custom-picklists)
 - [Create and edit one-to-many / many-to-one relationships](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-1n-relationships-portal)
 - [Import data and map choices/lookups](https://learn.microsoft.com/en-us/power-apps/user/import-data)
+- [Create a relationship by adding a lookup](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-platform-entity-lookup)
 
 *All organizations, facilities, staff, and operational scenarios in this learning project are fictional. Do not use this guide to control live data center infrastructure.*
