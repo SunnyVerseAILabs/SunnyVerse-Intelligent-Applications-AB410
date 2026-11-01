@@ -1,41 +1,36 @@
 # Data Center Operations 360 — Power Platform Build-Along
 
-**An educational, hands-on project by SunnyVerse AI Labs**
+**SunnyVerse AI Labs | Independent educational project**
 
-Build a fictional data center operations solution using Microsoft Power Platform. The scenario follows **SunnyVerse Renewable Group**, a fictional organization operating the **Pacific Resilience Campus**. All names, staff roles, facility records, and datasets in this project are invented for learning.
+Learn how to build a fictional data center operations solution using Microsoft Power Platform. The learning scenario follows SunnyVerse Renewable Group and a fictional facility called Pacific Resilience Campus.
 
-This is a guided learning project, not a deployed data center management system. Do not use its sample workflows to operate physical infrastructure.
+Everything in this repository folder—people, departments, equipment, facilities and example data—is invented for education. This project is not an actual data center management deployment.
 
-## Start learning
+## Start here
 
-**[Open the step-by-step Build Guide](./Build-Guide.md)**
+**[Read the complete step-by-step Build Guide](./Build-Guide.md)**
 
-The guide is the single source for the hands-on exercise. Each published chapter includes the business purpose, exact navigation, field and choice settings, practice data, expected results, verification, and troubleshooting.
+The Build Guide is the **single chronological learning document**. Each published part contains exact navigation, component names, field types, choices, required settings, data files, expected results, verification checks and troubleshooting. As new lessons are finalized, they are appended to the same guide rather than creating competing versions.
 
-## Sample data
+**Currently published:** Part 01 — Foundation and Department Master.
 
-| File | Contents |
-| --- | --- |
-| [Departments](./data/departments.csv) | Six fictional operating departments |
-| [Campuses](./data/campuses.csv) | One fictional campus |
-| [Data halls](./data/data-halls.csv) | Two data halls linked by campus code |
-| [Dataset instructions](./data/README.md) | Data definitions and import precautions |
+## Download the practice data
 
-## Learning environment
+- [Department master dataset — CSV](./data/departments.csv)
+- [Sample data index and import precautions](./data/README.md)
 
-You'll need permission to create a solution and Dataverse tables in a Microsoft Power Platform environment. Optional capabilities—such as email, Teams, AI, and premium connectors—depend on licensing and administrator policy. The guide always distinguishes required steps from optional exercises.
+Additional fictional datasets are provided as their relevant lessons are published.
 
-**Never publish** actual account details, tenant IDs, connection credentials, access tokens, or information from a real employer or school environment. Use the supplied fictional data only.
+## Episode companion documents
 
-## Fictional campus
+After a learning part is completed, its two public educational episode companions will be linked from the [Episode Companions folder](./episode-companions/README.md). These companions show what each host explains and link back to the exact Build Guide steps.
 
-The guided project begins with one campus and two data halls, then adds other application capabilities in subsequent chapters. The introductory CSV files are learning resources, not a claim that the corresponding Dataverse records already exist in your environment.
+## Where the solution runs
 
-## Documentation convention
+GitHub stores learning instructions, sample datasets and published documentation. You create Power Apps, Dataverse tables and Power Automate flows in a **Microsoft Power Platform environment you are authorized to use**. Connector availability depends on licenses and administrator policy.
 
-- Follow the [Build Guide](./Build-Guide.md) in sequence.
-- Use the datasets linked in the chapter you are completing.
-- Save your changes and confirm the expected result before moving forward.
-- When the interface varies, use the equivalent control and record the actual generated schema names rather than guessing them.
+Use fictional records only. Do not upload real employee/student data, tenant identifiers, account details, credentials, tokens, confidential business records or sensitive screenshots.
 
-© SunnyVerse AI Labs — educational demonstration. Microsoft product names belong to their respective owners.
+## Learning boundaries
+
+This is an educational prototype. It does not monitor, control, authorize or operate real electrical or mechanical infrastructure. Microsoft product names are trademarks of their respective owners.
