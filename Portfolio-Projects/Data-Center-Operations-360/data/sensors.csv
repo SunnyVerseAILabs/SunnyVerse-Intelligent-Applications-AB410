@@ -1,0 +1,25 @@
+Sensor Name,Sensor Code,Metric Type,Unit,Minimum Acceptable,Maximum Acceptable,Sample Interval Seconds,Enabled,Asset
+UPS 001 Output Power Sensor,DC-SEN-001,Output Power,kW,0.00,500.00,60,Yes,UPS 001
+UPS 002 Output Power Sensor,DC-SEN-002,Output Power,kW,0.00,500.00,60,Yes,UPS 002
+UPS 003 Output Power Sensor,DC-SEN-003,Output Power,kW,0.00,500.00,60,Yes,UPS 003
+UPS 004 Output Power Sensor,DC-SEN-004,Output Power,kW,0.00,500.00,60,Yes,UPS 004
+Generator 001 Temperature Sensor,DC-SEN-005,Temperature,degC,0.00,100.00,60,Yes,Generator 001
+Generator 002 Temperature Sensor,DC-SEN-006,Temperature,degC,0.00,100.00,60,Yes,Generator 002
+Generator 003 Temperature Sensor,DC-SEN-007,Temperature,degC,0.00,100.00,60,Yes,Generator 003
+Generator 004 Temperature Sensor,DC-SEN-008,Temperature,degC,0.00,100.00,60,Yes,Generator 004
+Cooling Unit 001 Supply Air Sensor,DC-SEN-009,Supply Air Temperature,degC,15.00,28.00,60,Yes,Cooling Unit 001
+Cooling Unit 002 Supply Air Sensor,DC-SEN-010,Supply Air Temperature,degC,15.00,28.00,60,Yes,Cooling Unit 002
+Cooling Unit 003 Supply Air Sensor,DC-SEN-011,Supply Air Temperature,degC,15.00,28.00,60,Yes,Cooling Unit 003
+Cooling Unit 004 Supply Air Sensor,DC-SEN-012,Supply Air Temperature,degC,15.00,28.00,60,Yes,Cooling Unit 004
+Switchgear 001 Voltage Sensor,DC-SEN-013,Voltage,V,400.00,480.00,60,Yes,Switchgear 001
+Switchgear 002 Voltage Sensor,DC-SEN-014,Voltage,V,400.00,480.00,60,Yes,Switchgear 002
+Switchgear 003 Voltage Sensor,DC-SEN-015,Voltage,V,400.00,480.00,60,Yes,Switchgear 003
+Switchgear 004 Voltage Sensor,DC-SEN-016,Voltage,V,400.00,480.00,60,Yes,Switchgear 004
+Power Distribution Unit 001 Power Sensor,DC-SEN-017,Electrical Power,kW,0.00,150.00,60,Yes,Power Distribution Unit 001
+Power Distribution Unit 002 Power Sensor,DC-SEN-018,Electrical Power,kW,0.00,150.00,60,Yes,Power Distribution Unit 002
+Power Distribution Unit 003 Power Sensor,DC-SEN-019,Electrical Power,kW,0.00,150.00,60,Yes,Power Distribution Unit 003
+Power Distribution Unit 004 Power Sensor,DC-SEN-020,Electrical Power,kW,0.00,150.00,60,Yes,Power Distribution Unit 004
+Server Rack 001 Inlet Sensor,DC-SEN-021,Inlet Temperature,degC,18.00,27.00,60,Yes,Server Rack 001
+Server Rack 002 Inlet Sensor,DC-SEN-022,Inlet Temperature,degC,18.00,27.00,60,Yes,Server Rack 002
+Server Rack 003 Inlet Sensor,DC-SEN-023,Inlet Temperature,degC,18.00,27.00,60,Yes,Server Rack 003
+Server Rack 004 Inlet Sensor,DC-SEN-024,Inlet Temperature,degC,18.00,27.00,60,Yes,Server Rack 004
