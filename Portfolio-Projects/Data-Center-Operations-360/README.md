@@ -1,36 +1,52 @@
-# Data Center Operations 360 — Power Platform Build-Along
+# Data Center Operations 360
+## A Microsoft Power Platform build-along project
 
 **SunnyVerse AI Labs | Independent educational project**
 
-Learn how to build a fictional data center operations solution using Microsoft Power Platform. The learning scenario follows SunnyVerse Renewable Group and a fictional facility called Pacific Resilience Campus.
+Build an original, fictional data center operations solution step by step using Microsoft Power Platform. The learning organization is **SunnyVerse Renewable Group**. All facilities, personnel, equipment, operational records, and scenarios are invented for education.
 
-Everything in this repository folder—people, departments, equipment, facilities and example data—is invented for education. This project is not an actual data center management deployment.
+This is a **hands-on learning project**, not a deployed facility management system and not an official Microsoft course.
 
-## Start here
+### Start the build
 
-**[Read the complete step-by-step Build Guide](./Build-Guide.md)**
+**[Open the Step-by-Step Build Guide](./Build-Guide.md)**
 
-The Build Guide is the **single chronological learning document**. Each published part contains exact navigation, component names, field types, choices, required settings, data files, expected results, verification checks and troubleshooting. As new lessons are finalized, they are appended to the same guide rather than creating competing versions.
+The Build Guide is the single cumulative learner document. Follow the published instructions in order. Each completed lesson includes the exact navigation, field settings, expected results, validation checks, troubleshooting, and links to downloadable practice files where appropriate.
 
-**Currently published:** Part 01 — Foundation and Department Master.
+**Published:** Part 00 — Prepare your learning environment and create the project solution.
 
-## Download the practice data
+### Learning goals
 
-- [Department master dataset — CSV](./data/departments.csv)
-- [Sample data index and import precautions](./data/README.md)
+In this project, you will practice:
 
-Additional fictional datasets are provided as their relevant lessons are published.
+- Organizing a Power Platform solution and managing components.
+- Designing relational Dataverse tables and applying data validation.
+- Developing Canvas and model-driven application experiences when permitted by your environment.
+- Creating flows, notifications, and controlled approval processes.
+- Testing, troubleshooting, monitoring, and documenting an integrated business solution.
+- Working with synthetic data and reporting without operating real infrastructure.
 
-## Episode companion documents
+The activities are released in order so that each one builds on validated prerequisites.
 
-After a learning part is completed, its two public educational episode companions will be linked from the [Episode Companions folder](./episode-companions/README.md). These companions show what each host explains and link back to the exact Build Guide steps.
+### Practice files
 
-## Where the solution runs
+[Open the dataset library](./data/README.md). Data files are linked in the Build Guide when the corresponding activity is published. Do not substitute files from unrelated tutorials.
 
-GitHub stores learning instructions, sample datasets and published documentation. You create Power Apps, Dataverse tables and Power Automate flows in a **Microsoft Power Platform environment you are authorized to use**. Connector availability depends on licenses and administrator policy.
+### Where the solution runs
 
-Use fictional records only. Do not upload real employee/student data, tenant identifiers, account details, credentials, tokens, confidential business records or sensitive screenshots.
+GitHub contains the learning materials. The actual app is built in **your own authorized Power Platform environment**, subject to its licensing, administrator policies, and available connectors. It is not publicly accessible simply because this repository is public.
 
-## Learning boundaries
+### Responsible learning
 
-This is an educational prototype. It does not monitor, control, authorize or operate real electrical or mechanical infrastructure. Microsoft product names are trademarks of their respective owners.
+- Use **fictional data only**. Never post real student or employee details, institutional records, connection strings, secrets, tokens, environment IDs, or confidential screenshots.
+- Do not perform changes in shared university or workplace environments without authorization.
+- No steps in this project authorize real electrical switching, mechanical operation, or changes to live critical infrastructure.
+- UI labels and licenses can vary. Validate actual values in your tenant and consult Microsoft Learn when needed.
+
+### References
+
+- [Power Apps maker portal](https://make.powerapps.com)
+- [Power Automate maker portal](https://make.powerautomate.com)
+- [Microsoft Learn — Power Apps solutions](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-solution)
+
+© 2026 SunnyVerse AI Labs. Educational material; not affiliated with or endorsed by Microsoft.
