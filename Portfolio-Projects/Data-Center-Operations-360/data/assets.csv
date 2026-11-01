@@ -1,0 +1,101 @@
+Asset Name,Asset Code,Asset Category,Criticality,Manufacturer,Model Number,Serial Number,Rated Power kW,Install Date,Operational Status,Data Hall
+UPS 001,DC-UPS-001,UPS,High,Demo Vendor A,SIM-UPS-02,SIM-UPS-0001,500.00,2023-02-15,In Service,Data Hall 01
+UPS 002,DC-UPS-002,UPS,High,Demo Vendor A,SIM-UPS-03,SIM-UPS-0002,500.00,2024-03-15,In Service,Data Hall 02
+UPS 003,DC-UPS-003,UPS,High,Demo Vendor A,SIM-UPS-04,SIM-UPS-0003,500.00,2022-04-15,In Service,Data Hall 01
+UPS 004,DC-UPS-004,UPS,High,Demo Vendor A,SIM-UPS-01,SIM-UPS-0004,500.00,2023-05-15,In Service,Data Hall 02
+UPS 005,DC-UPS-005,UPS,High,Demo Vendor A,SIM-UPS-02,SIM-UPS-0005,500.00,2024-06-15,In Service,Data Hall 01
+UPS 006,DC-UPS-006,UPS,High,Demo Vendor A,SIM-UPS-03,SIM-UPS-0006,500.00,2022-07-15,In Service,Data Hall 02
+UPS 007,DC-UPS-007,UPS,High,Demo Vendor A,SIM-UPS-04,SIM-UPS-0007,500.00,2023-08-15,In Service,Data Hall 01
+UPS 008,DC-UPS-008,UPS,High,Demo Vendor A,SIM-UPS-01,SIM-UPS-0008,500.00,2024-09-15,In Service,Data Hall 02
+UPS 009,DC-UPS-009,UPS,High,Demo Vendor A,SIM-UPS-02,SIM-UPS-0009,500.00,2022-10-15,In Service,Data Hall 01
+UPS 010,DC-UPS-010,UPS,High,Demo Vendor A,SIM-UPS-03,SIM-UPS-0010,500.00,2023-11-15,In Service,Data Hall 02
+UPS 011,DC-UPS-011,UPS,High,Demo Vendor A,SIM-UPS-04,SIM-UPS-0011,500.00,2024-12-15,In Service,Data Hall 01
+UPS 012,DC-UPS-012,UPS,High,Demo Vendor A,SIM-UPS-01,SIM-UPS-0012,500.00,2022-01-15,In Service,Data Hall 02
+Generator 001,DC-GEN-001,Generator,High,Demo Vendor B,SIM-GEN-02,SIM-GEN-0001,1500.00,2023-02-15,In Service,Data Hall 01
+Generator 002,DC-GEN-002,Generator,High,Demo Vendor B,SIM-GEN-03,SIM-GEN-0002,1500.00,2024-03-15,In Service,Data Hall 02
+Generator 003,DC-GEN-003,Generator,High,Demo Vendor B,SIM-GEN-04,SIM-GEN-0003,1500.00,2022-04-15,In Service,Data Hall 01
+Generator 004,DC-GEN-004,Generator,High,Demo Vendor B,SIM-GEN-01,SIM-GEN-0004,1500.00,2023-05-15,In Service,Data Hall 02
+Generator 005,DC-GEN-005,Generator,High,Demo Vendor B,SIM-GEN-02,SIM-GEN-0005,1500.00,2024-06-15,In Service,Data Hall 01
+Generator 006,DC-GEN-006,Generator,High,Demo Vendor B,SIM-GEN-03,SIM-GEN-0006,1500.00,2022-07-15,In Service,Data Hall 02
+Generator 007,DC-GEN-007,Generator,High,Demo Vendor B,SIM-GEN-04,SIM-GEN-0007,1500.00,2023-08-15,In Service,Data Hall 01
+Generator 008,DC-GEN-008,Generator,High,Demo Vendor B,SIM-GEN-01,SIM-GEN-0008,1500.00,2024-09-15,In Service,Data Hall 02
+Cooling Unit 001,DC-COOL-001,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-02,SIM-COOL-0001,120.00,2023-02-15,In Service,Data Hall 01
+Cooling Unit 002,DC-COOL-002,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-03,SIM-COOL-0002,120.00,2024-03-15,In Service,Data Hall 02
+Cooling Unit 003,DC-COOL-003,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-04,SIM-COOL-0003,120.00,2022-04-15,In Service,Data Hall 01
+Cooling Unit 004,DC-COOL-004,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-01,SIM-COOL-0004,120.00,2023-05-15,In Service,Data Hall 02
+Cooling Unit 005,DC-COOL-005,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-02,SIM-COOL-0005,120.00,2024-06-15,In Service,Data Hall 01
+Cooling Unit 006,DC-COOL-006,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-03,SIM-COOL-0006,120.00,2022-07-15,In Service,Data Hall 02
+Cooling Unit 007,DC-COOL-007,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-04,SIM-COOL-0007,120.00,2023-08-15,In Service,Data Hall 01
+Cooling Unit 008,DC-COOL-008,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-01,SIM-COOL-0008,120.00,2024-09-15,In Service,Data Hall 02
+Cooling Unit 009,DC-COOL-009,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-02,SIM-COOL-0009,120.00,2022-10-15,In Service,Data Hall 01
+Cooling Unit 010,DC-COOL-010,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-03,SIM-COOL-0010,120.00,2023-11-15,In Service,Data Hall 02
+Cooling Unit 011,DC-COOL-011,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-04,SIM-COOL-0011,120.00,2024-12-15,In Service,Data Hall 01
+Cooling Unit 012,DC-COOL-012,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-01,SIM-COOL-0012,120.00,2022-01-15,In Service,Data Hall 02
+Cooling Unit 013,DC-COOL-013,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-02,SIM-COOL-0013,120.00,2023-02-15,Standby,Data Hall 01
+Cooling Unit 014,DC-COOL-014,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-03,SIM-COOL-0014,120.00,2024-03-15,In Service,Data Hall 02
+Cooling Unit 015,DC-COOL-015,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-04,SIM-COOL-0015,120.00,2022-04-15,In Service,Data Hall 01
+Cooling Unit 016,DC-COOL-016,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-01,SIM-COOL-0016,120.00,2023-05-15,In Service,Data Hall 02
+Cooling Unit 017,DC-COOL-017,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-02,SIM-COOL-0017,120.00,2024-06-15,In Service,Data Hall 01
+Cooling Unit 018,DC-COOL-018,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-03,SIM-COOL-0018,120.00,2022-07-15,In Service,Data Hall 02
+Cooling Unit 019,DC-COOL-019,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-04,SIM-COOL-0019,120.00,2023-08-15,Under Maintenance,Data Hall 01
+Cooling Unit 020,DC-COOL-020,Cooling Unit,Medium,Demo Vendor C,SIM-COOL-01,SIM-COOL-0020,120.00,2024-09-15,In Service,Data Hall 02
+Switchgear 001,DC-SWG-001,Switchgear,High,Demo Vendor A,SIM-SWG-02,SIM-SWG-0001,1000.00,2023-02-15,In Service,Data Hall 01
+Switchgear 002,DC-SWG-002,Switchgear,High,Demo Vendor A,SIM-SWG-03,SIM-SWG-0002,1000.00,2024-03-15,In Service,Data Hall 02
+Switchgear 003,DC-SWG-003,Switchgear,High,Demo Vendor A,SIM-SWG-04,SIM-SWG-0003,1000.00,2022-04-15,In Service,Data Hall 01
+Switchgear 004,DC-SWG-004,Switchgear,High,Demo Vendor A,SIM-SWG-01,SIM-SWG-0004,1000.00,2023-05-15,In Service,Data Hall 02
+Switchgear 005,DC-SWG-005,Switchgear,High,Demo Vendor A,SIM-SWG-02,SIM-SWG-0005,1000.00,2024-06-15,In Service,Data Hall 01
+Switchgear 006,DC-SWG-006,Switchgear,High,Demo Vendor A,SIM-SWG-03,SIM-SWG-0006,1000.00,2022-07-15,In Service,Data Hall 02
+Switchgear 007,DC-SWG-007,Switchgear,High,Demo Vendor A,SIM-SWG-04,SIM-SWG-0007,1000.00,2023-08-15,In Service,Data Hall 01
+Switchgear 008,DC-SWG-008,Switchgear,High,Demo Vendor A,SIM-SWG-01,SIM-SWG-0008,1000.00,2024-09-15,In Service,Data Hall 02
+Switchgear 009,DC-SWG-009,Switchgear,High,Demo Vendor A,SIM-SWG-02,SIM-SWG-0009,1000.00,2022-10-15,In Service,Data Hall 01
+Switchgear 010,DC-SWG-010,Switchgear,High,Demo Vendor A,SIM-SWG-03,SIM-SWG-0010,1000.00,2023-11-15,In Service,Data Hall 02
+Switchgear 011,DC-SWG-011,Switchgear,High,Demo Vendor A,SIM-SWG-04,SIM-SWG-0011,1000.00,2024-12-15,In Service,Data Hall 01
+Switchgear 012,DC-SWG-012,Switchgear,High,Demo Vendor A,SIM-SWG-01,SIM-SWG-0012,1000.00,2022-01-15,In Service,Data Hall 02
+Switchgear 013,DC-SWG-013,Switchgear,High,Demo Vendor A,SIM-SWG-02,SIM-SWG-0013,1000.00,2023-02-15,Standby,Data Hall 01
+Switchgear 014,DC-SWG-014,Switchgear,High,Demo Vendor A,SIM-SWG-03,SIM-SWG-0014,1000.00,2024-03-15,In Service,Data Hall 02
+Switchgear 015,DC-SWG-015,Switchgear,High,Demo Vendor A,SIM-SWG-04,SIM-SWG-0015,1000.00,2022-04-15,In Service,Data Hall 01
+Switchgear 016,DC-SWG-016,Switchgear,High,Demo Vendor A,SIM-SWG-01,SIM-SWG-0016,1000.00,2023-05-15,In Service,Data Hall 02
+Power Distribution Unit 001,DC-PDU-001,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-02,SIM-PDU-0001,150.00,2023-02-15,In Service,Data Hall 01
+Power Distribution Unit 002,DC-PDU-002,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-03,SIM-PDU-0002,150.00,2024-03-15,In Service,Data Hall 02
+Power Distribution Unit 003,DC-PDU-003,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-04,SIM-PDU-0003,150.00,2022-04-15,In Service,Data Hall 01
+Power Distribution Unit 004,DC-PDU-004,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-01,SIM-PDU-0004,150.00,2023-05-15,In Service,Data Hall 02
+Power Distribution Unit 005,DC-PDU-005,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-02,SIM-PDU-0005,150.00,2024-06-15,In Service,Data Hall 01
+Power Distribution Unit 006,DC-PDU-006,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-03,SIM-PDU-0006,150.00,2022-07-15,In Service,Data Hall 02
+Power Distribution Unit 007,DC-PDU-007,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-04,SIM-PDU-0007,150.00,2023-08-15,In Service,Data Hall 01
+Power Distribution Unit 008,DC-PDU-008,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-01,SIM-PDU-0008,150.00,2024-09-15,In Service,Data Hall 02
+Power Distribution Unit 009,DC-PDU-009,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-02,SIM-PDU-0009,150.00,2022-10-15,In Service,Data Hall 01
+Power Distribution Unit 010,DC-PDU-010,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-03,SIM-PDU-0010,150.00,2023-11-15,In Service,Data Hall 02
+Power Distribution Unit 011,DC-PDU-011,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-04,SIM-PDU-0011,150.00,2024-12-15,In Service,Data Hall 01
+Power Distribution Unit 012,DC-PDU-012,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-01,SIM-PDU-0012,150.00,2022-01-15,In Service,Data Hall 02
+Power Distribution Unit 013,DC-PDU-013,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-02,SIM-PDU-0013,150.00,2023-02-15,Standby,Data Hall 01
+Power Distribution Unit 014,DC-PDU-014,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-03,SIM-PDU-0014,150.00,2024-03-15,In Service,Data Hall 02
+Power Distribution Unit 015,DC-PDU-015,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-04,SIM-PDU-0015,150.00,2022-04-15,In Service,Data Hall 01
+Power Distribution Unit 016,DC-PDU-016,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-01,SIM-PDU-0016,150.00,2023-05-15,In Service,Data Hall 02
+Power Distribution Unit 017,DC-PDU-017,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-02,SIM-PDU-0017,150.00,2024-06-15,In Service,Data Hall 01
+Power Distribution Unit 018,DC-PDU-018,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-03,SIM-PDU-0018,150.00,2022-07-15,In Service,Data Hall 02
+Power Distribution Unit 019,DC-PDU-019,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-04,SIM-PDU-0019,150.00,2023-08-15,Under Maintenance,Data Hall 01
+Power Distribution Unit 020,DC-PDU-020,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-01,SIM-PDU-0020,150.00,2024-09-15,In Service,Data Hall 02
+Power Distribution Unit 021,DC-PDU-021,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-02,SIM-PDU-0021,150.00,2022-10-15,In Service,Data Hall 01
+Power Distribution Unit 022,DC-PDU-022,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-03,SIM-PDU-0022,150.00,2023-11-15,In Service,Data Hall 02
+Power Distribution Unit 023,DC-PDU-023,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-04,SIM-PDU-0023,150.00,2024-12-15,In Service,Data Hall 01
+Power Distribution Unit 024,DC-PDU-024,Power Distribution Unit,High,Demo Vendor B,SIM-PDU-01,SIM-PDU-0024,150.00,2022-01-15,In Service,Data Hall 02
+Server Rack 001,DC-RACK-001,Server Rack,Medium,Demo Vendor C,SIM-RACK-02,SIM-RACK-0001,30.00,2023-02-15,In Service,Data Hall 01
+Server Rack 002,DC-RACK-002,Server Rack,Medium,Demo Vendor C,SIM-RACK-03,SIM-RACK-0002,30.00,2024-03-15,In Service,Data Hall 02
+Server Rack 003,DC-RACK-003,Server Rack,Medium,Demo Vendor C,SIM-RACK-04,SIM-RACK-0003,30.00,2022-04-15,In Service,Data Hall 01
+Server Rack 004,DC-RACK-004,Server Rack,Medium,Demo Vendor C,SIM-RACK-01,SIM-RACK-0004,30.00,2023-05-15,In Service,Data Hall 02
+Server Rack 005,DC-RACK-005,Server Rack,Medium,Demo Vendor C,SIM-RACK-02,SIM-RACK-0005,30.00,2024-06-15,In Service,Data Hall 01
+Server Rack 006,DC-RACK-006,Server Rack,Medium,Demo Vendor C,SIM-RACK-03,SIM-RACK-0006,30.00,2022-07-15,In Service,Data Hall 02
+Server Rack 007,DC-RACK-007,Server Rack,Medium,Demo Vendor C,SIM-RACK-04,SIM-RACK-0007,30.00,2023-08-15,In Service,Data Hall 01
+Server Rack 008,DC-RACK-008,Server Rack,Medium,Demo Vendor C,SIM-RACK-01,SIM-RACK-0008,30.00,2024-09-15,In Service,Data Hall 02
+Server Rack 009,DC-RACK-009,Server Rack,Medium,Demo Vendor C,SIM-RACK-02,SIM-RACK-0009,30.00,2022-10-15,In Service,Data Hall 01
+Server Rack 010,DC-RACK-010,Server Rack,Medium,Demo Vendor C,SIM-RACK-03,SIM-RACK-0010,30.00,2023-11-15,In Service,Data Hall 02
+Server Rack 011,DC-RACK-011,Server Rack,Medium,Demo Vendor C,SIM-RACK-04,SIM-RACK-0011,30.00,2024-12-15,In Service,Data Hall 01
+Server Rack 012,DC-RACK-012,Server Rack,Medium,Demo Vendor C,SIM-RACK-01,SIM-RACK-0012,30.00,2022-01-15,In Service,Data Hall 02
+Server Rack 013,DC-RACK-013,Server Rack,Medium,Demo Vendor C,SIM-RACK-02,SIM-RACK-0013,30.00,2023-02-15,Standby,Data Hall 01
+Server Rack 014,DC-RACK-014,Server Rack,Medium,Demo Vendor C,SIM-RACK-03,SIM-RACK-0014,30.00,2024-03-15,In Service,Data Hall 02
+Server Rack 015,DC-RACK-015,Server Rack,Medium,Demo Vendor C,SIM-RACK-04,SIM-RACK-0015,30.00,2022-04-15,In Service,Data Hall 01
+Server Rack 016,DC-RACK-016,Server Rack,Medium,Demo Vendor C,SIM-RACK-01,SIM-RACK-0016,30.00,2023-05-15,In Service,Data Hall 02
+Server Rack 017,DC-RACK-017,Server Rack,Medium,Demo Vendor C,SIM-RACK-02,SIM-RACK-0017,30.00,2024-06-15,In Service,Data Hall 01
+Server Rack 018,DC-RACK-018,Server Rack,Medium,Demo Vendor C,SIM-RACK-03,SIM-RACK-0018,30.00,2022-07-15,In Service,Data Hall 02
+Server Rack 019,DC-RACK-019,Server Rack,Medium,Demo Vendor C,SIM-RACK-04,SIM-RACK-0019,30.00,2023-08-15,Under Maintenance,Data Hall 01
+Server Rack 020,DC-RACK-020,Server Rack,Medium,Demo Vendor C,SIM-RACK-01,SIM-RACK-0020,30.00,2024-09-15,In Service,Data Hall 02
