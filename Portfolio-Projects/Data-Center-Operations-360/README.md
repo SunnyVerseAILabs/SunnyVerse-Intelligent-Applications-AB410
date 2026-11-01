@@ -13,7 +13,7 @@ This is a **hands-on learning project**, not a deployed facility management syst
 
 The Build Guide is the single cumulative learner document. Follow the published instructions in order. Each completed lesson includes the exact navigation, field settings, expected results, validation checks, troubleshooting, and links to downloadable practice files where appropriate.
 
-**Published:** Part 00 — Prepare your learning environment and create the project solution.
+**Published:** Part 00 — Environment and Solution Foundation; Part 01 — Department Master (Dataverse).
 
 ### Learning goals
 
