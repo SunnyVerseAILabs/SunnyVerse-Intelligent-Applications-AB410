@@ -4,7 +4,13 @@
 
 This directory will contain **original synthetic practice datasets** as the corresponding learner exercises are published. Each dataset will be linked from its relevant Build Guide section with the expected column names, record counts, validation checks, and import method.
 
-**Available practice data:** [Part 01 — Department Master (departments.csv)](./departments.csv), containing six fictional departments. Part 00 requires no dataset. Follow the [Part 01 guide](../Build-Guide.md#part-01--create-the-department-master-in-dataverse) to enter and validate the records. Importing this file is optional; the lesson walks through direct entry.
+**Available practice data:**
+
+- [Part 01 — departments.csv](./departments.csv): six fictional departments.
+- [Part 02 — campuses.csv](./campuses.csv): one fictional campus.
+- [Part 02 — data-halls.csv](./data-halls.csv): two fictional data halls linked to that campus.
+
+The CSV headers exactly match the **display names** introduced in the [Build Guide](../Build-Guide.md). The guide identifies the intended **svrg-prefixed schema names** separately. Dataverse may suggest field mapping automatically, but always review Choice and lookup values before completing an import. Import the campus before the data halls. If you have entered the same rows manually, do not also import the CSVs.
 
 Do not import datasets from previous experiments, previous Power Platform solutions, or unrelated AB-410 course modules. Every future dataset will be fictional and checked for consistency with the published schema.
 
