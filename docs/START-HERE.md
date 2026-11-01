@@ -10,10 +10,11 @@ Welcome! These companions help you follow the Twinkle & Celestyn **Design & Trou
 4. [Module 04 — Dataverse tables, relationships and data imports](../modules/M04-dataverse-tables-relationships/README.md) · [YouTube](https://youtu.be/eAd0rOf68Ms)
 5. [Module 05 — Dataverse columns, Prompt fields and alternate keys](../modules/M05-dataverse-columns-ai-fields/README.md) · [YouTube](https://youtu.be/_kPVgWgKZ-E)
 6. [Module 06 — Dataverse security roles, business units and teams](../modules/M06-dataverse-security-roles-teams/README.md) · [YouTube](https://youtu.be/la3adbbAMtY)
+7. [Module 07 — First canvas app from Excel](../modules/M07-first-canvas-app/README.md) · [YouTube](https://youtu.be/_G8UkxDQGqc)
 
 Open a module page beside the podcast. Click a blue timestamp to jump to the corresponding passage. Pause when an activity requires attention, then return to the audio.
 
-**Modules 1–2** explain foundations and prompting without requiring a formal build. **Module 3** introduces Power Apps Plans with optional follow-along steps. **Module 4** teaches Dataverse tables, relationships and imports. **Module 5** continues with Dataverse column choices, AI-assisted fields, autonumbering and alternate keys, including guided practice. **Module 6** teaches limited Dataverse security-role configuration and explains record access and teams; it requires a prepared Solar Inspection table and a real authorized test identity. Follow each module's activity indicators and verification checkpoints.
+**Modules 1–2** explain foundations and prompting without requiring a formal build. **Module 3** introduces Power Apps Plans with optional follow-along steps. **Module 4** teaches Dataverse tables, relationships and imports. **Module 5** continues with Dataverse column choices, AI-assisted fields, autonumbering and alternate keys, including guided practice. **Module 6** teaches limited Dataverse security-role configuration and explains record access and teams; it requires a prepared Solar Inspection table and a real authorized test identity. **Module 7** begins canvas app creation using the provided Excel workbook. Follow the Watch → Pause → Build → Verify → Resume markers, and keep the Excel-backed and Dataverse-backed routes distinct. Follow each module's activity indicators and verification checkpoints.
 
 ## Practice safely
 
