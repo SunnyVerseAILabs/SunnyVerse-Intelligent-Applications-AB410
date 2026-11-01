@@ -201,22 +201,24 @@ Open [Power Apps](https://make.powerapps.com), select your learning environment,
 | Display name / plural | `DC Campus` / `DC Campuses` |
 | Description | `Fictional campus register for data center operations.` |
 | Primary name column | `Campus Name` |
+| Primary column description | `Name of the fictional data center campus.` |
 | Type / record ownership | Standard / **Organization** |
 | Table schema name (target) | `svrg_DCCampus` |
 | Primary name schema (target) | `svrg_CampusName` |
 
 Choose **Organization** ownership before creating the table, since campus records are shared reference data. Confirm the primary name field is **Campus Name**, review generated schema names using **Advanced** or **Properties**, and select **Create**.
 
-Now open **DC Campus → Schema → Columns → New column** and add the fields below. Choose **Done** after each column and **Save table** if the designer prompts you. For text columns, use **Format = Text**, **Behavior = Simple** when available, and no default.
+Open **DC Campus → Schema → Columns → New column** and create the four additional columns using the settings below. **Campus Name** is the primary column created with the table; do not add it again. Choose **Done** after each new column and **Save table** if prompted.
 
-| Exact display name / CSV header | Schema name (target) | Type | Required | Other properties |
+| Exact display name / CSV header | Schema name (target) | Description | Type and required level | Other properties |
 | --- | --- | --- | --- | --- |
-| `Campus Code` | `svrg_CampusCode` | Text, single line | Business required | Max 20; Searchable Yes |
-| `Region` | `svrg_Region` | Text, single line | Optional | Max 100; Searchable Yes |
-| `Time Zone` | `svrg_TimeZone` | Text, single line | Optional | Max 100; Searchable Yes |
-| `Active` | `svrg_Active` | Yes/No | Optional | Labels Yes / No; default Yes; Searchable No if offered |
+| `Campus Name` | `svrg_CampusName` | `Name of the fictional data center campus.` | Primary name, Text; Business required | Created with table; retain its generated settings; no default |
+| `Campus Code` | `svrg_CampusCode` | `Stable fictional campus business code.` | Single-line Text; Business required | Format Text; max 20; Searchable Yes; Simple; no default |
+| `Region` | `svrg_Region` | `Geographical region for campus reporting.` | Single-line Text; Optional | Format Text; max 100; Searchable Yes; Simple; no default |
+| `Time Zone` | `svrg_TimeZone` | `IANA time zone identifier for campus reporting.` | Single-line Text; Optional | Format Text; max 100; Searchable Yes; Simple; no default |
+| `Active` | `svrg_Active` | `Whether the campus is available for operational use.` | Yes/No Boolean; Optional | Labels Yes / No; default Yes; Searchable No if offered; not a separate global/local Choice |
 
-Use these descriptions in the same order: `Stable fictional campus business code.`; `Geographical region for campus reporting.`; `IANA time zone identifier for campus reporting.`; `Whether the campus is available for operational use.` The **Active** field is a Boolean, not a new local or global Choice. Verify the generated schema names before saving, where the editor lets you edit them; Dataverse also creates its own primary-key GUID, which should not be changed.
+Review each generated schema name before saving, where editable. Dataverse also creates a primary-key GUID; leave that system column unchanged.
 
 ### S02.02 — Enter the campus record
 
@@ -252,6 +254,7 @@ Inside the same solution, choose **New → Table**, open advanced properties, an
 | Display name / plural | `DC Data Hall` / `DC Data Halls` |
 | Description | `Fictional data halls and their designed IT power capacity.` |
 | Primary name column | `Hall Name` |
+| Primary column description | `Name of the fictional data hall within its campus.` |
 | Type / record ownership | Standard / **Organization** |
 | Table schema name (target) | `svrg_DCDataHall` |
 | Primary name schema (target) | `svrg_HallName` |
@@ -260,16 +263,15 @@ Review the actual generated technical names and select **Create**. Organization 
 
 ### S02.05 — Add the Data Hall columns
 
-Open **DC Data Hall → Schema → Columns → New column**. Add the following four fields, choosing **Done** after each. Save the table when prompted.
+Open **DC Data Hall → Schema → Columns → New column** and create the four additional columns using the settings below. **Hall Name** is already the table's primary column. Choose **Done** after each new column and **Save table** if prompted.
 
-| Exact display name / CSV header | Schema name (target) | Data type | Required | Other properties |
+| Exact display name / CSV header | Schema name (target) | Description | Type and required level | Other properties |
 | --- | --- | --- | --- | --- |
-| `Hall Code` | `svrg_HallCode` | Text, single line; Format Text | Business required | Max 30; Searchable Yes; Simple; no default |
-| `Criticality` | `svrg_Criticality` | **Choice, single-select, synced with Global Choice `DC Infrastructure Criticality`** | Business required | Searchable Yes; options High / Medium / Low; **no default** |
-| `Design IT Capacity kW` | `svrg_DesignITCapacitykW` | Decimal number | Business required | 2 decimal places; min 0; max 100000 if offered; Simple; no default |
-| `Active` | `svrg_Active` | Yes/No | Optional | Labels Yes / No; default Yes; Searchable No if offered |
-
-Descriptions, in the same order: `Stable fictional hall business code.`; `Shared infrastructure criticality for the hall.`; `Designed IT capacity in kilowatts, not measured live power.`; `Whether the hall is available for operational use.`
+| `Hall Name` | `svrg_HallName` | `Name of the fictional data hall within its campus.` | Primary name, Text; Business required | Created with table; retain its generated settings; no default |
+| `Hall Code` | `svrg_HallCode` | `Stable fictional hall business code.` | Single-line Text; Business required | Format Text; max 30; Searchable Yes; Simple; no default |
+| `Criticality` | `svrg_Criticality` | `Shared infrastructure criticality for the hall.` | **Single-select Choice; Business required** | **Global** `DC Infrastructure Criticality` (`svrg_DCInfrastructureCriticality`); High / Medium / Low; Searchable Yes; no default |
+| `Design IT Capacity kW` | `svrg_DesignITCapacitykW` | `Designed IT capacity in kilowatts, not measured live power.` | Decimal number; Business required | 2 decimal places; min 0; max 100000 if offered; Simple; no default |
+| `Active` | `svrg_Active` | `Whether the hall is available for operational use.` | Yes/No Boolean; Optional | Labels Yes / No; default Yes; Searchable No if offered; not a separate global/local Choice |
 
 When adding **Criticality**, select **Choice**, **not Multi-select Choices**. Choose **Sync with global choice = Yes**, if the editor shows this field, then select **DC Infrastructure Criticality**. Do not create a second local option list. The column name (`svrg_Criticality`) and the Global Choice name (`svrg_DCInfrastructureCriticality`) are different objects. If the designer offers **Default**, leave it empty.
 
