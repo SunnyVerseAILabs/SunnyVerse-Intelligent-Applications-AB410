@@ -302,7 +302,7 @@ You now have a genuine one-to-many campus-to-hall structure, ready for other fic
 
 The campus and data halls now give our fictional facility a location structure. Next, we'll create an employee directory so that later incident and maintenance records can refer to consistent staff profiles and departments. We'll also connect each profile to a campus and, when applicable, to a manager.
 
-You will create one **DC Employee Profile** table, populate **20 fictional employees**, and establish their reporting hierarchy. Download [employee-profiles.csv](./data/employee-profiles.csv). Its **nine headers exactly match the column display names** defined below; the underlying technical schema names use our `svrg` prefix. These are *fictional business profiles*, not real Microsoft Entra accounts, Microsoft 365 recipients, or authenticated approvers.
+You will create one **DC Employee Profile** table, populate **20 fictional employees**, and establish their reporting hierarchy. Download [employee-profiles.csv](./data/employee-profiles.csv). Its six headers match the text, Choice and Yes/No column display names used for initial import; related Department, Campus and Manager records are then selected using Dataverse lookups. The technical schema names use the `svrg` prefix. These are *fictional business profiles*, not real Microsoft Entra accounts, Microsoft 365 recipients, or authenticated approvers.
 
 ### S03.01 — Create the DC Employee Profile table
 
@@ -357,30 +357,28 @@ In **Schema → Columns**, check that precisely one lookup each named **Departme
 
 ### S03.04 — Add the 20 employee profiles
 
-Use the linked [employee-profiles.csv](./data/employee-profiles.csv) for the practice data. The file has these display-name headers, in this order:
+Download [employee-profiles.csv](./data/employee-profiles.csv). Its six CSV headers use the exact display names of the Dataverse columns configured in S03.02:
 
 ```csv
-Employee Name,Employee Code,Job Title,Department,Campus,Shift Group,Active,Is Synthetic,Manager
+Employee Name,Employee Code,Job Title,Shift Group,Active,Is Synthetic
 ```
 
-Its **Manager** values are initially blank. This is intentional: we first create all 20 employees so the self-lookup has existing records to reference. We'll assign the managers in the next section.
+Open **DC Employee Profile → Import from CSV** (or **Import data**, depending on the portal). Upload the file and select **Review Mapping**. Match all six headers to their corresponding columns. **Employee Code** is a fictional business code, not the system-generated Dataverse GUID. For **Shift Group**, match A, B, C and D to the existing Global Choice options. For **Active** and **Is Synthetic**, confirm that Yes is interpreted as the Boolean **Yes** value.
 
-To import, open **DC Employee Profile → Import from CSV** or the available table **Import data** command. Select the file, then **Review Mapping**. Confirm each of the nine columns maps to the corresponding display name. The employee codes are values in **Employee Code**, **not** the Dataverse system ID.
+Complete the import and reopen **DC Employee Profile → Columns and data**. Confirm the 20 fictional employee profiles exist with distinct codes (`EMP-000001` through `EMP-000020`). Use the table's column picker if one of these columns is hidden. If the import experience requires lookups before saving records, create the rows in the editable table instead, selecting the existing lookup records as described below.
 
-Inspect the important value mappings before starting:
+Next, populate the **Department** and **Campus** lookups in the editable grid. For **Campus**, select the existing **Pacific Resilience Campus** record for **every employee**. For **Department**, select the related **DC Department** record according to the table below. These are actual Dataverse lookup selections, not ordinary text labels or copied GUIDs.
 
-| CSV column | Dataverse field | How to validate the import |
-| --- | --- | --- |
-| `Employee Name`, `Employee Code`, `Job Title` | Text / primary name | Header matches field; codes follow `EMP-000001` through `EMP-000020` |
-| `Department` | Lookup → DC Department | Resolve to existing records by the primary column **Department Name**; all six department names already exist |
-| `Campus` | Lookup → DC Campus | Resolve the existing **Pacific Resilience Campus** record by its primary **Campus Name** |
-| `Shift Group` | Global Choice-backed column | Check that **A, B, C, D** map to existing options; do not create new option labels |
-| `Active`, `Is Synthetic` | Yes/No Boolean | Check `Yes` is accepted as a true/Yes value |
-| `Manager` | Optional self-lookup | Blank for the initial import; skip/ignore the empty source mapping if required |
+| Department lookup | Employee profiles |
+| --- | --- |
+| Data Center Operations | Sophia Carter, Emma Park, David Patel, Iris Chen, Priya Allen, Liam Santos |
+| Electrical Operations | Anika Shah, Noah Morales |
+| Mechanical & Cooling | Marcus Johnson, Sana Kim, Jordan Wilson, Theo Singh |
+| Facilities Maintenance | Elena Stone, Daniel Lee, Ava Brooks, Mina Reed, Ethan Baker, Maya Iyer |
+| Safety & Compliance | Arjun Davis |
+| IT Infrastructure | Olivia Nair |
 
-**Header matching alone doesn't resolve lookup or Choice values.** If an import experience cannot reliably map Department and Campus from their existing primary names, cancel that import and use the editable data grid to create the records from the same CSV; select the actual lookup records using the picker rather than entering text or GUIDs blindly. Choose **one** creation method, not both.
-
-After the import or manual entry, open **DC Employee Profile → Columns and data**. You should see exactly **20** unique Employee Code values, all linked to an existing department and the same existing campus, with a Shift Group selected. Do not start a second import to fix a view filter or an unresolved lookup.
+Save the lookup changes and reopen the table. Each profile should resolve to the intended existing Department and Campus record. Continue with the Manager hierarchy in S03.05. The file is intended for one initial import; don't import it again if those employee rows already exist.
 
 ### S03.05 — Connect the reporting managers
 
