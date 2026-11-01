@@ -25,7 +25,7 @@ Read the [learner quick-start](docs/START-HERE.md), choose a module below, play 
 | **Path 2 — Dataverse foundations** ||||
 | M04 | Dataverse tables, relationships & imports | [Open build-along](modules/M04-dataverse-tables-relationships/README.md) | [Listen](https://youtu.be/eAd0rOf68Ms) |
 | M05 | Dataverse columns, Prompt fields and alternate keys | [Open build-along](modules/M05-dataverse-columns-ai-fields/README.md) | [Listen](https://youtu.be/_kPVgWgKZ-E) |
-| M06 | Security roles and teams | Coming soon | Link coming soon |
+| M06 | Dataverse security roles, business units and teams | [Open build-along](modules/M06-dataverse-security-roles-teams/README.md) | [Listen](https://youtu.be/la3adbbAMtY) |
 | **Path 3 — Power Apps and Power Pages** ||||
 | M07 | First canvas app | Coming soon | Link coming soon |
 | M08 | Canvas customization and Power Fx | Coming soon | Link coming soon |
@@ -40,7 +40,7 @@ Read the [learner quick-start](docs/START-HERE.md), choose a module below, play 
 | M16 | Approvals and business process flows | Coming soon | Link coming soon |
 | M17 | Grounded AI prompts | Coming soon | Link coming soon |
 
-**Guide status:** M01–M05 are available. Additional learner guides and episode links will appear here as they are released.
+**Guide status:** M01–M06 are available. Additional learner guides and episode links will appear here as they are released.
 
 ## The SunnyVerse learning world
 
