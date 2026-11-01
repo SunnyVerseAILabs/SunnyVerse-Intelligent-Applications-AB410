@@ -2,13 +2,13 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–01 — Solution Foundation and Department Master
+**Published:** Parts 00–02 — Solution Foundation, Department Master, Campus and Data Halls
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
 Welcome to Data Center Operations 360. In this project, you will build a fictional data center operations solution using Microsoft Power Platform. The work is completed in an environment where you have permission to develop, and all practice records are fictional.
 
-Part 00 prepares the solution that holds the project components. Part 01 creates a Dataverse department table and adds six fictional operating departments. You can complete the lessons using your own authorized learning environment.
+Part 00 prepares the solution. Part 01 creates operating departments, and Part 02 adds a fictional campus with two related data halls. Work through the published lessons in order using your own authorized learning environment.
 
 Follow the activities in order. The menu labels in your environment may differ slightly; choose the equivalent command and inspect the actual settings before saving.
 
@@ -183,11 +183,176 @@ Your **DC Department** table should now contain six records, each with a departm
 
 You have completed the first reference-data table. **No other tables are required for this lesson.**
 
+
+---
+
+## Part 02 — Build the Campus and Data Hall registers
+
+In Part 01 you created the operating departments. Next, you'll add the location structure for our fictional data center. **Pacific Resilience Campus** contains two data halls, and each hall belongs to exactly one campus. We'll model that connection with a Dataverse lookup rather than typing the campus name into an ordinary text column.
+
+This lesson creates two tables, one reusable Choice and three practice records. You can type the records directly or use the matching [campus CSV](./data/campuses.csv) and [data hall CSV](./data/data-halls.csv). The tables must exist before you import their data.
+
+Our publisher customization prefix is **`svrg`**. The technical names shown below are the intended *schema names*, while CSV headers use the exact *display names* shown in the table designer. Dataverse import attempts to match display-name headers automatically; you still need to review Choice and lookup mapping. If your designer generates a different name, verify and correct it **before** creating the component, where editable. Do not rename an already saved component just to match a sample.
+
+### S02.01 — Create the DC Campus table
+
+Open [Power Apps](https://make.powerapps.com), choose the environment used in Part 01 and go to **Solutions → SunnyVerse Data Center Operations 360 → New → Table**. Select advanced table properties if the designer offers that option.
+
+| Table property | Enter |
+| --- | --- |
+| Display name | `DC Campus` |
+| Plural display name | `DC Campuses` |
+| Description | `Fictional campus register for data center locations and reporting.` |
+| Primary name column | `Campus Name` |
+| Type | Standard |
+| Record ownership | **Organization** |
+| Intended table schema name | `svrg_DCCampus` |
+| Intended primary-name schema | `svrg_CampusName` |
+
+Keep **Organization** ownership because the campus is shared reference data. Ownership is difficult to change after creation. Inspect the generated schema names and select **Create**. The table should appear inside the same solution.
+
+Now open **DC Campus → Schema → Columns → New column** and add the four business columns, one at a time. Enter each description, type, format and required setting. When available, inspect **Advanced options → Name** for the exact `svrg_`-prefixed schema name.
+
+| Column (CSV header) | Intended schema name | Data type / format | Other settings |
+| --- | --- | --- | --- |
+| `Campus Code` | `svrg_CampusCode` | Text / single line; format Text | Business required; maximum 20 characters; Searchable Yes; no default |
+| `Region` | `svrg_Region` | Text / single line; format Text | Optional; maximum 100 characters; Searchable Yes; no default |
+| `Time Zone` | `svrg_TimeZone` | Text / single line; format Text | Optional; maximum 100 characters; Searchable Yes; no default |
+| `Active` | `svrg_Active` | Yes/No | Labels Yes / No; default **Yes**; Optional; Searchable No if available |
+
+Use these column descriptions, respectively: `Stable fictional campus identifier.`; `Geographical operating region.`; `IANA time zone used for campus reporting.`; and `Indicates whether the campus is available for operational use.`
+
+`Active` is a **Yes/No** field, *not* a local or global Choice. Set column Behavior to **Simple** where the property applies. Select **Done** for each column and **Save table** if required. Reopen **Columns** to confirm the names, data types and generated schema names.
+
+### S02.02 — Add Pacific Resilience Campus
+
+Open **DC Campus columns and data → Edit** (or the table's editable data grid). Show the five columns used in [campuses.csv](./data/campuses.csv), and enter this row:
+
+| Campus Name | Campus Code | Region | Time Zone | Active |
+| --- | --- | --- | --- | --- |
+| Pacific Resilience Campus | `DC-PAC-01` | Pacific | `America/Los_Angeles` | Yes |
+
+Save the row, leave the grid, and reopen it. Confirm that one campus record appears. Leave the automatically generated Dataverse record ID untouched.
+
+If you prefer an import, the CSV has **exactly the five display-name column headers** above. On a supported table data-import screen, choose the CSV file, review its field mappings and import it. **Choose either direct entry or CSV import—not both**, or you may create duplicate records. We'll use this saved campus as the parent for the halls.
+
+### S02.03 — Create the reusable infrastructure Criticality Choice
+
+A data hall can have one of three criticality classifications. Because other infrastructure records may use the same classification, we'll define the options **once** in a Global Choice.
+
+Return to the solution's object list and select **New → Choice**.
+
+| Choice property | Enter |
+| --- | --- |
+| Display name | `DC Infrastructure Criticality` |
+| Intended unique name | `svrg_DCInfrastructureCriticality` |
+| Scope | **Global Choice** (solution component) |
+| Description | `Shared fictional infrastructure criticality classification for data halls and assets.` |
+| Choice option 1 | High |
+| Choice option 2 | Medium |
+| Choice option 3 | Low |
+| Numeric option values | Keep Dataverse-generated numbers |
+| Column selection style | Single-select, configured when we create the Criticality column |
+| Column default | No default; the learner selects a value |
+
+If an initial option already appears, replace its label with **High**. Use **New choice** to add **Medium** and **Low** in that order. Open **Advanced options** and check the actual `svrg_`-prefixed **Name**. Save the Choice.
+
+The Global Choice holds the shared option list. It is not itself the field in a data hall row; we'll connect a **Criticality** column to it in the next steps.
+
+### S02.04 — Create the DC Data Hall table
+
+Inside the same solution, select **New → Table** and enter:
+
+| Table property | Enter |
+| --- | --- |
+| Display name | `DC Data Hall` |
+| Plural display name | `DC Data Halls` |
+| Description | `Fictional data halls belonging to a campus, with designed IT power capacity.` |
+| Primary name column | `Hall Name` |
+| Type | Standard |
+| Record ownership | **Organization** |
+| Intended table schema name | `svrg_DCDataHall` |
+| Intended primary-name schema | `svrg_HallName` |
+
+Review the primary-name column, ownership and generated names before selecting **Create**.
+
+### S02.05 — Configure the Data Hall columns
+
+Open **DC Data Hall → Schema → Columns → New column**. Configure each column using this table and select **Done** after each. Save the table when prompted.
+
+| Column (CSV header) | Intended schema name | Data type / format | Other settings |
+| --- | --- | --- | --- |
+| `Hall Code` | `svrg_HallCode` | Text / single line; format Text | Business required; maximum 30 characters; Searchable Yes; no default |
+| `Criticality` | `svrg_Criticality` | **Choice (single-select)**, synced with existing **Global Choice** `DC Infrastructure Criticality` | Required **Business required**; Searchable Yes; options High / Medium / Low; **no default** |
+| `Design IT Capacity kW` | `svrg_DesignITCapacitykW` | Decimal number; **2 decimal places** | Business required; minimum **0**; maximum **100000** if the editor permits; no default |
+| `Active` | `svrg_Active` | Yes/No | Labels Yes / No; default **Yes**; Optional; Searchable No if available |
+
+Use these descriptions, respectively: `Stable fictional identifier for this data hall.`; `Shared classification of the data hall's infrastructure criticality.`; `Designed IT power capacity in kilowatts, not live power consumption.`; and `Whether this data hall is available for operational use.`
+
+For **Criticality**, choose data type **Choice**, not **Choices / Multi Select Choice**. Where the editor displays **Sync with global choice?**, choose **Yes**, then select **DC Infrastructure Criticality**. Verify all three labels and leave the column default blank. This is a *table column backed by a Global Choice*, not an independently edited Local Choice.
+
+For **Design IT Capacity kW**, use **Decimal number**, set **2 decimal places**, and choose minimum **0**. If the maximum entry is available, use **100000**. Use Behavior **Simple**, rather than calculated or rollup, wherever applicable.
+
+Save the table after adding the columns.
+
+### S02.06 — Create the Campus lookup relationship
+
+Each data hall needs to point to an existing campus record. We'll add the lookup by creating one **many-to-one relationship**.
+
+Open **DC Data Hall → Schema → Relationships → New relationship → Many-to-one**.
+
+Choose **Related table = DC Campus**. The **current table must be DC Data Hall**, because the lookup belongs on each hall record.
+
+| Relationship property | Enter |
+| --- | --- |
+| Relationship | **Many DC Data Hall records → one DC Campus record (N:1)** |
+| Lookup column display name | `Campus` |
+| Intended lookup column name | `svrg_Campus` |
+| Description | `Parent campus for this data hall.` |
+| Lookup requirement | **Business required** |
+| Searchable | Yes |
+| Intended relationship name, if editable | `svrg_DCDataHall_DCCampus` |
+| Delete behavior, if configurable | **Restrict** deletion of a campus that has halls |
+
+Select **Done** and **Save table**. Then open **DC Data Hall → Schema → Columns** and confirm that exactly **one** column named **Campus** has type **Lookup** and points to **DC Campus**.
+
+Do **not** create another Lookup column or a free-text Campus column. Dataverse already created the lookup as part of this relationship. The selected campus row is stored through its Dataverse identifier; do not enter or copy a GUID yourself.
+
+### S02.07 — Add the two data halls
+
+Open **DC Data Hall columns and data → Edit**. Display **Hall Name**, **Hall Code**, **Campus**, **Criticality**, **Design IT Capacity kW** and **Active**.
+
+Use the **Campus** lookup picker to select the existing **Pacific Resilience Campus** record for *both* data halls. For **Criticality**, select **High**.
+
+| Hall Name | Hall Code | Campus | Criticality | Design IT Capacity kW | Active |
+| --- | --- | --- | --- | ---: | --- |
+| Data Hall 01 | `DC-PAC-01-H01` | Pacific Resilience Campus | High | 2350.00 | Yes |
+| Data Hall 02 | `DC-PAC-01-H02` | Pacific Resilience Campus | High | 2500.00 | Yes |
+
+Save the two rows. Leave and reopen the data grid. Both hall records should still show **High**, their respective designed capacities, and the **same existing campus** in the lookup field. The campus table should still have one record.
+
+#### Optional CSV import
+
+The companion [data-halls.csv](./data/data-halls.csv) uses the **exact six display-name headers** shown above. If you prefer importing it instead of entering the two rows manually, import **campuses.csv first**, so the referenced campus already exists.
+
+In a supported Dataverse import experience, choose the appropriate table, upload the CSV, select **Review Mapping**, and confirm all six headers map to their intended columns. For **Criticality**, confirm that source label **High** maps to the existing **High** option; do not create a new option. For **Campus**, open the **Lookup Reference** mapping and select the **DC Campus** table, matching **Campus Name** to `Pacific Resilience Campus`. Complete the import only after those mappings are valid. Check the import results and reopen the two hall records.
+
+Matching CSV column headers to display names helps the importer find fields, but **does not by itself guarantee Choice or lookup values resolve**. Do not import a file after entering the same records manually.
+
+### Finish Part 02
+
+You should now have one **DC Campus** record, two **DC Data Hall** records, and one shared **DC Infrastructure Criticality** Choice. Both halls must resolve through the **Campus** lookup to Pacific Resilience Campus. Reopen the tables and check that all three records are saved with the expected values.
+
+The design now represents a genuine parent/child relationship without duplicating campus details in each hall. No employee, asset or monitoring records are needed for this lesson.
+
 ## Microsoft Learn references
 
 - [Create a Power Platform solution](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-solution)
 - [Create and edit Dataverse tables](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-entities-portal)
 - [Create and edit Dataverse columns](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-field-portal)
 - [Dataverse table types and ownership](https://learn.microsoft.com/en-us/powerapps/maker/data-platform/types-of-entities)
+- [Create global choices](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/custom-picklists)
+- [Create and edit one-to-many / many-to-one relationships](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-1n-relationships-portal)
+- [Import data and map choices/lookups](https://learn.microsoft.com/en-us/power-apps/user/import-data)
 
 *All organizations, facilities, staff, and operational scenarios in this learning project are fictional. Do not use this guide to control live data center infrastructure.*
