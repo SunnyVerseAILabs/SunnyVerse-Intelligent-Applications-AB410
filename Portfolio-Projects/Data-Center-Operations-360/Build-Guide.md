@@ -230,22 +230,7 @@ Open **DC Campus → Columns and data → Edit**. Show the columns `Campus Name`
 
 Save and reopen the table to confirm that the single campus row persists. You can instead import [campuses.csv](./data/campuses.csv) using **Import from CSV**, where available; inspect the field mappings and ensure the Yes/No value is accepted. **Use one method only**—manual entry *or* import—to avoid duplicate rows. The CSV header names match the table's column display names, not the `svrg_` technical names.
 
-### S02.03 — Create the infrastructure criticality Global Choice
-
-Return to the solution's objects list and select **New → Choice**. This will provide a consistent criticality classification for data halls and other infrastructure records.
-
-| Property | Value |
-| --- | --- |
-| Choice display name | `DC Infrastructure Criticality` |
-| Choice unique name (target) | `svrg_DCInfrastructureCriticality` |
-| Scope | **Global Choice** |
-| Description | `Common criticality classification for fictional infrastructure assets and facilities.` |
-| Option labels, in order | **High**, **Medium**, **Low** |
-| Option values | Keep Dataverse-generated numeric values |
-
-If the editor opens with an existing first option, change its label to **High**. Add **Medium** and **Low** with **New choice**. Check the unique Name under **Advanced options** and select **Save**. This creates the shared option set; the actual `Criticality` column will be created in the Data Hall table in S02.05. That column will be **single-select** with **no default**, requiring learners to choose the classification.
-
-### S02.04 — Create the Data Hall table
+### S02.03 — Create the Data Hall table
 
 Inside the same solution, choose **New → Table**, open advanced properties, and configure:
 
@@ -261,21 +246,21 @@ Inside the same solution, choose **New → Table**, open advanced properties, an
 
 Review the actual generated technical names and select **Create**. Organization ownership must be selected before creation.
 
-### S02.05 — Add the Data Hall columns
+### S02.04 — Add the Data Hall columns
 
-Open **DC Data Hall → Schema → Columns → New column** and create the four additional columns using the settings below. **Hall Name** is already the table's primary column. Choose **Done** after each new column and **Save table** if prompted.
+Open **DC Data Hall → Schema → Columns → New column** and create the four additional columns using the settings below. **Hall Name** is already the table's primary column. The **Criticality** Global Choice is created as part of configuring that column; no earlier Choice-creation step is necessary. Choose **Done** after each new column and **Save table** if prompted.
 
 | Exact display name / CSV header | Schema name (target) | Description | Type and required level | Other properties |
 | --- | --- | --- | --- | --- |
 | `Hall Name` | `svrg_HallName` | `Name of the fictional data hall within its campus.` | Primary name, Text; Business required | Created with table; retain its generated settings; no default |
 | `Hall Code` | `svrg_HallCode` | `Stable fictional hall business code.` | Single-line Text; Business required | Format Text; max 30; Searchable Yes; Simple; no default |
-| `Criticality` | `svrg_Criticality` | `Shared infrastructure criticality for the hall.` | **Single-select Choice; Business required** | **Global** `DC Infrastructure Criticality` (`svrg_DCInfrastructureCriticality`); High / Medium / Low; Searchable Yes; no default |
+| `Criticality` | `svrg_Criticality` | `Shared infrastructure criticality for the hall.` | **Single-select Choice; Business required** | **New Global Choice:** `DC Infrastructure Criticality` (`svrg_DCInfrastructureCriticality`); description: `Common criticality classification for fictional infrastructure assets and facilities.`; options **High, Medium, Low** (in this order); keep generated numeric values; Searchable Yes; no default |
 | `Design IT Capacity kW` | `svrg_DesignITCapacitykW` | `Designed IT capacity in kilowatts, not measured live power.` | Decimal number; Business required | 2 decimal places; min 0; max 100000 if offered; Simple; no default |
 | `Active` | `svrg_Active` | `Whether the hall is available for operational use.` | Yes/No Boolean; Optional | Labels Yes / No; default Yes; Searchable No if offered; not a separate global/local Choice |
 
-When adding **Criticality**, select **Choice**, **not Multi-select Choices**. Choose **Sync with global choice = Yes**, if the editor shows this field, then select **DC Infrastructure Criticality**. Do not create a second local option list. The column name (`svrg_Criticality`) and the Global Choice name (`svrg_DCInfrastructureCriticality`) are different objects. If the designer offers **Default**, leave it empty.
+For the **Criticality** column, select **Data type → Choice** (not multi-select), then choose **New choice** from the Choice picker. In the modern designer, this creates a **Global Choice** by default. Enter the global Choice display name, description, unique name and three labels **exactly as shown in the row above**, retaining generated numeric values. Save/Done the Choice, then ensure the column is linked to **DC Infrastructure Criticality**. If the designer instead shows **Sync with global choice**, choose **Yes** and select that Global Choice. Do not select **Local choice** or create a separate option list. Set **Business required**, **Searchable Yes** and leave **Default choice** blank. The column (`svrg_Criticality`) and its Global Choice (`svrg_DCInfrastructureCriticality`) are separate technical components. If your designer does not offer **New choice** in the column panel, use **solution → New → Choice** to create the global list with the same properties, then return to this column and select it.
 
-### S02.06 — Create the Campus lookup
+### S02.05 — Create the Campus lookup
 
 Every hall must reference the existing campus record. In **DC Data Hall**, open **Schema → Relationships → New relationship → Many-to-one** and set **Related table = DC Campus**. Confirm that **DC Data Hall** is the current table: many hall records will link to one campus.
 
@@ -291,7 +276,7 @@ Every hall must reference the existing campus record. In **DC Data Hall**, open 
 
 Select **Done**, then **Save table**. Return to **Schema → Columns** and confirm a **single** `Campus` Lookup column exists, pointing to `DC Campus`. The relationship wizard creates the lookup; **do not** add a second `Campus` text or Lookup column. The field stores a reference to the related Dataverse row; do not type a system GUID into the data grid.
 
-### S02.07 — Add the two Data Hall records
+### S02.06 — Add the two Data Hall records
 
 Open **DC Data Hall → Columns and data → Edit**. Make the six columns visible, including the `Campus` lookup. In the lookup picker, select the existing **Pacific Resilience Campus** for both rows. Choose **High** from the `Criticality` options.
 
