@@ -2,13 +2,13 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–04 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry
+**Published:** Parts 00–05 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
 Welcome to Data Center Operations 360. In this project, you will build a fictional data center operations solution using Microsoft Power Platform. The work is completed in an environment where you have permission to develop, and all practice records are fictional.
 
-Part 00 prepares the solution. Part 01 adds departments, Part 02 builds the campus and data halls, Part 03 adds the employee directory, and Part 04 registers equipment and monitoring sensors. Follow the lessons in order in an authorized learning environment.
+Part 00 prepares the solution. Parts 01–04 build departments, campus locations, employees, assets and sensors. Part 05 adds connected alarm and incident records. Follow the lessons in order in an authorized learning environment.
 
 Follow the activities in order. The menu labels in your environment may differ slightly; choose the equivalent command and inspect the actual settings before saving.
 
@@ -537,6 +537,138 @@ Reopen **DC Asset** and **DC Sensor**. Confirm **100 distinct Asset Codes**, **5
 
 You now have a relational infrastructure registry ready for incident and monitoring exercises. **No live sensor data or external hardware connection is required.**
 
+
+---
+
+## Part 05 — Build the Alarm and Incident Management Registers
+
+The asset and sensor registry now identifies the equipment operating across our fictional data center. This lesson adds **DC Alarm** to describe detected operating conditions and **DC Incident** to track issues requiring investigation. Some incidents originate from alarms; others are reported directly by fictional employees. This gives us connected records to use in later application and automation exercises.
+
+We'll create **120 alarm records** and **200 incident records** using [alarms.csv](./data/alarms.csv) and [incidents.csv](./data/incidents.csv). As in earlier lessons, CSV headers match the exact Dataverse **column display names**, while target schema names use our `svrg` prefix. Configure the tables first, then create the parent alarms before the incident records that reference them.
+
+### S05.01 — Create DC Alarm
+
+Open [Power Apps](https://make.powerapps.com), select your learning environment, then open **Solutions → SunnyVerse Data Center Operations 360 → New → Table**. Select advanced table properties when needed.
+
+| Table property | Enter |
+| --- | --- |
+| Display name / plural | `DC Alarm` / `DC Alarms` |
+| Description | `Fictional operating alerts reported by data center equipment and monitoring systems.` |
+| Primary name column | `Alarm Name` |
+| Primary-column description | `Readable description of a fictional operating alarm.` |
+| Table type / ownership | Standard / **Organization** |
+| Table schema name (target) | `svrg_DCAlarm` |
+| Primary-name schema (target) | `svrg_AlarmName` |
+
+Select **Organization** ownership before creating the table. Confirm the primary name and schema values, choose **Create**, and leave the Dataverse-generated primary-key GUID unchanged.
+
+### S05.02 — Configure the Alarm columns and Choices
+
+In **DC Alarm → Schema → Columns → New column**, add the following fields. **Alarm Name** is the primary column created with the table, so do not add it again. Complete each new column with **Done**, then select **Save table** where prompted.
+
+| Exact display name / CSV header | Schema name (target) | Description | Data type and required level | Other properties |
+| --- | --- | --- | --- | --- |
+| `Alarm Name` | `svrg_AlarmName` | `Readable description of a fictional operating alarm.` | Primary Text; Business required | Created with table; no default |
+| `Alarm Code` | `svrg_AlarmCode` | `Stable fictional identifier for the operating alarm.` | Single-line Text; Business required | Format Text; max **24**; Searchable Yes; Simple; no default |
+| `Alarm Type` | `svrg_AlarmType` | `Type of condition represented by this alarm.` | Single-select Choice; Business required | **Local Choice:** High Temperature, Low Voltage, Power Deviation, Cooling Degradation, Equipment Fault, Communication Loss; Searchable Yes; no default |
+| `Alarm Severity` | `svrg_AlarmSeverity` | `Reported seriousness of the operating condition.` | Single-select Choice; Business required | **Local Choice:** Critical, High, Medium, Low; Searchable Yes; no default |
+| `Alarm Status` | `svrg_AlarmStatus` | `Acknowledgment and lifecycle state of the alarm.` | Single-select Choice; Business required | **Local Choice:** New, Acknowledged, Cleared, Suppressed; Searchable Yes; no default |
+| `Detection Source` | `svrg_DetectionSource` | `Origin of the fictional alarm event.` | Single-select Choice; Business required | **Local Choice:** Sensor, System, Manual; Searchable Yes; no default |
+| `Detected At` | `svrg_DetectedAt` | `Date and time when the fictional alarm was detected.` | Date and Time; Business required | Format **Date and time**; Behavior **User local**; no default |
+| `Alarm Details` | `svrg_AlarmDetails` | `Description of the detected condition for investigation.` | Multiple lines of text; Optional | Maximum **2000** characters if configurable; Simple; no default |
+
+Create each of the four Choice columns **directly in its column editor**. Choose **Choice → View more → Local choice**, not a separately named Global Choice, and enter the option labels in the order shown. Keep Dataverse-generated numeric option values. These Choices are specific to the Alarm table. There is no need to repeat the Asset Criticality Choice here; equipment criticality and alert severity describe different things.
+
+For **Detected At**, choose the Date and Time type and **User local** behavior. The sample CSV timestamps use ISO 8601 **UTC** values ending in `Z`. A model-driven app may display the same instant converted into the viewer's local time zone.
+
+### S05.03 — Link and load the Alarm records
+
+Every alarm references an existing equipment asset. A sensor may also be associated with the alarm, but a sensor link is optional.
+
+Open **DC Alarm → Schema → Relationships → New relationship → Many-to-one** for each row below. The current table must be **DC Alarm**; the related table is the destination to which the lookup points.
+
+| Exact lookup display name / CSV header | Schema name (target) | Description | Related table | Requirement / other settings |
+| --- | --- | --- | --- | --- |
+| `Source Asset` | `svrg_SourceAsset` | `Existing data center equipment asset affected by this alarm.` | **DC Asset** | Business required; Searchable Yes; Referential — Restrict Delete when available |
+| `Source Sensor` | `svrg_SourceSensor` | `Existing sensor associated with the alarm when the source is sensor-based.` | **DC Sensor** | Optional; Searchable Yes; Referential — Restrict Delete when available |
+
+Choose **Done → Save table** and confirm the two lookup fields appear once under **Schema → Columns**. They must be Lookup types, not text columns. A sensor selected in **Source Sensor** must belong to the same asset identified by **Source Asset**.
+
+Download [alarms.csv](./data/alarms.csv) and open the table's supported **Import from CSV** or **Import data** command. Its exact headers are:
+
+```csv
+Alarm Name,Alarm Code,Alarm Type,Alarm Severity,Alarm Status,Detection Source,Detected At,Alarm Details,Source Asset,Source Sensor
+```
+
+Review the mapping before importing: match each Choice label to the existing option, parse **Detected At** as a UTC Date and Time value, and resolve **Source Asset → DC Asset → Asset Name** and **Source Sensor → DC Sensor → Sensor Name** through your chosen import tool's supported lookup-reference mechanism. A blank **Source Sensor** is legitimate for System and Manual alerts. If a mapping cannot be configured, use an import method that supports it rather than loading unresolved references.
+
+Complete the import once. Open the import result and return to **DC Alarm → Columns and data**. There should be **120 distinct Alarm Codes**, starting with `ALM-0001`. **48 alarms** refer to existing sensors; the other **72** do not. All 120 alarms must reference existing assets. These are fictional historical events, not live telemetry or actual facility alerts.
+
+### S05.04 — Create DC Incident
+
+Return to the same solution and choose **New → Table**.
+
+| Table property | Enter |
+| --- | --- |
+| Display name / plural | `DC Incident` / `DC Incidents` |
+| Description | `Fictional operational incidents linked to equipment, alarms and staff profiles.` |
+| Primary name column | `Incident Name` |
+| Primary-column description | `Readable title of a fictional operational incident.` |
+| Table type / ownership | Standard / **Organization** |
+| Table schema name (target) | `svrg_DCIncident` |
+| Primary-name schema (target) | `svrg_IncidentName` |
+
+Confirm **Organization** ownership, the primary-name column, and the intended schema names, then select **Create**.
+
+### S05.05 — Configure the Incident columns and Choices
+
+Open **DC Incident → Schema → Columns → New column**. Add each custom field as shown below. The primary-name column already exists.
+
+| Exact display name / CSV header | Schema name (target) | Description | Data type and required level | Other properties |
+| --- | --- | --- | --- | --- |
+| `Incident Name` | `svrg_IncidentName` | `Readable title of a fictional operational incident.` | Primary Text; Business required | Created with table; no default |
+| `Incident Code` | `svrg_IncidentCode` | `Stable fictional incident identifier for tracking.` | Single-line Text; Business required | Format Text; max **24**; Searchable Yes; Simple; no default |
+| `Incident Category` | `svrg_IncidentCategory` | `Business area associated with the incident.` | Single-select Choice; Business required | **Local Choice:** Electrical, Mechanical & Cooling, IT Infrastructure, Facilities, Safety, Other; Searchable Yes; no default |
+| `Priority` | `svrg_Priority` | `Response priority assigned to the incident.` | Single-select Choice; Business required | **Local Choice:** P1 Critical, P2 High, P3 Medium, P4 Low; Searchable Yes; no default |
+| `Incident Status` | `svrg_IncidentStatus` | `Current work state of this operational incident.` | Single-select Choice; Business required | **Local Choice:** New, Assigned, In Progress, Resolved, Closed; Searchable Yes; no default |
+| `Reported At` | `svrg_ReportedAt` | `Date and time when the incident was reported.` | Date and Time; Business required | Format **Date and time**; Behavior **User local**; no default |
+| `Incident Description` | `svrg_IncidentDescription` | `What was observed or requires investigation.` | Multiple lines of text; Business required | Maximum **2000** characters if configurable; Simple; no default |
+| `Safety Related` | `svrg_SafetyRelated` | `Whether the fictional incident has a safety classification.` | Yes/No Boolean; Optional | Labels Yes / No; default **No**; Searchable No if available |
+| `Resolution Notes` | `svrg_ResolutionNotes` | `Recorded outcome for a resolved or closed practice incident.` | Multiple lines of text; Optional | Maximum **2000** characters if configurable; Simple; no default |
+
+Create **Incident Category**, **Priority**, and **Incident Status** as **Local Choice** columns in their respective column editors, using precisely the displayed labels. Leave the defaults blank; the CSV supplies a value for each row. **Safety Related** is a Boolean, not a separate Choice. Save the table when prompted.
+
+### S05.06 — Connect the Incident relationships and import records
+
+Each incident refers to an existing asset and a fictional reporting employee. An assigned engineer and an originating alarm are optional.
+
+Open **DC Incident → Schema → Relationships → New relationship → Many-to-one** for each lookup in this table, then select **Done → Save table**.
+
+| Exact lookup display name / CSV header | Schema name (target) | Description | Related table | Requirement / other settings |
+| --- | --- | --- | --- | --- |
+| `Source Asset` | `svrg_SourceAsset` | `Existing equipment affected by the incident.` | **DC Asset** | Business required; Searchable Yes; Referential — Restrict Delete when available |
+| `Reported By` | `svrg_ReportedBy` | `Fictional employee profile that reported the issue.` | **DC Employee Profile** | Business required; Searchable Yes; Referential — Restrict Delete when available |
+| `Assigned Engineer` | `svrg_AssignedEngineer` | `Fictional employee profile assigned to investigate the issue.` | **DC Employee Profile** | Optional; Searchable Yes; Referential — Restrict Delete when available |
+| `Related Alarm` | `svrg_RelatedAlarm` | `Existing alarm associated with this incident when one exists.` | **DC Alarm** | Optional; Searchable Yes; Referential — Restrict Delete when available |
+
+Verify all four fields under **Schema → Columns**. **Reported By** and **Assigned Engineer** both point to **DC Employee Profile** but are different lookups. Neither grants Microsoft 365 permissions or sends real notifications; these are fictional staff references.
+
+Download [incidents.csv](./data/incidents.csv) and import it into **DC Incident** using your supported import experience. Its display-name headers are:
+
+```csv
+Incident Name,Incident Code,Incident Category,Priority,Incident Status,Reported At,Incident Description,Safety Related,Resolution Notes,Source Asset,Reported By,Assigned Engineer,Related Alarm
+```
+
+In the field mapping, confirm the local Choice labels, **Safety Related** Yes/No values and **Reported At** UTC timestamps. Resolve lookup references to **Source Asset → DC Asset → Asset Name**, **Reported By / Assigned Engineer → DC Employee Profile → Employee Name**, and **Related Alarm → DC Alarm → Alarm Name**. The referenced Asset, Employee and Alarm records must already exist. Leave blank optional lookup values blank; do not create placeholder records.
+
+After import, confirm there are **200 distinct Incident Codes**, beginning with `INC-0001`. The sample includes **120 incidents** associated with an existing alarm and **80 directly reported incidents** without an alarm; **160** have an assigned fictional engineer and **40** have the assignment blank. All 200 have an Asset and Reported By reference. For incidents linked to alarms, the Source Asset matches the related alarm's Source Asset.
+
+### Finish Part 05
+
+Reopen both tables and inspect a few records. **DC Alarm** should have **120** unique codes and valid equipment references, including **48** sensor-linked alerts. **DC Incident** should have **200** unique codes; the **120 Related Alarm** lookups, **200 Source Asset** lookups and **200 Reported By** lookups should resolve to existing fictional rows. Confirm the Choice values and timestamps remain populated, with the expected optional blank fields.
+
+This is now a linked alarm-and-incident data model ready for later app screens, automated routing, acknowledgments and incident-management workflows. No app, flow, real alarm connector or live facility integration is required in this lesson.
+
 ## Microsoft Learn references
 
 - [Create a Power Platform solution](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-solution)
@@ -547,5 +679,6 @@ You now have a relational infrastructure registry ready for incident and monitor
 - [Create and edit one-to-many / many-to-one relationships](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-1n-relationships-portal)
 - [Import data and map choices/lookups](https://learn.microsoft.com/en-us/power-apps/user/import-data)
 - [Create a relationship by adding a lookup](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/data-platform-entity-lookup)
+- [Date and Time column behavior](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/behavior-format-date-time-field)
 
 *All organizations, facilities, staff, and operational scenarios in this learning project are fictional. Do not use this guide to control live data center infrastructure.*
