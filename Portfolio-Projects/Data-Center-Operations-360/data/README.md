@@ -12,8 +12,10 @@ This directory will contain **original synthetic practice datasets** as the corr
 - [Part 03 — employee-profiles.csv](./employee-profiles.csv): 20 fictional employee profiles for initial import. After creating the records, follow [Part 03](../Build-Guide.md#part-03--build-the-employee-directory-and-reporting-hierarchy) to select the existing Department, Campus and Manager lookup records.
 - [Part 04 — assets.csv](./assets.csv): 100 fictional infrastructure assets, 50 per data hall; **Data Hall** is an actual lookup and needs lookup-reference mapping.
 - [Part 04 — sensors.csv](./sensors.csv): 24 fictional sensor inventory records referring to existing assets; **Asset** is an actual lookup and needs lookup-reference mapping.
+- [Part 05 — alarms.csv](./alarms.csv): 120 fictional operating alarms, including 48 sensor-linked records; requires existing DC Asset and DC Sensor records.
+- [Part 05 — incidents.csv](./incidents.csv): 200 fictional incidents linked to assets, employee profiles and optionally prior alarm records; import alarms before incidents.
 
-The CSV headers exactly match the **display names** introduced in the [Build Guide](../Build-Guide.md). The guide identifies the intended **svrg-prefixed schema names** separately. Dataverse may suggest field mapping automatically, but always review Choice and lookup values before completing an import. Import referenced parent records before child records: campus before halls, halls before assets, and assets before sensors. If you have entered the same rows manually, do not also import the CSVs.
+The CSV headers exactly match the **display names** introduced in the [Build Guide](../Build-Guide.md). The guide identifies the intended **svrg-prefixed schema names** separately. Dataverse may suggest field mapping automatically, but always review Choice and lookup values before completing an import. Import referenced parent records before child records: campus before halls; halls before assets; assets before sensors; alarms after assets and sensors; incidents after alarms. If you have entered the same rows manually, do not also import the CSVs.
 
 Do not import datasets from previous experiments, previous Power Platform solutions, or unrelated AB-410 course modules. Every future dataset will be fictional and checked for consistency with the published schema.
 
