@@ -13,7 +13,7 @@ This is a **hands-on learning project**, not a deployed facility management syst
 
 The Build Guide is the single cumulative learner document. Follow the published instructions in order. Each completed lesson includes the exact navigation, field settings, expected results, validation checks, troubleshooting, and links to downloadable practice files where appropriate.
 
-**Published:** Part 00 — Solution Foundation; Part 01 — Department Master; Part 02 — Campus and Data Halls; Part 03 — Employee Directory and Reporting Hierarchy; Part 04 — Asset and Sensor Registry.
+**Published:** Parts 00–05 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management.
 
 ### Learning goals
 
