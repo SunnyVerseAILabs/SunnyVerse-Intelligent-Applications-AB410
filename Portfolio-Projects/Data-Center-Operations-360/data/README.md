@@ -15,6 +15,8 @@ This directory will contain **original synthetic practice datasets** as the corr
 - [Part 05 — alarms.csv](./alarms.csv): 120 fictional operating alarms, including 48 sensor-linked records; requires existing DC Asset and DC Sensor records.
 - [Part 05 — incidents.csv](./incidents.csv): 200 fictional incidents linked to assets, employee profiles and optionally prior alarm records; import alarms before incidents.
 
+**Part 06 — Operations Command Center** uses the existing Dataverse records from Parts 04–05. No additional dataset or CSV import is required. Follow [Part 06 in the Build Guide](../Build-Guide.md#part-06--build-the-operations-command-center-canvas-app).
+
 The CSV headers exactly match the **display names** introduced in the [Build Guide](../Build-Guide.md). The guide identifies the intended **svrg-prefixed schema names** separately. Dataverse may suggest field mapping automatically, but always review Choice and lookup values before completing an import. Import referenced parent records before child records: campus before halls; halls before assets; assets before sensors; alarms after assets and sensors; incidents after alarms. If you have entered the same rows manually, do not also import the CSVs.
 
 Do not import datasets from previous experiments, previous Power Platform solutions, or unrelated AB-410 course modules. Every future dataset will be fictional and checked for consistency with the published schema.
