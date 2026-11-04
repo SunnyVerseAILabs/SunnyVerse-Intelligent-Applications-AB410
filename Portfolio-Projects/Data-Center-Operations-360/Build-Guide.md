@@ -1052,7 +1052,7 @@ You have a **five-screen Operations Command Center** with consistent navy, teal,
 
 Our Operations Command Center provides a desktop view of alarms and incidents. Next, we'll create **DC FieldOps**, a portrait Canvas App for a fictional field engineer carrying a phone. The app will show existing incidents, allow an update to an incident's operational status, and record equipment inspections with notes and supporting evidence. It uses the existing Assets, Incidents and Employee Profiles from earlier lessons.
 
-First we'll create **DC Field Inspection**, a small Dataverse table for inspection records. Then we'll create the mobile app and enter two sample inspections through its own form. **No CSV import or new Power Automate flow is needed.** We'll use the same deep-navy, teal, amber and light-neutral colors as the command center.
+First we'll create **DC Field Inspection**, a small Dataverse table for inspection records. Then we'll create the mobile app and enter two sample inspections through its own form. **No CSV import or new Power Automate flow is needed.** We'll use a distinct **Night Shift Neon** visual design: a fully black screen, deep slate panels, vivid cyan actions, violet dividers and warm-gold highlights. Wherever the selected Canvas control exposes a **Font** property, set it to **Comic Sans MS** with a fallback for devices that don't have that font. The theme is applied during each build activity, not in a separate styling exercise.
 
 ### S07.01 — Create the DC Field Inspection table
 
@@ -1109,7 +1109,7 @@ In **Schema → Columns**, verify that **Asset**, **Inspected By** and **Related
 
 **Checkpoint 2 — Relationships.** The DC Field Inspection table has **three** lookups: two required and one optional. The related Asset, Employee Profile and Incident tables already contain the practice records created earlier.
 
-### S07.04 — Create DC FieldOps and apply its mobile theme
+### S07.04 — Create DC FieldOps with a black canvas, neon palette and Comic Sans MS typography
 
 Return to **Solutions → SunnyVerse Data Center Operations 360 → New → App → Canvas app**. Choose **Phone / Portrait** and enter **DC FieldOps** as the app's name. In the editor open **Data → Add data → Microsoft Dataverse** and connect these existing tables:
 
@@ -1120,21 +1120,57 @@ Return to **Solutions → SunnyVerse Data Center Operations 360 → New → App 
 | `'DC Employee Profiles'` | Select a fictional inspector in the form |
 | `'DC Field Inspections'` | Create, browse and edit inspection records |
 
-Select **App → Formulas** and enter the same reusable named colors used by the desktop command center:
+Select **App** in Tree view and choose the **Formulas** property above the formula bar. Enter these named formulas. Using one palette means the header, screens, forms, galleries and buttons remain visually consistent. The screen itself is **pure black**; elevated cards use dark slate so their edges and contents remain clear.
 
 ```powerfx
-clrPrimary = ColorValue("#16364F");
-clrSecondary = ColorValue("#086B78");
-clrAccent = ColorValue("#F3B547");
-clrCanvas = ColorValue("#F3F7FA");
-clrSurface = ColorValue("#FFFFFF");
-clrText = ColorValue("#192F42");
-clrMuted = ColorValue("#536A7B");
-clrBorder = ColorValue("#D9E4EB");
-clrSelected = ColorValue("#E1F2F3");
-clrDanger = ColorValue("#B83D51");
-clrSuccess = ColorValue("#20715B");
+clrPrimary = ColorValue("#000000");
+clrCanvas = ColorValue("#000000");
+clrSurface = ColorValue("#141C2A");
+clrSecondary = ColorValue("#27D7E7");
+clrAccent = ColorValue("#AC91FF");
+clrSignal = ColorValue("#FFC86A");
+clrText = ColorValue("#F6F9FF");
+clrMuted = ColorValue("#BECDDD");
+clrBorder = ColorValue("#38475D");
+clrSelected = ColorValue("#203F52");
+clrDanger = ColorValue("#FF879A");
+clrSuccess = ColorValue("#76E8BB");
+fontField = "Comic Sans MS, Arial, sans-serif";
 ```
+
+| Role | Color / font token | Purpose |
+| --- | --- | --- |
+| Header and entire canvas | `clrPrimary` / `clrCanvas` — **#000000** | Pure black, focused night-shift environment |
+| Primary interaction | `clrSecondary` — **#27D7E7** | Cyan navigation, buttons and focus |
+| Secondary accent | `clrAccent` — **#AC91FF** | Violet header underline and selected visual emphasis |
+| Signal highlight | `clrSignal` — **#FFC86A** | Warm-gold marker for important figures |
+| Cards, forms and inputs | `clrSurface` — **#141C2A** | Dark slate surfaces distinct from black |
+| Primary text | `clrText` — **#F6F9FF** | High-contrast near-white labels |
+| Supporting text | `clrMuted` — **#BECDDD** | Metadata, captions and descriptions |
+| Borders | `clrBorder` — **#38475D** | Subtle separation of controls |
+| Selected records | `clrSelected` — **#203F52** | Dark cyan-blue gallery selection |
+| Error and success | `clrDanger` / `clrSuccess` | State indicators with written messages |
+| Typography | `fontField` — **Comic Sans MS** | Labels and supported controls, falling back to Arial or sans-serif |
+
+In Power Apps, a control's **Font** property specifies the font family. Apply **Font = `fontField`** to all Classic labels, buttons, text inputs, editable gallery labels, and supported form card captions/values. A Combo box, Date picker, attachment control or Modern control may expose a different set of typography properties; set **Font** wherever present, but do not break a generated control to force the font. Comic Sans MS isn't guaranteed on every phone, so preview on an actual device and allow the listed fallback to render when needed. No font file or custom-code package is required.
+
+Apply this reusable control-format reference while adding controls in the steps below. It keeps the entire app consistent rather than styling only the title.
+
+| Control type | Properties to configure during insertion | Formula/value |
+| --- | --- | --- |
+| Every screen | Fill | `clrCanvas` |
+| Header rectangles | Fill / BorderThickness | `clrPrimary` / `0` |
+| Screen title labels | Font / Color / FontWeight | `fontField` / `clrSecondary` / `FontWeight.Bold` |
+| Body and gallery title labels | Font / Color | `fontField` / `clrText` |
+| Secondary labels and form card captions | Font / Color | `fontField` / `clrMuted` |
+| Classic input controls | Font / Fill / Color / BorderColor | `fontField` / `clrSurface` / `clrText` / `clrBorder` |
+| Primary buttons | Font / Fill / Color | `fontField` / `clrSecondary` / `clrPrimary` |
+| Back, Cancel, Refresh buttons | Font / Fill / Color / BorderColor | `fontField` / `clrSurface` / `clrText` / `clrBorder` |
+| Gallery containers | Fill / TemplateFill | `clrSurface` / `If(ThisItem.IsSelected, clrSelected, clrSurface)` |
+| Display/Edit forms | Fill / BorderColor | `clrSurface` / `clrBorder` |
+| Form input validation label | Font / Color | `fontField` / `clrDanger` |
+
+**Why these colors?** Cyan-on-black buttons are easy to locate, dark-slate cards establish grouping without losing the black-screen effect, violet adds identity without overwhelming the work area, and warm gold highlights operational information. Always pair an alert color with readable text. Avoid white text on a bright cyan button; the **black text** is intentional for contrast.
 
 Create the six blank screens in **Tree view**, using **New screen → Blank** and **… → Rename**:
 
@@ -1147,7 +1183,7 @@ Create the six blank screens in **Tree view**, using **New screen → Blank** an
 | `scrFieldInspections` | Inspection list | Search, inspection gallery, New button |
 | `scrFieldInspectionEdit` | Create or update inspection | Edit form including attachments, Save and Cancel |
 
-On **each screen**, set **Fill = `clrCanvas`**. Create a rectangle (**Insert → Shapes → Rectangle**) and a text label for its header. Give the rectangle **X = 0, Y = 0, Width = Parent.Width, Height = 72, Fill = `clrPrimary`, BorderThickness = 0**. Add a thin second rectangle with **X = 0, Y = 72, Width = Parent.Width, Height = 3, Fill = `clrAccent`**. Send both rectangles to the back. Set each title label's **X = 18, Y = 13, Width = Parent.Width - 36, Height = 44, Color = `clrSurface`, Fill = `Color.Transparent`, Size = 20, FontWeight = `FontWeight.Bold`**.
+On **each screen**, set **Fill = `clrCanvas`** for the complete black canvas. Create a rectangle (**Insert → Shapes → Rectangle**) and a text label for its header. Give the rectangle **X = 0, Y = 0, Width = Parent.Width, Height = 72, Fill = `clrPrimary`, BorderThickness = 0**. Add a thin violet divider rectangle with **X = 0, Y = 72, Width = Parent.Width, Height = 3, Fill = `clrAccent`**. Send both shapes to the back. Set each title label's **X = 18, Y = 13, Width = Parent.Width - 36, Height = 44, Font = `fontField`, Color = `clrSecondary`, Fill = `Color.Transparent`, Size = 20, FontWeight = `FontWeight.Bold`**. This gives every screen a black top area with a vivid cyan Comic Sans heading and a fine violet accent.
 
 | Screen title label | Text |
 | --- | --- |
@@ -1160,7 +1196,7 @@ On **each screen**, set **Fill = `clrCanvas`**. Create a rectangle (**Insert →
 
 Use **Classic** Text labels, Buttons, Text inputs, and **Blank vertical** Galleries when available, so the formulas use the classic `Text` property. Add each title to its screen and rename it as above. Set **App → StartScreen = `scrFieldHome`**.
 
-Buttons will use consistent mobile styling: **Fill = `clrSecondary`**, **Color = `clrSurface`**, **Height = 48**, **Size = 16**, **BorderThickness = 0**. Set **HoverFill = `ColorValue("#07515B")`** and **PressedFill = `ColorValue("#06444C")`** for Classic buttons. For **Back** and **Cancel** buttons use **Fill = `clrSurface`**, **Color = `clrPrimary`**, **BorderColor = `clrBorder`**, **BorderThickness = 1**. Use a 12–16 pixel margin between touch controls.
+Buttons will use consistent mobile styling: **Font = `fontField`**, **Fill = `clrSecondary`**, **Color = `clrPrimary`** (black text), **Height = 48**, **Size = 16**, **BorderThickness = 0**. Set **HoverFill = `ColorValue("#54E6F1")`** and **PressedFill = `ColorValue("#1EB0C0")`** for Classic buttons. For **Back**, **Cancel** and **Refresh**, use **Fill = `clrSurface`**, **Color = `clrText`**, **BorderColor = `clrBorder`**, **BorderThickness = 1**. Use a 12–16 pixel margin between touch controls. When available, set Classic button corner radii to `8` for all four corners.
 
 ### S07.05 — Build the FieldOps Home screen
 
@@ -1170,7 +1206,7 @@ Open `scrFieldHome`. Add two large labels for the KPIs and three buttons below t
 | --- | --- | --- |
 | `lblFieldIncidentCount` | Text | `"INCIDENTS" & Char(10) & Text(CountIf('DC Incidents', true), "0")` |
 | `lblFieldInspectionCount` | Text | `"INSPECTIONS" & Char(10) & Text(CountIf('DC Field Inspections', true), "0")` |
-| Both KPI labels | Fill / Color / BorderColor / BorderThickness | `clrSurface` / `clrText` / `clrBorder` / `1` |
+| Both KPI labels | Fill / Color / BorderColor / BorderThickness / Font | `clrSurface` / `clrText` / `clrBorder` / `1` / `fontField` |
 | Both KPI labels | X / Width / Height / Align | `18` / `Parent.Width - 36` / `90` / `Align.Center` |
 | `lblFieldIncidentCount` | Y | `104` |
 | `lblFieldInspectionCount` | Y | `212` |
@@ -1178,11 +1214,11 @@ Open `scrFieldHome`. Add two large labels for the KPIs and three buttons below t
 | `btnFieldOpenInspections` | Text / OnSelect | `"Record inspection"` / `Navigate(scrFieldInspections, ScreenTransition.Fade)` |
 | `btnFieldRefresh` | Text / OnSelect | `"Refresh"` / `Refresh('DC Incidents'); Refresh('DC Field Inspections'); Notify("Records refreshed.", NotificationType.Information)` |
 
-Set each button's **X = 18**, **Width = Parent.Width - 36**, and use **Y = 330, 398, and 466**, respectively. The first two buttons use teal; make Refresh white with navy text and a cool-gray border.
+Set each button's **X = 18**, **Width = Parent.Width - 36**, and use **Y = 330, 398, and 466**, respectively. The first two buttons use **cyan Fill, black Text and Comic Sans MS**; Refresh uses a dark-slate Fill, light Text and a muted border. Set **lblFieldIncidentCount.BorderColor = `clrSignal`** so the warm-gold edge marks an important KPI without filling the card with bright color.
 
 With the original practice data, Incidents should initially show approximately **200**, and Inspections should initially show **0**. Dataverse counts can be cached or delegation-limited; the `CountIf` formula is intended to request an exact count in supported Dataverse environments with enhanced delegation enabled. If a count contradicts the table's records, inspect the formula warning rather than replacing the number with a fixed literal.
 
-**Checkpoint 3 — Mobile Home.** The portrait screen shows two readable white KPI cards, three large touch buttons, and a navy header with a thin amber divider. Both Browse incidents and Record inspection navigate to their respective screens.
+**Checkpoint 3 — Mobile Home.** The portrait screen is fully black with two readable dark-slate KPI cards, large cyan touch buttons, a black header, a thin violet divider and Comic Sans MS wherever supported. Both Browse incidents and Record inspection navigate to their respective screens.
 
 ### S07.06 — Browse and open existing incidents
 
@@ -1192,7 +1228,7 @@ On `scrFieldIncidents` insert **Classic Text input** `txtFieldIncidentSearch`, *
 | --- | --- | --- |
 | `txtFieldIncidentSearch` | HintText / Default | `"Search incident code or name"` / `""` |
 | `txtFieldIncidentSearch` | X / Y / Width / Height | `18` / `94` / `Parent.Width - 36` / `48` |
-| `txtFieldIncidentSearch` | Fill / Color / BorderColor / FocusedBorderColor | `clrSurface` / `clrText` / `clrBorder` / `clrSecondary` |
+| `txtFieldIncidentSearch` | Font / Fill / Color / BorderColor / FocusedBorderColor | `fontField` / `clrSurface` / `clrText` / `clrBorder` / `clrSecondary` |
 | `scrFieldIncidents` | OnVisible | `Set(varFieldOnlyUnassigned, false)` |
 | `btnFieldOnlyUnassigned` | Text | `If(varFieldOnlyUnassigned, "Show all incidents", "Unassigned only")` |
 | `btnFieldOnlyUnassigned` | OnSelect | `Set(varFieldOnlyUnassigned, !varFieldOnlyUnassigned)` |
@@ -1219,7 +1255,7 @@ Sort(
 )
 ```
 
-Inside the gallery template insert **two labels**, `lblFieldIncidentRowName` and `lblFieldIncidentRowMeta`. Do not use a photo gallery. Give the first **Text = `ThisItem.'Incident Name'`**, **Color = `clrText`**, **Size = 15**; the second **Text = `ThisItem.'Incident Code' & "  ·  " & Text(ThisItem.'Incident Status')`**, **Color = `clrMuted`**, **Size = 12**. Set both **OnSelect = `Select(Parent)`**, **Fill = `Color.Transparent`**, **X = 12** and **Width = Parent.TemplateWidth - 24**. Use **Y = 9** for the first and **Y = 42** for the second. Remove any placeholder image control from the template.
+Inside the gallery template insert **two labels**, `lblFieldIncidentRowName` and `lblFieldIncidentRowMeta`. Do not use a photo gallery. Give the first **Text = `ThisItem.'Incident Name'`**, **Color = `clrText`**, **Font = `fontField`**, **Size = 15**; the second **Text = `ThisItem.'Incident Code' & "  ·  " & Text(ThisItem.'Incident Status')`**, **Color = `clrMuted`**, **Font = `fontField`**, **Size = 12**. Set both **OnSelect = `Select(Parent)`**, **Fill = `Color.Transparent`**, **X = 12** and **Width = Parent.TemplateWidth - 24**. Use **Y = 9** for the first and **Y = 42** for the second. Remove any placeholder image control from the template.
 
 On `scrFieldIncidentDetail` choose **Insert → Forms → Display form** and rename it `frmFieldIncidentView`. Add two buttons, `btnFieldOpenEdit` and `btnFieldDetailBack`. Configure:
 
@@ -1231,7 +1267,7 @@ On `scrFieldIncidentDetail` choose **Insert → Forms → Display form** and ren
 | `btnFieldOpenEdit` | Text / OnSelect | `"Update incident"` / `EditForm(frmFieldIncidentEdit); Navigate(scrFieldIncidentEdit, ScreenTransition.Fade)` |
 | `btnFieldDetailBack` | Text / OnSelect | `"Back to incidents"` / `Navigate(scrFieldIncidents, ScreenTransition.None)` |
 
-Under **frmFieldIncidentView → Edit fields → Add field**, include **Incident Name**, **Incident Code**, **Priority**, **Incident Status**, **Reported At**, **Incident Description**, **Source Asset**, **Reported By**, **Assigned Engineer**, **Related Alarm** and **Resolution Notes**. Remove any automatically included *system* Status or Status Reason cards from the form; keep the custom **Incident Status**. Set card caption colors to `clrMuted` and displayed values to `clrText`. Use a one-column form so field labels and lookup names remain readable on a phone.
+Under **frmFieldIncidentView → Edit fields → Add field**, include **Incident Name**, **Incident Code**, **Priority**, **Incident Status**, **Reported At**, **Incident Description**, **Source Asset**, **Reported By**, **Assigned Engineer**, **Related Alarm** and **Resolution Notes**. Remove any automatically included *system* Status or Status Reason cards from the form; keep the custom **Incident Status**. Set each card caption's **Font = `fontField`**, **Color = `clrMuted`**; set the displayed value control's **Font = `fontField`** where offered and **Color = `clrText`**. Give the form **Fill = `clrSurface`** and **BorderColor = `clrBorder`**. Use a one-column form so field labels and lookup names remain readable on a phone.
 
 **Checkpoint 4 — Incident navigation.** Search `INC-0002`, select it, and verify the Incident Details form displays the selected existing record. The Back button returns to the incident gallery without creating anything.
 
@@ -1267,7 +1303,7 @@ Notify(
 )
 ```
 
-Position Save update and Cancel beneath the form; use teal for Save and outlined white for Cancel. For each form-card caption choose **Color = `clrMuted`**. For editable controls use **Fill = `clrSurface`**, **Color = `clrText`** and **BorderColor = `clrBorder`**, where supported. Error labels use `clrDanger`. Leave the generated Combo box's lookup source and any card **DataField / Default / Update** settings unchanged.
+Position Save update and Cancel beneath the form; use **cyan Fill with black Comic Sans text** for Save, and a dark-slate Fill with light Comic Sans text and a thin border for Cancel. For each form-card caption set **Font = `fontField`**, **Color = `clrMuted`**. For editable controls use **Font = `fontField`** (where offered), **Fill = `clrSurface`**, **Color = `clrText`**, **BorderColor = `clrBorder`** and **FocusedBorderColor = `clrSecondary`** (where available). Error labels use **Font = `fontField`** and **Color = `clrDanger`**. Leave the generated Combo box's lookup source and any card **DataField / Default / Update** settings unchanged.
 
 **Checkpoint 5 — Update.** Open `INC-0002`, update its **Incident Status** from Assigned to In Progress, save and confirm the status is shown in the read-only details. Change it back to Assigned so the fictional seed data stays consistent. Canceling the form must not save a change.
 
@@ -1278,6 +1314,7 @@ On `scrFieldInspections` insert **Classic Text input** `txtFieldInspectionSearch
 | Control | Property | Formula / value |
 | --- | --- | --- |
 | `txtFieldInspectionSearch` | HintText / Default | `"Search inspection code or name"` / `""` |
+| `txtFieldInspectionSearch` | Font / Fill / Color / BorderColor | `fontField` / `clrSurface` / `clrText` / `clrBorder` |
 | `txtFieldInspectionSearch` | X / Y / Width / Height | `18` / `96` / `Parent.Width - 36` / `48` |
 | `galFieldInspections` | Items | See formula below |
 | `galFieldInspections` | X / Y / Width / Height | `18` / `211` / `Parent.Width - 36` / `Parent.Height - 304` |
@@ -1302,7 +1339,7 @@ Sort(
 )
 ```
 
-Inside the gallery template add **two labels**: `lblFieldInspectionRowName` (**Text = `ThisItem.'Inspection Name'`**, Color `clrText`, Size 15), and `lblFieldInspectionRowMeta` (**Text = `ThisItem.'Inspection Code' & "  ·  " & Text(ThisItem.'Inspection Status')`**, Color `clrMuted`, Size 12). Set **OnSelect = `Select(Parent)`**, **Fill = `Color.Transparent`**, **X = 12** and **Width = Parent.TemplateWidth - 24** for both. Put New inspection above the gallery and Home below it.
+Inside the gallery template add **two labels**: `lblFieldInspectionRowName` (**Text = `ThisItem.'Inspection Name'`**, **Font = `fontField`**, Color `clrText`, Size 15), and `lblFieldInspectionRowMeta` (**Text = `ThisItem.'Inspection Code' & "  ·  " & Text(ThisItem.'Inspection Status')`**, **Font = `fontField`**, Color `clrMuted`, Size 12). Set **OnSelect = `Select(Parent)`**, **Fill = `Color.Transparent`**, **X = 12** and **Width = Parent.TemplateWidth - 24** for both. Put New inspection above the gallery and Home below it.
 
 Next open `scrFieldInspectionEdit`, insert **Forms → Edit form**, rename it `frmFieldInspectionEdit`, then add the **Save inspection** and **Cancel** buttons below the form.
 
@@ -1336,7 +1373,7 @@ Under **frmFieldInspectionEdit → Edit fields → Add field**, select these fie
 
 **Evidence upload:** The table's **Enable attachments** setting allows a Dataverse form to offer an **Attachments** field. Choose **Edit fields → Add field → Attachments**, if shown. Keep the generated attachment card and its data binding unchanged. The file is not stored just because it was selected; **SubmitForm** saves the record and the staged file together. On Power Apps Mobile, files are normally selected one at a time. Use a **fictional/staged image or non-sensitive sample file**—never a real facility photo. If Attachments isn't available, verify table attachment enablement and refresh the Dataverse connection; do not substitute an unbound Add picture control and assume it saved to Dataverse. The attachment feature may depend on the tenant configuration and permissions.
 
-For the form's existing card captions use **clrMuted** and for supported inputs use **Fill = clrSurface**, **Color = clrText**, **BorderColor = clrBorder**; use **clrDanger** for error labels. Keep **DataField**, **Update**, **Default**, **Required** and attachment control bindings as generated. The single-column form is taller than a phone's display; keep the form scrollable and its Save/Cancel buttons outside its scrollable cards.
+For the form's existing card captions set **Font = `fontField`** and **Color = `clrMuted`**. On supported input controls set **Font = `fontField`**, **Fill = `clrSurface`**, **Color = `clrText`**, **BorderColor = `clrBorder`** and **FocusedBorderColor = `clrSecondary`** when offered. Use **Font = `fontField`** and **Color = `clrDanger`** for error labels. Keep **DataField**, **Update**, **Default**, **Required** and attachment control bindings as generated. The single-column form is taller than a phone's display; keep the form scrollable and its Save/Cancel buttons outside its scrollable cards.
 
 Set `frmFieldInspectionEdit.OnSuccess`:
 
@@ -1377,7 +1414,7 @@ Notify(
 
 After saving, select one inspection from `galFieldInspections` to reopen the edit form. Verify its Asset, inspector, status, result, notes and any attachment remain associated with the saved record. The attachment should be retrievable from the record if the tenant supports it.
 
-**Checkpoint 6 — Inspection workflow.** The inspection gallery shows **two** records with distinct codes; opening one shows its saved fields, lookups and evidence where enabled. The form can create and edit inspection records without duplicating the underlying Assets or Employees.
+**Checkpoint 6 — Inspection workflow.** The inspection gallery shows **two** records with distinct codes; opening one shows its saved fields, lookups and evidence where enabled. Text fields, buttons and record cards use the same black/slate/cyan/violet visual system and Comic Sans MS where available. The form can create and edit inspection records without duplicating the underlying Assets or Employees.
 
 ### S07.09 — Test, save and publish DC FieldOps
 
@@ -1385,7 +1422,7 @@ Use **Preview (Play/F5)** in Power Apps Studio, then test on an authorized phone
 
 | Test | Action | Expected result |
 | --- | --- | --- |
-| T01 | Open DC FieldOps | Portrait layout, navy header, amber divider, teal buttons and readable controls |
+| T01 | Open DC FieldOps | Portrait layout, pure-black canvas/header, violet divider, cyan buttons with black lettering, slate cards and readable Comic Sans MS text when available |
 | T02 | Tap Browse incidents; search `INC-0002` | Existing incident appears |
 | T03 | Open its details | Priority, status, asset and reporting employee are visible |
 | T04 | Update Incident Status; save; restore original value | The change persists and the form reports success |
@@ -1401,7 +1438,7 @@ Select **Save**, then **Publish → Publish this version**. Return to the soluti
 
 ### Finish Part 07
 
-Your solution now contains a **phone-oriented FieldOps Canvas App** and a **DC Field Inspection** Dataverse table with three lookup relationships. The app can browse and update existing fictional incidents, create and edit inspections, record observations and follow-up decisions, and save supporting evidence through a supported Dataverse attachment form. Confirm the two sample inspection records persist after reopening the table and that the previous incident, asset and employee data remain intact.
+Your solution now contains a **phone-oriented FieldOps Canvas App** using a fully black, cyan/violet/gold mobile theme and Comic Sans MS text where supported, plus a **DC Field Inspection** Dataverse table with three lookup relationships. The app can browse and update existing fictional incidents, create and edit inspections, record observations and follow-up decisions, and save supporting evidence through a supported Dataverse attachment form. Confirm the two sample inspection records persist after reopening the table and that the previous incident, asset and employee data remain intact.
 
 
 ## Microsoft Learn references
