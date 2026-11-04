@@ -694,33 +694,59 @@ In Studio, open **Data** from the left rail and select **Add data → Microsoft 
 
 Select the **App** node in the tree view and set **StartScreen** to `scrHome` *after* creating that screen in the next step. Do not create another connection to an unrelated environment.
 
-### S06.02 — Name the screens and arrange navigation
+### S06.02 — Create the screens, add controls and connect navigation
 
-Select the first blank screen in **Tree view → Rename** and enter `scrHome`. Choose **New screen → Blank** four times; rename the new screens as shown. Use **Insert** to add controls, then rename each in Tree view. For the controls in this lesson, prefer **Classic** Label, Button, Text input and Gallery variants where the editor offers them; their Power Fx properties use `Text`. Modern Text input controls can use `Value` instead, so substitute that property consistently if you choose a modern input.
+We will first create the five screens and give each control a consistent name. **Only add the controls listed for this step**; the Incident forms and Alarm browser controls will be inserted in their respective later activities. This avoids adding the same control twice.
 
-| Screen name | Purpose | Controls to add |
+**1. Create and rename the screens.** In Power Apps Studio, select **Tree view** on the left. Find the first screen (often named `Screen1`), select its **…** menu (or right-click), choose **Rename**, type `scrHome` and press **Enter**. Then choose **New screen → Blank**, rename the new screen `scrIncidents`, and repeat **New screen → Blank** three more times to create `scrIncidentDetail`, `scrIncidentEdit` and `scrAlarms`. The Tree view should now show **exactly these five screens**.
+
+| Order | Screen name | Purpose |
 | --- | --- | --- |
-| `scrHome` | Summary and recent incidents | `lblHomeTitle`, `lblCountIncidents`, `lblCountAlarms`, `lblCountAssets`, `galRecentIncidents`, `btnHomeIncidents`, `btnHomeAlarms`, `btnRefreshHome` |
-| `scrIncidents` | Search and open incidents | `lblIncidentsTitle`, `txtIncidentSearch`, `btnOnlyUnassigned`, `galIncidents`, `btnNewIncident`, `btnIncidentsHome` |
-| `scrIncidentDetail` | Read one selected incident | `lblIncidentTitle`, `frmIncidentView`, `btnEditIncident`, `btnDetailBack` |
-| `scrIncidentEdit` | Create or edit an incident | `lblEditTitle`, `frmIncidentEdit`, `btnSaveIncident`, `btnCancelIncident` |
-| `scrAlarms` | Browse alarms and show selected details | `lblAlarmsTitle`, `txtAlarmSearch`, `galAlarms`, `frmAlarmView`, `btnAlarmsHome` |
+| 1 | `scrHome` | Summary counts and recent incidents |
+| 2 | `scrIncidents` | Search the incident queue |
+| 3 | `scrIncidentDetail` | View a selected incident |
+| 4 | `scrIncidentEdit` | Create or edit an incident |
+| 5 | `scrAlarms` | Browse and inspect alarms |
 
-For a simple desktop layout, use **Insert → Label** for each title, place it along the top, and set its **Text** property to the screen title. Arrange the home screen with three KPI labels across the upper half and the recent-incident gallery below. Place the Incidents gallery under its search box. On Alarms, place the gallery on the left and the read-only form on the right; resize both so their fields remain legible. A practical title style is **Font size 24**, bold. Keep at least a 16-pixel gap between adjacent controls. This first iteration uses a tablet layout; phone-specific redesign comes later if needed.
+**2. Learn the add-and-rename action once.** Select the target **screen name in Tree view**, then choose **Insert**. For a title or count choose **Text label / Label**; for a navigation action choose **Button**; for search choose **Text input**; and for a list choose **Gallery → Vertical** (choose a title/subtitle layout if offered). Find the newly inserted control *under that screen* in Tree view, select **… → Rename**, enter the exact name below and press **Enter**. Repeat for the remaining controls. Prefer **Classic** Label, Button, Text input and Gallery variants when available so the formulas in this lesson use the `Text` property. A Modern Text input may use `Value` instead; if you choose Modern, replace references to `txtIncidentSearch.Text` with `txtIncidentSearch.Value` consistently.
 
-Configure the navigation buttons:
+**3. Add the controls screen by screen.** Work down the table; each comma-separated name represents **one separate control**. Do not type these names into the canvas as visible text—enter them using **Rename** in Tree view.
+
+| Select screen | Add **now** (control type → exact names) | Add **later** |
+| --- | --- | --- |
+| `scrHome` | **Labels:** `lblHomeTitle`, `lblCountIncidents`, `lblCountAlarms`, `lblCountAssets`; **Vertical gallery:** `galRecentIncidents`; **Buttons:** `btnHomeIncidents`, `btnHomeAlarms`, `btnRefreshHome` | Populate KPI/gallery formulas in **S06.03** |
+| `scrIncidents` | **Label:** `lblIncidentsTitle`; **Text input:** `txtIncidentSearch`; **Vertical gallery:** `galIncidents`; **Buttons:** `btnOnlyUnassigned`, `btnNewIncident`, `btnIncidentsHome` | Configure search and filtering in **S06.04** |
+| `scrIncidentDetail` | **Label:** `lblIncidentTitle`; **Buttons:** `btnEditIncident`, `btnDetailBack` | Insert **Display form** `frmIncidentView` in **S06.05** |
+| `scrIncidentEdit` | **Label:** `lblEditTitle`; **Buttons:** `btnSaveIncident`, `btnCancelIncident` | Insert **Edit form** `frmIncidentEdit` in **S06.06** |
+| `scrAlarms` | **Label:** `lblAlarmsTitle`; **Button:** `btnAlarmsHome` | Insert **Text input** `txtAlarmSearch`, **Vertical gallery** `galAlarms` and **Display form** `frmAlarmView` in **S06.07** |
+
+**4. Arrange the controls.** Select each title label and place it at the top of its screen. Set **Font size = 24** and **Font weight = Bold** where offered. On `scrHome`, arrange the three count labels across the upper area, followed by the recent-incidents gallery and the navigation/refresh buttons. On `scrIncidents`, place the search input above the incident gallery, with the filter and New Incident buttons nearby. On the detail and edit screens, keep the title at the top and their action buttons below or beside the space reserved for the forms. On `scrAlarms`, reserve the left side for the gallery and the right side for the read-only form added in S06.07. Leave approximately 16 pixels between adjacent controls; you can resize and refine the layout after the data is connected.
+
+**5. Set the screen titles and navigation buttons.** To change a property, select a control in **Tree view**, choose the property (for example **Text** or **OnSelect**) using the property drop-down above the formula bar, paste the expression and press **Enter**. **Text** controls what a label or button displays; **OnSelect** is what happens when a button is clicked.
 
 | Control | Property | Formula / value |
 | --- | --- | --- |
+| `lblHomeTitle` | Text | `"Data Center Operations 360 — Command Center"` |
+| `lblIncidentsTitle` | Text | `"Incident Management"` |
+| `lblIncidentTitle` | Text | `"Incident Details"` |
+| `lblEditTitle` | Text | `"Incident Editor"` |
+| `lblAlarmsTitle` | Text | `"Alarm Monitoring"` |
 | `btnHomeIncidents` | Text | `"Open incidents"` |
 | `btnHomeIncidents` | OnSelect | `Navigate(scrIncidents, ScreenTransition.Fade)` |
 | `btnHomeAlarms` | Text | `"Open alarms"` |
 | `btnHomeAlarms` | OnSelect | `Navigate(scrAlarms, ScreenTransition.Fade)` |
+| `btnIncidentsHome` | Text | `"Home"` |
 | `btnIncidentsHome` | OnSelect | `Navigate(scrHome, ScreenTransition.None)` |
+| `btnAlarmsHome` | Text | `"Home"` |
 | `btnAlarmsHome` | OnSelect | `Navigate(scrHome, ScreenTransition.None)` |
+| `btnDetailBack` | Text | `"Back to incidents"` |
 | `btnDetailBack` | OnSelect | `Navigate(scrIncidents, ScreenTransition.None)` |
 
-Set the three return-button **Text** properties to `"Home"` or `"Back to incidents"` as appropriate. Finally select **App → StartScreen** and enter `scrHome`.
+The other buttons, galleries, forms and search properties are deliberately configured in **S06.03–S06.07**. You do not need to assign temporary formulas to them now.
+
+**6. Choose the starting screen.** Select **App** at the top of Tree view (not the `scrHome` screen). In the property drop-down select **StartScreen**, enter `scrHome` without quotes, and press **Enter**. The app should launch on Home.
+
+Finally choose **Preview (Play/F5)** and test **Open incidents → Home** and **Open alarms → Home**. Use **Back to incidents** from `scrIncidentDetail` if you preview that screen directly. A blank gallery or unconfigured form at this stage is expected; the next activities connect them to Dataverse.
 
 ### S06.03 — Add live-count KPIs and a recent-incident list
 
