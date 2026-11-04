@@ -1089,7 +1089,7 @@ Open **DC Field Inspection → Schema → Columns → New column**. Enter the di
 | `Follow-up Required` | `svrg_FollowUpRequired` | `Whether another action is needed after the inspection.` | Yes/No Boolean; Optional | Labels Yes / No; default No; Searchable No if available |
 | `Duration Minutes` | `svrg_DurationMinutes` | `Illustrative number of minutes spent on the inspection.` | Whole Number; Optional | Format None; minimum 0, maximum 1440 if offered; no default |
 
-To create **Inspection Status**, select **Data type → Choice → View more → Local choice**, add the three labels exactly as shown, and leave its default empty. Repeat for **Inspection Result**, using its four labels. These are two independent **Local Choices**, not new Global Choices. **Follow-up Required** is a Boolean Yes/No column, not a Choice.
+To create **Inspection Status**, select **Data type → Choice**, keep the choice **local to this column** (for a designer showing **Sync with global choice**, set it to **No**), add the three labels exactly as shown, and leave the default empty. Repeat for **Inspection Result**, using its four labels. If the designer instead offers **Local choice** directly, select it. These are two independent local Choice columns; do not create global duplicates. **Follow-up Required** is a Boolean Yes/No column, not a Choice.
 
 **Checkpoint 1 — Table definition.** Reopen **Schema → Columns**. Confirm the primary name and all eight additional business columns, with the intended `svrg` schema prefix and the exact Local Choice labels. No Asset or Employee fields should have been created as plain text.
 
@@ -1248,12 +1248,14 @@ Sort(
         IsBlank(txtFieldIncidentSearch.Text) ||
             StartsWith('Incident Code', txtFieldIncidentSearch.Text) ||
             StartsWith('Incident Name', txtFieldIncidentSearch.Text),
-        !varFieldOnlyUnassigned || IsBlank('Assigned Engineer')
+        !varFieldOnlyUnassigned || 'Assigned Engineer' = Blank()
     ),
     'Reported At',
     SortOrder.Descending
 )
 ```
+
+The unassigned condition uses a **blank lookup comparison** (`'Assigned Engineer' = Blank()`) rather than applying `IsBlank` directly to a related record. In the connected Dataverse environment, review the gallery's delegation indicators; a lookup predicate can still produce warnings depending on connector version and combined filters. **Do not assume the gallery is complete for datasets exceeding the app's nondelegation record limit unless the warning is resolved and tested.** For a larger deployment, validate a delegable server-side view/filter or a precomputed assignment-state field. Do not increase the data row limit as a substitute for fixing delegation.
 
 Inside the gallery template insert **two labels**, `lblFieldIncidentRowName` and `lblFieldIncidentRowMeta`. Do not use a photo gallery. Give the first **Text = `ThisItem.'Incident Name'`**, **Color = `clrText`**, **Font = `fontField`**, **Size = 15**; the second **Text = `ThisItem.'Incident Code' & "  ·  " & Text(ThisItem.'Incident Status')`**, **Color = `clrMuted`**, **Font = `fontField`**, **Size = 12**. Set both **OnSelect = `Select(Parent)`**, **Fill = `Color.Transparent`**, **X = 12** and **Width = Parent.TemplateWidth - 24**. Use **Y = 9** for the first and **Y = 42** for the second. Remove any placeholder image control from the template.
 
@@ -1264,10 +1266,19 @@ On `scrFieldIncidentDetail` choose **Insert → Forms → Display form** and ren
 | `frmFieldIncidentView` | DataSource / Item | `'DC Incidents'` / `varFieldIncident` |
 | `frmFieldIncidentView` | X / Y / Width / Height | `18` / `96` / `Parent.Width - 36` / `Parent.Height - 194` |
 | `frmFieldIncidentView` | Columns / Fill | `1` / `clrSurface` |
-| `btnFieldOpenEdit` | Text / OnSelect | `"Update incident"` / `EditForm(frmFieldIncidentEdit); Navigate(scrFieldIncidentEdit, ScreenTransition.Fade)` |
+| `btnFieldOpenEdit` | Text / OnSelect | `"Update incident"` / `Navigate(scrFieldIncidentEdit, ScreenTransition.Fade)` |
 | `btnFieldDetailBack` | Text / OnSelect | `"Back to incidents"` / `Navigate(scrFieldIncidents, ScreenTransition.None)` |
 
-Under **frmFieldIncidentView → Edit fields → Add field**, include **Incident Name**, **Incident Code**, **Priority**, **Incident Status**, **Reported At**, **Incident Description**, **Source Asset**, **Reported By**, **Assigned Engineer**, **Related Alarm** and **Resolution Notes**. Remove any automatically included *system* Status or Status Reason cards from the form; keep the custom **Incident Status**. Set each card caption's **Font = `fontField`**, **Color = `clrMuted`**; set the displayed value control's **Font = `fontField`** where offered and **Color = `clrText`**. Give the form **Fill = `clrSurface`** and **BorderColor = `clrBorder`**. Use a one-column form so field labels and lookup names remain readable on a phone.
+Under **frmFieldIncidentView → Edit fields → Add field**, include **Incident Name**, **Incident Code**, **Priority**, **Incident Status**, **Reported At**, **Incident Description**, **Source Asset**, **Reported By**, **Assigned Engineer**, **Related Alarm** and **Resolution Notes**. Remove any automatically included *system* Status or Status Reason cards from the form; keep the custom **Incident Status**. Set each card caption's **Font = `fontField`**, **Color = `clrMuted`**; set the displayed value control's **Font = `fontField`** where offered and **Color = `clrText`**. Give the form **Fill = `clrSurface`** and **BorderColor = `clrBorder`**. Use one column for readable phone layouts. For a read-only lookup whose generated value label is blank, select **the value label inside its display card** (not the card itself) and set its **Text** to the related record's primary name using the table below; retain the underlying **DataField** and **Item** properties.
+
+| Read-only field | Value label Text formula | Meaning |
+| --- | --- | --- |
+| Source Asset | `Coalesce(varFieldIncident.'Source Asset'.'Asset Name', "—")` | Show the name of the existing asset |
+| Reported By | `Coalesce(varFieldIncident.'Reported By'.'Employee Name', "—")` | Show the fictional reporting employee |
+| Assigned Engineer | `Coalesce(varFieldIncident.'Assigned Engineer'.'Employee Name', "Unassigned")` | Show the selected fictional engineer or an unassigned label |
+| Related Alarm | `Coalesce(varFieldIncident.'Related Alarm'.'Alarm Name', "None")` | Show the linked alarm name when present |
+
+These formulas are for **display-only labels**, not editable lookup cards; the edit forms keep the generated lookup pickers. Keep the label **Font = `fontField`** (where available), **Color = `clrText`**, and an accessible label identifying the field.
 
 **Checkpoint 4 — Incident navigation.** Search `INC-0002`, select it, and verify the Incident Details form displays the selected existing record. The Back button returns to the incident gallery without creating anything.
 
@@ -1280,6 +1291,7 @@ Open `scrFieldIncidentEdit`, choose **Insert → Forms → Edit form**, and rena
 | `frmFieldIncidentEdit` | DataSource / Item | `'DC Incidents'` / `varFieldIncident` |
 | `frmFieldIncidentEdit` | X / Y / Width / Height | `18` / `96` / `Parent.Width - 36` / `Parent.Height - 194` |
 | `frmFieldIncidentEdit` | Columns / Fill | `1` / `clrSurface` |
+| `scrFieldIncidentEdit` | OnVisible | `EditForm(frmFieldIncidentEdit)` |
 | `btnFieldSaveIncident` | Text / OnSelect | `"Save update"` / `SubmitForm(frmFieldIncidentEdit)` |
 | `btnFieldCancelIncident` | Text / OnSelect | `"Cancel"` / `ResetForm(frmFieldIncidentEdit); Navigate(scrFieldIncidentDetail, ScreenTransition.None)` |
 
@@ -1305,7 +1317,7 @@ Notify(
 
 Position Save update and Cancel beneath the form; use **cyan Fill with black Comic Sans text** for Save, and a dark-slate Fill with light Comic Sans text and a thin border for Cancel. For each form-card caption set **Font = `fontField`**, **Color = `clrMuted`**. For editable controls use **Font = `fontField`** (where offered), **Fill = `clrSurface`**, **Color = `clrText`**, **BorderColor = `clrBorder`** and **FocusedBorderColor = `clrSecondary`** (where available). Error labels use **Font = `fontField`** and **Color = `clrDanger`**. Leave the generated Combo box's lookup source and any card **DataField / Default / Update** settings unchanged.
 
-**Checkpoint 5 — Update.** Open `INC-0002`, update its **Incident Status** from Assigned to In Progress, save and confirm the status is shown in the read-only details. Change it back to Assigned so the fictional seed data stays consistent. Canceling the form must not save a change.
+**Checkpoint 5 — Update.** Open `INC-0002`, update its **Incident Status** from Assigned to In Progress, save and confirm the status is shown in the read-only details. Change it back to Assigned so the fictional seed data stays consistent. Canceling the form must not save a change. Using the destination screen's **OnVisible** property to enter edit mode avoids directly referencing a form control from another screen.
 
 ### S07.08 — Create the inspection list and mobile inspection form
 
@@ -1320,8 +1332,8 @@ On `scrFieldInspections` insert **Classic Text input** `txtFieldInspectionSearch
 | `galFieldInspections` | X / Y / Width / Height | `18` / `211` / `Parent.Width - 36` / `Parent.Height - 304` |
 | `galFieldInspections` | Fill / TemplateFill | `clrSurface` / `If(ThisItem.IsSelected, clrSelected, clrSurface)` |
 | `galFieldInspections` | TemplateSize | `80` |
-| `galFieldInspections` | OnSelect | `Set(varFieldSelectedInspection, ThisItem); Set(varNewInspection, false); EditForm(frmFieldInspectionEdit); Navigate(scrFieldInspectionEdit, ScreenTransition.Fade)` |
-| `btnFieldNewInspection` | Text / OnSelect | `"New inspection"` / `Set(varNewInspection, true); NewForm(frmFieldInspectionEdit); Navigate(scrFieldInspectionEdit, ScreenTransition.Fade)` |
+| `galFieldInspections` | OnSelect | `Set(varFieldSelectedInspection, ThisItem); Set(varNewInspection, false); Navigate(scrFieldInspectionEdit, ScreenTransition.Fade)` |
+| `btnFieldNewInspection` | Text / OnSelect | `"New inspection"` / `Set(varNewInspection, true); Navigate(scrFieldInspectionEdit, ScreenTransition.Fade)` |
 | `btnFieldInspectionsHome` | Text / OnSelect | `"Home"` / `Navigate(scrFieldHome, ScreenTransition.None)` |
 
 Set **galFieldInspections.Items**:
@@ -1349,6 +1361,7 @@ Next open `scrFieldInspectionEdit`, insert **Forms → Edit form**, rename it `f
 | `frmFieldInspectionEdit` | Item | `varFieldSelectedInspection` |
 | `frmFieldInspectionEdit` | X / Y / Width / Height | `18` / `94` / `Parent.Width - 36` / `Parent.Height - 198` |
 | `frmFieldInspectionEdit` | Columns / Fill | `1` / `clrSurface` |
+| `scrFieldInspectionEdit` | OnVisible | `If(varNewInspection, NewForm(frmFieldInspectionEdit), EditForm(frmFieldInspectionEdit))` |
 | `btnFieldSaveInspection` | Text / OnSelect | `"Save inspection"` / `SubmitForm(frmFieldInspectionEdit)` |
 | `btnFieldSaveInspection` | DisplayMode | `If(frmFieldInspectionEdit.Valid, DisplayMode.Edit, DisplayMode.Disabled)` |
 | `btnFieldCancelInspection` | Text / OnSelect | `"Cancel"` / `ResetForm(frmFieldInspectionEdit); Navigate(scrFieldInspections, ScreenTransition.None)` |
@@ -1373,7 +1386,7 @@ Under **frmFieldInspectionEdit → Edit fields → Add field**, select these fie
 
 **Evidence upload:** When **Enable attachments** is selected on the Dataverse table, an Edit form can offer the **Attachments** field; the availability of this field still depends on your environment and form configuration. Choose **Edit fields → Add field → Attachments**, if shown. Keep the generated attachment card and its data binding unchanged. The file is not stored just because it was selected; **SubmitForm** saves the record and the staged file together. On Power Apps Mobile, the classic Attachments control accepts files one at a time. Use a **fictional/staged image or non-sensitive sample file**—never a real facility photo. If Attachments isn't available, verify table attachment enablement and refresh the Dataverse connection; do not substitute an unbound Add picture control and assume it saved to Dataverse. The attachment feature may depend on the tenant configuration and permissions.
 
-For the form's existing card captions set **Font = `fontField`** and **Color = `clrMuted`**. On supported input controls set **Font = `fontField`**, **Fill = `clrSurface`**, **Color = `clrText`**, **BorderColor = `clrBorder`** and **FocusedBorderColor = `clrSecondary`** when offered. Use **Font = `fontField`** and **Color = `clrDanger`** for error labels. Keep **DataField**, **Update**, **Default**, **Required** and attachment control bindings as generated. The single-column form is taller than a phone's display; keep the form scrollable and its Save/Cancel buttons outside its scrollable cards.
+For the form's existing card captions set **Font = `fontField`** and **Color = `clrMuted`** where supported. For **Classic inputs**, set **Font = `fontField`**, **Fill = `clrSurface`**, **Color = `clrText`**, **BorderColor = `clrBorder`** and **FocusedBorderColor = `clrSecondary`** when available. **Modern input and Combo box property names vary with the control version**: use the exposed text-color property (**FontColor** or **Color**) and the available palette/appearance properties, then confirm the dropdown's selected and unselected text is readable. A modern **Number Input** may not expose the same Font, Fill or text-color properties; style only the settings present in your designer (such as Size, BasePaletteColor, Appearance, border properties or AccessibleLabel) and retain its numeric binding. Do not replace a generated Number Input solely to force Comic Sans MS. For **Duration Minutes**, enter the number, press **Tab** or move focus away to commit it, then save and reopen the record to verify that 15 or 20 persists. Use the error-message color `clrDanger`. Set **AccessibleLabel** on inputs and attachment controls where available, and leave static shapes/labels without unnecessary behavior events. Keep **DataField**, **Update**, **Default**, **Required** and attachment control bindings as generated. The one-column form is taller than a phone's display; keep it scrollable and place Save/Cancel outside the scrollable cards.
 
 Set `frmFieldInspectionEdit.OnSuccess`:
 
@@ -1432,7 +1445,7 @@ Use **Preview (Play/F5)** in Power Apps Studio, then test on an authorized phone
 | T08 | Reopen and edit an inspection, then Cancel | Changes that weren't submitted are discarded |
 | T09 | Check **App checker** | No blocking formula errors; examine delegation, form, accessibility and permission warnings |
 
-Do not mistake a fictional **Inspected By** lookup for real user authentication. App visibility and button rules do not replace Dataverse security roles; access to the app and its Dataverse tables must be authorized for each real user.
+Review **App checker → Accessibility** after configuring the forms: remove unused **OnSelect** formulas from static decorative shapes and labels, and set meaningful **AccessibleLabel** values for interactive inputs and the Attachments control. Performance notices involving cross-screen controls should also be reviewed; this lesson keeps form-mode changes on the destination screen's **OnVisible** event. Do not mistake a fictional **Inspected By** lookup for real user authentication. App visibility and button rules do not replace Dataverse security roles; access to the app and its Dataverse tables must be authorized for each real user.
 
 Select **Save**, then **Publish → Publish this version**. Return to the solution and confirm **DC FieldOps** appears as a second Canvas App alongside **DC Operations Command Center**.
 
