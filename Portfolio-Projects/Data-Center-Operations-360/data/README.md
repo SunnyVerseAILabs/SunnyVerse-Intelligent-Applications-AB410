@@ -19,6 +19,8 @@ This directory will contain **original synthetic practice datasets** as the corr
 
 **Part 07 — DC FieldOps** uses the existing Asset, Incident and Employee data plus a new **DC Field Inspection** table. Create two fictional inspection records directly through the app in [Part 07](../Build-Guide.md#part-07--build-the-field-engineer-mobile-app). No new CSV import is needed. Supporting evidence is added through the form's attachment field where enabled.
 
+**Part 08 — Incident and Inspection Automation** uses the existing DC Incident and DC Field Inspection records. It creates two solution-aware notification flows and a configurable authorized test recipient; **no new CSV dataset** is needed. Follow [Part 08 in the Build Guide](../Build-Guide.md#part-08--automate-incident-updates-and-inspection-follow-ups).
+
 The CSV headers exactly match the **display names** introduced in the [Build Guide](../Build-Guide.md). The guide identifies the intended **svrg-prefixed schema names** separately. Dataverse may suggest field mapping automatically, but always review Choice and lookup values before completing an import. Import referenced parent records before child records: campus before halls; halls before assets; assets before sensors; alarms after assets and sensors; incidents after alarms. If you have entered the same rows manually, do not also import the CSVs.
 
 Do not import datasets from previous experiments, previous Power Platform solutions, or unrelated AB-410 course modules. Every future dataset will be fictional and checked for consistency with the published schema.
