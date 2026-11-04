@@ -1135,7 +1135,7 @@ clrBorder = ColorValue("#38475D");
 clrSelected = ColorValue("#203F52");
 clrDanger = ColorValue("#FF879A");
 clrSuccess = ColorValue("#76E8BB");
-fontField = "Comic Sans MS, Arial, sans-serif";
+fontField = "Comic Sans MS";
 ```
 
 | Role | Color / font token | Purpose |
@@ -1150,9 +1150,9 @@ fontField = "Comic Sans MS, Arial, sans-serif";
 | Borders | `clrBorder` — **#38475D** | Subtle separation of controls |
 | Selected records | `clrSelected` — **#203F52** | Dark cyan-blue gallery selection |
 | Error and success | `clrDanger` / `clrSuccess` | State indicators with written messages |
-| Typography | `fontField` — **Comic Sans MS** | Labels and supported controls, falling back to Arial or sans-serif |
+| Typography | `fontField` — **Comic Sans MS** | Preferred text family in supported controls; device default font if unavailable |
 
-In Power Apps, a control's **Font** property specifies the font family. Apply **Font = `fontField`** to all Classic labels, buttons, text inputs, editable gallery labels, and supported form card captions/values. A Combo box, Date picker, attachment control or Modern control may expose a different set of typography properties; set **Font** wherever present, but do not break a generated control to force the font. Comic Sans MS isn't guaranteed on every phone, so preview on an actual device and allow the listed fallback to render when needed. No font file or custom-code package is required.
+In Power Apps, the **Font** property accepts a font-family name. Apply **Font = `fontField`** to all Classic labels, buttons, text inputs, gallery labels, and supported form card captions/values. This named formula resolves to **Comic Sans MS**, not a comma-separated CSS font list. If Comic Sans MS is unavailable on the device, Power Apps can render a platform fallback; test on an actual phone rather than assuming the lettering will look identical everywhere. Combo boxes, date pickers, attachment controls and Modern controls can expose different typography properties: set **Font** where supported, but leave their generated data bindings intact. No external font file is required.
 
 Apply this reusable control-format reference while adding controls in the steps below. It keeps the entire app consistent rather than styling only the title.
 
@@ -1371,7 +1371,7 @@ Under **frmFieldInspectionEdit → Edit fields → Add field**, select these fie
 | 12 | **Related Incident** | Optionally select an existing related incident |
 | 13 | **Attachments** | Add a staged photo or supporting file where the tenant permits |
 
-**Evidence upload:** The table's **Enable attachments** setting allows a Dataverse form to offer an **Attachments** field. Choose **Edit fields → Add field → Attachments**, if shown. Keep the generated attachment card and its data binding unchanged. The file is not stored just because it was selected; **SubmitForm** saves the record and the staged file together. On Power Apps Mobile, files are normally selected one at a time. Use a **fictional/staged image or non-sensitive sample file**—never a real facility photo. If Attachments isn't available, verify table attachment enablement and refresh the Dataverse connection; do not substitute an unbound Add picture control and assume it saved to Dataverse. The attachment feature may depend on the tenant configuration and permissions.
+**Evidence upload:** When **Enable attachments** is selected on the Dataverse table, an Edit form can offer the **Attachments** field; the availability of this field still depends on your environment and form configuration. Choose **Edit fields → Add field → Attachments**, if shown. Keep the generated attachment card and its data binding unchanged. The file is not stored just because it was selected; **SubmitForm** saves the record and the staged file together. On Power Apps Mobile, the classic Attachments control accepts files one at a time. Use a **fictional/staged image or non-sensitive sample file**—never a real facility photo. If Attachments isn't available, verify table attachment enablement and refresh the Dataverse connection; do not substitute an unbound Add picture control and assume it saved to Dataverse. The attachment feature may depend on the tenant configuration and permissions.
 
 For the form's existing card captions set **Font = `fontField`** and **Color = `clrMuted`**. On supported input controls set **Font = `fontField`**, **Fill = `clrSurface`**, **Color = `clrText`**, **BorderColor = `clrBorder`** and **FocusedBorderColor = `clrSecondary`** when offered. Use **Font = `fontField`** and **Color = `clrDanger`** for error labels. Keep **DataField**, **Update**, **Default**, **Required** and attachment control bindings as generated. The single-column form is taller than a phone's display; keep the form scrollable and its Save/Cancel buttons outside its scrollable cards.
 
