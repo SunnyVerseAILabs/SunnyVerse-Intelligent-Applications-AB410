@@ -674,122 +674,115 @@ This is now a linked alarm-and-incident data model ready for later app screens, 
 
 ## Part 06 — Build the Operations Command Center Canvas App
 
-Our Dataverse tables now contain fictional assets, alarms and incidents. In this lesson, we'll turn those records into a working **tablet-style Canvas App** for reviewing operational activity, finding incidents, opening related records and updating incident assignments. The app reads and writes the existing Dataverse tables directly; it does not require a new table, CSV import or Power Automate flow.
+In the earlier lessons, you created the fictional data center's assets, alarms and incidents. Now create a **DC Operations Command Center** tablet Canvas App that reads those records, opens incident details, edits or creates an incident, and browses alarms. All five screens use your existing Dataverse data; this lesson requires **no additional CSV files, tables or flows**.
 
-We'll build one app named **DC Operations Command Center** with five screens: Home, Incidents, Incident Details, Incident Editor and Alarms. This is a learning application using fictional data, not a real facility-control console. It does not implement live sensor monitoring or authenticated role-based approvals.
+Complete the **functional build first**. A separate **optional visual styling section** appears after the functional completion checkpoint, so you can publish a working app without spending time on design refinements.
 
-**Formula convention:** The examples use English-language Power Fx, commas as argument separators, and the exact **column display names** from Parts 04–05. In Power Apps Studio, the existing Dataverse tables generally appear under their **plural** names (`'DC Incidents'`, `'DC Alarms'` and `'DC Assets'`). Select the actual source shown by Studio autocomplete if the label differs in your environment. The existing technical schema names retain the `svrg` publisher prefix; Canvas control names below are local app identifiers, not additional Dataverse columns.
+> **Before you begin:** If you have already started `DC Operations Command Center`, open that same app for editing and reuse its screens and controls. Rename or configure an existing control rather than inserting a duplicate. If you are starting fresh, follow S06.01. The control names and Power Fx expressions are exact so you can check each selection and property in Power Apps Studio. This guide uses English-language Power Fx with **commas** between arguments and **semicolons** between actions. Some locales use different formula separators.
 
-### S06.01 — Create the Canvas App and connect Dataverse
+### S06.01 — Open the app and connect its existing Dataverse tables
 
-Open [Power Apps](https://make.powerapps.com), select your authorized learning environment, then navigate to **Solutions → SunnyVerse Data Center Operations 360 → New → App → Canvas app**. Select **Tablet** (landscape) when asked for the format. If the current designer instead starts with a blank-app dialog, choose **Tablet size**. Set the app's display name to **DC Operations Command Center** when the name field is offered, or use **Settings → General → App name** after Studio opens.
+Open [Power Apps](https://make.powerapps.com), select your authorized environment, and go to **Solutions → SunnyVerse Data Center Operations 360**. If the app already exists, select **DC Operations Command Center → Edit**. Otherwise choose **New → App → Canvas app**, select **Tablet** / **Landscape**, name it **DC Operations Command Center**, and open the editor. Save the app inside this solution.
 
-In Studio, open **Data** from the left rail and select **Add data → Microsoft Dataverse**. Add the following three tables from the *same environment*:
+Select **Data** on the left and choose **Add data → Microsoft Dataverse**. Add these **existing** tables; do not create new ones:
 
-| Data source in Studio | Existing Dataverse table | Used for |
+| Data source to select in Studio | Dataverse table | Use |
 | --- | --- | --- |
-| `'DC Incidents'` | DC Incident (`svrg_DCIncident`) | Incident queues, forms and edits |
-| `'DC Alarms'` | DC Alarm (`svrg_DCAlarm`) | Alarm search and details |
-| `'DC Assets'` | DC Asset (`svrg_DCAsset`) | Summary inventory count |
+| `'DC Incidents'` | DC Incident (`svrg_DCIncident`) | Queues, details, edit/create |
+| `'DC Alarms'` | DC Alarm (`svrg_DCAlarm`) | Alarm browser |
+| `'DC Assets'` | DC Asset (`svrg_DCAsset`) | Equipment count |
 
-Select the **App** node in the tree view and set **StartScreen** to `scrHome` *after* creating that screen in the next step. Do not create another connection to an unrelated environment.
+The formulas below use the table names displayed above. If Studio's autocomplete shows a different plural name, choose that actual connected data source consistently.
 
-### S06.02 — Create the screens, add controls and connect navigation
+**Checkpoint 1 — Connection.** All three tables appear in the Data pane. Before proceeding, preview an existing Dataverse table in the maker portal to confirm that it contains the expected fictional records.
 
-We will first create the five screens and give each control a consistent name. **Only add the controls listed for this step**; the Incident forms and Alarm browser controls will be inserted in their respective later activities. This avoids adding the same control twice.
+### S06.02 — Create the five-screen shell and navigation
 
-**1. Create and rename the screens.** In Power Apps Studio, select **Tree view** on the left. Find the first screen (often named `Screen1`), select its **…** menu (or right-click), choose **Rename**, type `scrHome` and press **Enter**. Then choose **New screen → Blank**, rename the new screen `scrIncidents`, and repeat **New screen → Blank** three more times to create `scrIncidentDetail`, `scrIncidentEdit` and `scrAlarms`. The Tree view should now show **exactly these five screens**.
+Open **Tree view**. Select the first screen (often `Screen1`), choose **… → Rename**, and enter `scrHome`. Choose **New screen → Blank** four more times and rename the screens in this order. To add a control, select its intended **screen** in Tree view, choose **Insert**, then rename the newly inserted control from its **… → Rename** menu. Use **Classic** labels, buttons, text inputs and standard **Blank vertical galleries** in this lesson; classic Text input controls expose the `Text` property. The Modern Text input equivalent may expose `Value` instead.
 
-| Order | Screen name | Purpose |
-| --- | --- | --- |
-| 1 | `scrHome` | Summary counts and recent incidents |
-| 2 | `scrIncidents` | Search the incident queue |
-| 3 | `scrIncidentDetail` | View a selected incident |
-| 4 | `scrIncidentEdit` | Create or edit an incident |
-| 5 | `scrAlarms` | Browse and inspect alarms |
+Create **only** the controls listed for now. The form controls are inserted with their complete configurations in later steps.
 
-**2. Learn the add-and-rename action once.** Select the target **screen name in Tree view**, then choose **Insert**. For a title or count choose **Text label / Label**; for a navigation action choose **Button**; for search choose **Text input**; and for a list choose **Gallery → Vertical** (choose a title/subtitle layout if offered). Find the newly inserted control *under that screen* in Tree view, select **… → Rename**, enter the exact name below and press **Enter**. Repeat for the remaining controls. Prefer **Classic** Label, Button, Text input and Gallery variants when available so the formulas in this lesson use the `Text` property. A Modern Text input may use `Value` instead; if you choose Modern, replace references to `txtIncidentSearch.Text` with `txtIncidentSearch.Value` consistently.
+| Screen (create in this order) | Insert and rename controls |
+| --- | --- |
+| `scrHome` | **Labels:** `lblHomeTitle`, `lblCountIncidents`, `lblCountAlarms`, `lblCountAssets`; **blank vertical gallery:** `galRecentIncidents`; **buttons:** `btnHomeIncidents`, `btnHomeAlarms`, `btnRefreshHome` |
+| `scrIncidents` | **Label:** `lblIncidentsTitle`; **text input:** `txtIncidentSearch`; **blank vertical gallery:** `galIncidents`; **buttons:** `btnOnlyUnassigned`, `btnNewIncident`, `btnIncidentsHome` |
+| `scrIncidentDetail` | **Label:** `lblIncidentTitle`; **buttons:** `btnEditIncident`, `btnDetailBack`. The Display form comes in S06.05 |
+| `scrIncidentEdit` | **Label:** `lblEditTitle`; **buttons:** `btnSaveIncident`, `btnCancelIncident`. The Edit form comes in S06.06 |
+| `scrAlarms` | **Label:** `lblAlarmsTitle`; **button:** `btnAlarmsHome`. The search, gallery and Display form come in S06.07 |
 
-**3. Add the controls screen by screen.** Work down the table; each comma-separated name represents **one separate control**. Do not type these names into the canvas as visible text—enter them using **Rename** in Tree view.
+Select a control in Tree view, choose the relevant property from the drop-down beside the formula bar, paste the formula, then press **Enter**. Set the initial titles and basic navigation:
 
-| Select screen | Add **now** (control type → exact names) | Add **later** |
-| --- | --- | --- |
-| `scrHome` | **Labels:** `lblHomeTitle`, `lblCountIncidents`, `lblCountAlarms`, `lblCountAssets`; **Vertical gallery:** `galRecentIncidents`; **Buttons:** `btnHomeIncidents`, `btnHomeAlarms`, `btnRefreshHome` | Populate KPI/gallery formulas in **S06.03** |
-| `scrIncidents` | **Label:** `lblIncidentsTitle`; **Text input:** `txtIncidentSearch`; **Vertical gallery:** `galIncidents`; **Buttons:** `btnOnlyUnassigned`, `btnNewIncident`, `btnIncidentsHome` | Configure search and filtering in **S06.04** |
-| `scrIncidentDetail` | **Label:** `lblIncidentTitle`; **Buttons:** `btnEditIncident`, `btnDetailBack` | Insert **Display form** `frmIncidentView` in **S06.05** |
-| `scrIncidentEdit` | **Label:** `lblEditTitle`; **Buttons:** `btnSaveIncident`, `btnCancelIncident` | Insert **Edit form** `frmIncidentEdit` in **S06.06** |
-| `scrAlarms` | **Label:** `lblAlarmsTitle`; **Button:** `btnAlarmsHome` | Insert **Text input** `txtAlarmSearch`, **Vertical gallery** `galAlarms` and **Display form** `frmAlarmView` in **S06.07** |
-
-**4. Arrange the controls.** Select each title label and place it at the top of its screen. Set **Font size = 24** and **Font weight = Bold** where offered. On `scrHome`, arrange the three count labels across the upper area, followed by the recent-incidents gallery and the navigation/refresh buttons. On `scrIncidents`, place the search input above the incident gallery, with the filter and New Incident buttons nearby. On the detail and edit screens, keep the title at the top and their action buttons below or beside the space reserved for the forms. On `scrAlarms`, reserve the left side for the gallery and the right side for the read-only form added in S06.07. Leave approximately 16 pixels between adjacent controls; you can resize and refine the layout after the data is connected.
-
-**5. Set the screen titles and navigation buttons.** To change a property, select a control in **Tree view**, choose the property (for example **Text** or **OnSelect**) using the property drop-down above the formula bar, paste the expression and press **Enter**. **Text** controls what a label or button displays; **OnSelect** is what happens when a button is clicked.
-
-| Control | Property | Formula / value |
+| Control | Property | Formula |
 | --- | --- | --- |
 | `lblHomeTitle` | Text | `"Data Center Operations 360 — Command Center"` |
 | `lblIncidentsTitle` | Text | `"Incident Management"` |
 | `lblIncidentTitle` | Text | `"Incident Details"` |
 | `lblEditTitle` | Text | `"Incident Editor"` |
 | `lblAlarmsTitle` | Text | `"Alarm Monitoring"` |
-| `btnHomeIncidents` | Text | `"Open incidents"` |
-| `btnHomeIncidents` | OnSelect | `Navigate(scrIncidents, ScreenTransition.Fade)` |
-| `btnHomeAlarms` | Text | `"Open alarms"` |
-| `btnHomeAlarms` | OnSelect | `Navigate(scrAlarms, ScreenTransition.Fade)` |
-| `btnIncidentsHome` | Text | `"Home"` |
-| `btnIncidentsHome` | OnSelect | `Navigate(scrHome, ScreenTransition.None)` |
-| `btnAlarmsHome` | Text | `"Home"` |
-| `btnAlarmsHome` | OnSelect | `Navigate(scrHome, ScreenTransition.None)` |
-| `btnDetailBack` | Text | `"Back to incidents"` |
-| `btnDetailBack` | OnSelect | `Navigate(scrIncidents, ScreenTransition.None)` |
+| `btnHomeIncidents` | Text / OnSelect | `"Open incidents"` / `Navigate(scrIncidents, ScreenTransition.Fade)` |
+| `btnHomeAlarms` | Text / OnSelect | `"Open alarms"` / `Navigate(scrAlarms, ScreenTransition.Fade)` |
+| `btnIncidentsHome` | Text / OnSelect | `"Home"` / `Navigate(scrHome, ScreenTransition.None)` |
+| `btnAlarmsHome` | Text / OnSelect | `"Home"` / `Navigate(scrHome, ScreenTransition.None)` |
+| `btnDetailBack` | Text / OnSelect | `"Back to incidents"` / `Navigate(scrIncidents, ScreenTransition.None)` |
 
-The other buttons, galleries, forms and search properties are deliberately configured in **S06.03–S06.07**. You do not need to assign temporary formulas to them now.
+For rows combining **Text / OnSelect**, enter the expression on the left of `/` in the **Text** property and the one on the right in **OnSelect**—they are two distinct settings.
 
-**6. Choose the starting screen.** Select **App** at the top of Tree view (not the `scrHome` screen). In the property drop-down select **StartScreen**, enter `scrHome` without quotes, and press **Enter**. The app should launch on Home.
+Select **App** at the top of Tree view (not the Home screen), choose its **StartScreen** property and enter `scrHome` without quotes. Set each title label's **X = 32**, **Y = 22**, **Width = Parent.Width - 64**, **Height = 54**, **Size = 24** and **FontWeight = FontWeight.Bold** if that property is available (classic labels may instead expose **Font weight → Bold** in the pane).
 
-Finally choose **Preview (Play/F5)** and test **Open incidents → Home** and **Open alarms → Home**. Use **Back to incidents** from `scrIncidentDetail` if you preview that screen directly. A blank gallery or unconfigured form at this stage is expected; the next activities connect them to Dataverse.
+**Checkpoint 2 — Navigation shell.** The Tree view shows exactly five named screens. Preview with **Play/F5**: **Open incidents → Home** and **Open alarms → Home** work. Empty galleries are expected because their formulas are next.
 
-### S06.03 — Add live-count KPIs and a recent-incident list
+### S06.03 — Complete Home with working KPIs and recent incidents
 
-Set the following properties on `scrHome`. A label should have its **Text** property set to a *formula*, not a hard-coded number.
+On `scrHome`, position the three KPI labels in one row and the gallery underneath. Set the following formulas; use the **Text** property for labels and **Items** for the gallery:
 
-| Control | Property | Formula / value |
+| Control | Property | Formula |
 | --- | --- | --- |
-| `lblHomeTitle` | Text | `"Data Center Operations 360 — Command Center"` |
-| `lblCountIncidents` | Text | `"Incidents: " & CountRows('DC Incidents')` |
-| `lblCountAlarms` | Text | `"Alarms: " & CountRows('DC Alarms')` |
-| `lblCountAssets` | Text | `"Assets: " & CountRows('DC Assets')` |
+| `lblCountIncidents` | Text | `"INCIDENTS" & Char(10) & Text(CountIf('DC Incidents', true), "0")` |
+| `lblCountAlarms` | Text | `"ALARMS" & Char(10) & Text(CountIf('DC Alarms', true), "0")` |
+| `lblCountAssets` | Text | `"ASSETS" & Char(10) & Text(CountIf('DC Assets', true), "0")` |
 | `galRecentIncidents` | Items | `Sort('DC Incidents', 'Reported At', SortOrder.Descending)` |
-| `galRecentIncidents` | OnSelect | `Set(varSelectedIncident, ThisItem); Navigate(scrIncidentDetail, ScreenTransition.None)` |
-| `btnRefreshHome` | Text | `"Refresh"` |
+| `galRecentIncidents` | OnSelect | `Set(varSelectedIncident, ThisItem); Navigate(scrIncidentDetail, ScreenTransition.Fade)` |
+| `btnRefreshHome` | Text | `"Refresh data"` |
 | `btnRefreshHome` | OnSelect | `Refresh('DC Incidents'); Refresh('DC Alarms'); Refresh('DC Assets'); Notify("Data refreshed.", NotificationType.Information)` |
 
-Inside `galRecentIncidents`, use a Title and Subtitle layout or insert two labels into the gallery template. Configure their **Text** properties as follows:
+**Count accuracy:** `CountRows('DC Incidents')` may use a Dataverse cached total. `CountIf('DC Incidents', true)` requests an exact count for supported tables within the Dataverse aggregation limit. In **Settings → Upcoming features → Preview**, enable **Enhanced delegation for Microsoft Dataverse** if that option is available and required in your editor; its location may vary. Do not type fixed numbers into the KPI labels. If a count remains zero while the gallery shows records, inspect the formula warnings, data source identity and table permissions, then refresh—do not accept the incorrect value as the finished result.
 
-| Gallery template label | Text formula |
-| --- | --- |
-| Title | `ThisItem.'Incident Name'` |
-| Subtitle | `ThisItem.'Incident Code' & "  |  " & Text(ThisItem.Priority) & "  |  " & Text(ThisItem.'Incident Status')` |
+Use these practical layout values (the labels need room for both lines):
 
-If the gallery contains a chevron icon or labels that intercept clicks, set those controls' **OnSelect** property to `Select(Parent)`. Keep the gallery connected directly to Dataverse; do not copy its records into a static collection.
-
-The count labels show the currently visible Dataverse totals. Microsoft notes that unfiltered `CountRows` on Dataverse can use cached counts, so use the source tables rather than those numbers as proof of exact import completeness. The seeded dataset contains 200 incidents, 120 alarms and 100 assets before any additional edits or records are created.
-
-### S06.04 — Build the searchable Incident queue
-
-On `scrIncidents`, enter the following properties:
-
-| Control / screen | Property | Formula / value |
+| Control(s) | X / Y | Width / Height or other |
 | --- | --- | --- |
-| `lblIncidentsTitle` | Text | `"Incident Management"` |
+| `lblCountIncidents` | `32` / `102` | `(Parent.Width - 96) / 3` / `78` |
+| `lblCountAlarms` | `lblCountIncidents.X + lblCountIncidents.Width + 16` / `102` | Same width / `78` |
+| `lblCountAssets` | `lblCountAlarms.X + lblCountAlarms.Width + 16` / `102` | Same width / `78` |
+| `galRecentIncidents` | `32` / `207` | `Parent.Width - 64` / `Parent.Height - 302`; TemplateSize `70` |
+| `btnHomeIncidents`, `btnHomeAlarms`, `btnRefreshHome` | Place together along the bottom | Height `44`, comfortable spacing, no overlap |
+
+**Build clean gallery rows.** Select `galRecentIncidents` and confirm it is a **Blank vertical gallery**. If you used a gallery template that includes `Image1`, select **Image1 inside the gallery template** in Tree view and remove only that placeholder; do not delete the gallery. Select the gallery's first template (pencil/Edit gallery), choose **Insert → Label** twice **inside the template** and rename the labels `lblRecentName` and `lblRecentMeta`.
+
+| Template label | Text | Recommended placement |
+| --- | --- | --- |
+| `lblRecentName` | `ThisItem.'Incident Name'` | X `12`, Y `8`, Width `Parent.TemplateWidth - 24`, Height `26` |
+| `lblRecentMeta` | `ThisItem.'Incident Code' & "  ·  " & Text(ThisItem.'Incident Status')` | X `12`, Y `36`, Width `Parent.TemplateWidth - 24`, Height `24` |
+
+Set both nested labels' **OnSelect = `Select(Parent)`** so clicking text selects the gallery record.
+
+**Checkpoint 3 — Home.** With the original seeded data unchanged, expect approximately **200 incidents, 120 alarms and 100 assets** (exact values depend on later edits). The recent gallery displays incident names/codes with **no generic image placeholders**. Selecting a row records its selection; the detail form will appear when S06.05 is completed.
+
+### S06.04 — Finish the searchable Incident queue
+
+Select `scrIncidents`. Place `txtIncidentSearch` under the title and the buttons beside it. Place `galIncidents` below the search area.
+
+| Control or screen | Property | Formula / value |
+| --- | --- | --- |
 | `txtIncidentSearch` | HintText (Classic) | `"Search incident code or name"` |
 | `scrIncidents` | OnVisible | `Set(varOnlyUnassigned, false)` |
 | `btnOnlyUnassigned` | Text | `If(varOnlyUnassigned, "Show all", "Unassigned only")` |
 | `btnOnlyUnassigned` | OnSelect | `Set(varOnlyUnassigned, !varOnlyUnassigned)` |
-| `galIncidents` | OnSelect | `Set(varSelectedIncident, ThisItem); Navigate(scrIncidentDetail, ScreenTransition.None)` |
 | `btnNewIncident` | Text | `"New incident"` |
-| `btnNewIncident` | OnSelect | `Set(varIsNewIncident, true); NewForm(frmIncidentEdit); Navigate(scrIncidentEdit, ScreenTransition.None)` |
+| `btnIncidentsHome` | Text | `"Home"` |
+| `galIncidents` | OnSelect | `Set(varSelectedIncident, ThisItem); Navigate(scrIncidentDetail, ScreenTransition.Fade)` |
 
-Set `galIncidents.Items` to:
+Set `galIncidents.Items` to the following complete formula. This is a **prefix search** on the two text columns, with an optional filter for incidents without an assigned engineer.
 
 ```powerfx
 Sort(
@@ -805,48 +798,81 @@ Sort(
 )
 ```
 
-This searches the two text fields by prefix and optionally shows records without an Assigned Engineer. Selecting **Unassigned only** changes the gallery without modifying any incident. If the editor displays a blue delegation warning, inspect the flagged expression and the actual Dataverse column type before relying on the filter in a larger environment; do not raise the data row limit merely to hide the warning.
-
-For the gallery's visible fields, set:
+Use a **Blank vertical gallery**, not a photo gallery. In its editable template add **two** labels; name them `lblIncidentRowName` and `lblIncidentRowMeta`. Remove any default image placeholder from the template and use a compact **TemplateSize = 76**.
 
 | Template label | Text formula |
 | --- | --- |
-| Title | `ThisItem.'Incident Name'` |
-| Subtitle | `ThisItem.'Incident Code' & "  |  " & Text(ThisItem.Priority)` |
-| Status | `Text(ThisItem.'Incident Status')` |
-| Assignment | `If(IsBlank(ThisItem.'Assigned Engineer'), "Unassigned", ThisItem.'Assigned Engineer'.'Employee Name')` |
+| `lblIncidentRowName` | `ThisItem.'Incident Name'` |
+| `lblIncidentRowMeta` | `ThisItem.'Incident Code' & "  ·  " & Text(ThisItem.'Incident Status') & "  ·  " & If(IsBlank(ThisItem.'Assigned Engineer'), "Unassigned", ThisItem.'Assigned Engineer'.'Employee Name')` |
 
-For the Assignment label, use the actual related-record **Employee Name** property suggested by Studio autocomplete. The selection is a Dataverse employee lookup, not the signed-in Microsoft user. Set the labels' **OnSelect** to `Select(Parent)` if needed.
+For both labels use **OnSelect = `Select(Parent)`**. Studio should autocomplete the related employee field `'Employee Name'`; choose the actual related-table column if necessary.
 
-### S06.05 — Show complete Incident details
+Recommended incident-list dimensions:
 
-On `scrIncidentDetail`, insert a **Display form** using **Insert → Forms → Display** (or the equivalent form command). Rename it `frmIncidentView`.
-
-| Control | Property | Formula / value |
+| Control | X / Y | Width / Height |
 | --- | --- | --- |
-| `lblIncidentTitle` | Text | `"Incident Details"` |
+| `txtIncidentSearch` | `32` / `110` | `Parent.Width * 0.48` / `44` |
+| `btnOnlyUnassigned` | Immediately right of search | Width `164` / Height `44` |
+| `btnNewIncident` | Immediately right of filter | Width `140` / Height `44` |
+| `btnIncidentsHome` | Immediately right of New | Width `110` / Height `44` |
+| `galIncidents` | `32` / `180` | `Parent.Width - 64` / `Parent.Height - 205` |
+
+If button placement overflows on a narrower tablet, move **Home** to a second row rather than covering the search field. Later, in S06.06, we'll connect the **New incident** action to the Edit form.
+
+**Checkpoint 4 — Incident queue.** Search `INC-0200` and confirm one matching incident appears. Clear the search and select **Unassigned only**; the list should show records with an empty Assigned Engineer. Select **Show all** to restore the complete queue. If a delegation warning appears, inspect it before relying on the same filter for much larger production datasets.
+
+### S06.05 — Build the Incident Details screen
+
+Open `scrIncidentDetail`. Choose **Insert → Forms → Display form** (Classic) and rename it **`frmIncidentView`**. This form belongs **inside `scrIncidentDetail`**, not inside a gallery.
+
+| Control | Property | Formula |
+| --- | --- | --- |
 | `frmIncidentView` | DataSource | `'DC Incidents'` |
 | `frmIncidentView` | Item | `varSelectedIncident` |
+| `frmIncidentView` | X / Y | `32` / `102` |
+| `frmIncidentView` | Width / Height | `Parent.Width - 64` / `Parent.Height - 204` |
+| `frmIncidentView` | Columns | `2` |
 | `btnEditIncident` | Text | `"Edit incident"` |
-| `btnEditIncident` | OnSelect | `Set(varIsNewIncident, false); EditForm(frmIncidentEdit); Navigate(scrIncidentEdit, ScreenTransition.None)` |
+| `btnEditIncident` | OnSelect | `Set(varIsNewIncident, false); EditForm(frmIncidentEdit); Navigate(scrIncidentEdit, ScreenTransition.Fade)` |
+| `btnDetailBack` | Text | `"Back to incidents"` |
 
-Select the form and choose **Edit fields → Add field**. Include these existing columns: **Incident Name**, **Incident Code**, **Incident Category**, **Priority**, **Incident Status**, **Reported At**, **Incident Description**, **Safety Related**, **Resolution Notes**, **Source Asset**, **Reported By**, **Assigned Engineer**, and **Related Alarm**.
+Select the form and choose **Edit fields → Add field**. Add these **13 existing business columns**, preferably in this order:
 
-Change the form's **Columns** setting to **2** if it improves readability on your tablet canvas. Preview from the Incident queue and open an existing incident, for example **INC-0002**. The form should display its existing field values and related records, without letting you edit them directly on this screen.
+| Row | Left field | Right field |
+| --- | --- | --- |
+| 1 | Incident Name | Incident Code |
+| 2 | Incident Category | Priority |
+| 3 | Incident Status | Reported At |
+| 4 | Incident Description | Safety Related |
+| 5 | Source Asset | Reported By |
+| 6 | Assigned Engineer | Related Alarm |
+| 7 | Resolution Notes | — |
 
-### S06.06 — Add the Incident create/edit form and save behavior
+Remove any automatically included **system `Status` or `Status Reason` cards from this form only** if they appear. **Incident Status** is our custom operational lifecycle Choice; it is not the built-in Dataverse Status/Status Reason. Do **not** delete system columns from Dataverse. To reorder fields, use **Edit fields** and drag them into the order shown where supported.
 
-On `scrIncidentEdit`, insert **Insert → Forms → Edit form** and rename it `frmIncidentEdit`. In the **Data** pane, choose **DC Incidents**. Add the same 13 fields from S06.05. Use the default controls that Power Apps generates for **Choice**, **Yes/No**, date/time and **Lookup** columns: do not replace the lookup cards with free-text inputs, and leave their generated **Update** properties intact unless a specific correction is required.
+Set the form's **Columns = 2** and place the two action buttons at the bottom, outside the form. On a narrow canvas, change the form to **1 column** so values remain readable. Do not shrink the form until its cards disappear; make the form taller or scrollable if necessary.
+
+**Checkpoint 5 — Incident Details.** Preview the app and navigate **Home → Incidents → select `INC-0002`**. The screen should show its code, Priority, **custom Incident Status**, description, associated asset, reporting employee and assigned engineer. The page must not be blank. **Edit incident** should navigate to the Editor once S06.06 is configured.
+
+### S06.06 — Configure the Incident Editor and reliable Save/Cancel actions
+
+Open `scrIncidentEdit`, choose **Insert → Forms → Edit form**, and rename it **`frmIncidentEdit`**. If that form already exists, select and configure it rather than adding another.
 
 | Control | Property | Formula / value |
 | --- | --- | --- |
-| `lblEditTitle` | Text | `If(varIsNewIncident, "New Incident", "Edit Incident")` |
 | `frmIncidentEdit` | DataSource | `'DC Incidents'` |
 | `frmIncidentEdit` | Item | `varSelectedIncident` |
+| `frmIncidentEdit` | X / Y | `32` / `102` |
+| `frmIncidentEdit` | Width / Height | `Parent.Width - 64` / `Parent.Height - 204` |
+| `frmIncidentEdit` | Columns | `2` |
+| `lblEditTitle` | Text | `If(varIsNewIncident, "New Incident", "Edit Incident")` |
+| `btnNewIncident` | OnSelect | `Set(varIsNewIncident, true); NewForm(frmIncidentEdit); Navigate(scrIncidentEdit, ScreenTransition.Fade)` |
 | `btnSaveIncident` | Text | `"Save incident"` |
 | `btnSaveIncident` | OnSelect | `SubmitForm(frmIncidentEdit)` |
 | `btnCancelIncident` | Text | `"Cancel"` |
 | `btnCancelIncident` | OnSelect | `ResetForm(frmIncidentEdit); If(varIsNewIncident, Navigate(scrIncidents, ScreenTransition.None), Navigate(scrIncidentDetail, ScreenTransition.None))` |
+
+In **Edit fields → Add field**, choose the same 13 business columns and order used in S06.05. If the form automatically includes **Status** and **Status Reason**, remove those two **cards**, not the table columns, unless you intentionally need the system state in this training screen. Keep **Incident Status**. Ensure **Source Asset**, **Reported By**, **Assigned Engineer** and **Related Alarm** all appear. Use the lookup controls generated by Dataverse and preserve their original **Update** formulas; entering employee or asset names into ordinary text boxes will not establish proper relationships.
 
 Set `frmIncidentEdit.OnSuccess` to:
 
@@ -855,66 +881,148 @@ Set(varSelectedIncident, frmIncidentEdit.LastSubmit);
 Set(varIsNewIncident, false);
 Refresh('DC Incidents');
 Notify("Incident saved.", NotificationType.Success);
-Navigate(scrIncidentDetail, ScreenTransition.None)
+Navigate(scrIncidentDetail, ScreenTransition.Fade)
 ```
 
 Set `frmIncidentEdit.OnFailure` to:
 
 ```powerfx
 Notify(
-    Coalesce(frmIncidentEdit.Error, "Incident was not saved."),
+    Coalesce(frmIncidentEdit.Error, "Incident was not saved. Review the fields."),
     NotificationType.Error
 )
 ```
 
-The same form handles two modes. **Edit incident** uses `EditForm` to update the existing record; **New incident** uses `NewForm` so the learner can enter a new record. When creating an incident, complete all required columns, including **Incident Name**, **Incident Code**, **Incident Category**, **Priority**, **Incident Status**, **Reported At**, **Incident Description**, **Source Asset** and **Reported By**. Select existing Lookup records using the generated lookup pickers. **Assigned Engineer** and **Related Alarm** may remain blank. Use a new, unique business code (for example `INC-MAN-0001`) and do not assume the Text field's Business required setting enforces uniqueness; record-key enforcement is a separate topic.
+**How the form works:** From a selected incident, `EditForm(frmIncidentEdit)` opens its existing values. From **New incident**, `NewForm(frmIncidentEdit)` makes a new record; the form ignores its `Item` while in New mode. `SubmitForm` validates required cards and saves. Only the form's **OnSuccess** navigates away after a successful save, so failures leave the learner on the same screen.
 
-Select **Save incident** once and observe the success notification. If the save fails, the form stays on the edit screen and displays a validation or Dataverse error. **Cancel** resets unsaved field changes. This screen updates only the incident record and does not send Teams notifications, initiate approvals or automatically update an associated alarm; those are separate automation features.
+For a new incident, enter a new **Incident Name** and **Incident Code**, and complete **Incident Category**, **Priority**, **Incident Status**, **Reported At**, **Incident Description**, **Source Asset** and **Reported By**. Select an existing related Asset and employee with the actual lookup pickers. **Assigned Engineer** and **Related Alarm** may stay blank. The business code is not a Dataverse GUID, and a Business required column by itself does not enforce unique values.
 
-### S06.07 — Add the Alarm browser
+Place **Save incident** and **Cancel** clearly below the form; the buttons should display those exact labels, never the default text `Button`. If a required-field asterisk is unexpectedly missing, inspect that card and its Dataverse column requirement before testing create behavior.
 
-Open `scrAlarms` and use **Insert → Text input** for `txtAlarmSearch`, **Insert → Gallery → Vertical** for `galAlarms`, and **Insert → Forms → Display** for `frmAlarmView`. Place the gallery to the left and the form to the right.
+**Checkpoint 6 — Editor.** Open `INC-0002`, choose **Edit incident**, change **Incident Status** from **Assigned** to **In Progress**, save and reopen to confirm persistence. Repeat the edit and restore **Assigned**. Then use **New incident** to inspect the blank required fields and press **Cancel** without saving; no extra incident should be created. If the form fails, read the error shown in Studio and confirm the lookup/required-field card values.
+
+### S06.07 — Finish Alarm Monitoring with a browser and read-only detail form
+
+Open `scrAlarms`. Below the existing title, insert **Classic Text input** `txtAlarmSearch`, **Blank vertical Gallery** `galAlarms` and **Display form** `frmAlarmView`. Put the search field above the gallery on the **left**, the display form on the **right**, and keep the Home button visible.
 
 | Control | Property | Formula / value |
 | --- | --- | --- |
-| `lblAlarmsTitle` | Text | `"Alarm Monitoring"` |
-| `txtAlarmSearch` | HintText (Classic) | `"Search alarm code or name"` |
-| `galAlarms` | Items | `Sort(Search('DC Alarms', txtAlarmSearch.Text, 'Alarm Code', 'Alarm Name'), 'Detected At', SortOrder.Descending)` |
+| `txtAlarmSearch` | HintText | `"Search alarm code or name"` |
+| `galAlarms` | Items | See formula below |
 | `galAlarms` | OnSelect | `Set(varSelectedAlarm, ThisItem)` |
 | `frmAlarmView` | DataSource | `'DC Alarms'` |
 | `frmAlarmView` | Item | `varSelectedAlarm` |
+| `frmAlarmView` | Columns | `1` |
+| `btnAlarmsHome` | Text / OnSelect | `"Home"` / `Navigate(scrHome, ScreenTransition.None)` |
 
-For the gallery template, show **Alarm Name** as the title, **Alarm Code** as the subtitle, and **Alarm Severity** and **Alarm Status** as additional labels using `Text(ThisItem.'Alarm Severity')` and `Text(ThisItem.'Alarm Status')`. Set nested template labels to `Select(Parent)` where necessary.
+Set `galAlarms.Items` to:
 
-In `frmAlarmView → Edit fields → Add field`, include **Alarm Name**, **Alarm Code**, **Alarm Type**, **Alarm Severity**, **Alarm Status**, **Detection Source**, **Detected At**, **Alarm Details**, **Source Asset**, and **Source Sensor**. Before a selection, the form may be blank; select an alarm in the gallery to populate it.
+```powerfx
+Sort(
+    Filter(
+        'DC Alarms',
+        IsBlank(txtAlarmSearch.Text) ||
+            StartsWith('Alarm Code', txtAlarmSearch.Text) ||
+            StartsWith('Alarm Name', txtAlarmSearch.Text)
+    ),
+    'Detected At',
+    SortOrder.Descending
+)
+```
 
-This Alarm screen is intentionally **read-only**. Alarm acknowledgment, escalation, automated routing and real-time updates will be introduced when those behaviors have been designed and tested.
+Add **two** labels inside the gallery's first template; rename them `lblAlarmRowName` and `lblAlarmRowMeta`. Remove any generic photo placeholder.
 
-### S06.08 — Test, save and publish the Canvas App
+| Template label | Text formula |
+| --- | --- |
+| `lblAlarmRowName` | `ThisItem.'Alarm Name'` |
+| `lblAlarmRowMeta` | `ThisItem.'Alarm Code' & "  ·  " & Text(ThisItem.'Alarm Severity') & "  ·  " & Text(ThisItem.'Alarm Status')` |
 
-Use **Preview (Play/F5)** in Power Apps Studio and perform these activities on the seeded fictional data:
+Set those nested labels' **OnSelect = `Select(Parent)`**. Set `galAlarms.TemplateSize = 76`. Use these layout properties for the search, gallery and form:
 
-| Test | Action | Expected result |
+| Control | X / Y | Width / Height |
 | --- | --- | --- |
-| T01 | Open Home | Incident, Alarm and Asset summary labels show counts sourced from the matching Dataverse tables |
-| T02 | Select **Open incidents**, search `INC-0002` | The matching Incident appears in the queue |
-| T03 | Select the incident | Incident Details opens with its existing Priority, Status and linked records |
-| T04 | Select **Edit incident**, change `Incident Status` from **Assigned** to **In Progress**, then save | The app displays a success message; reopen the record and confirm the saved status |
-| T05 | Edit the same record again to restore **Assigned** | The training data returns to its original status |
-| T06 | Select **Unassigned only** | The incident list shows records with no Assigned Engineer; toggle again to show all |
-| T07 | Open Alarms, search `ALM-0001` and select it | The Alarm form shows its existing detail and linked Asset/Sensor |
-| T08 | Open **New incident**, confirm the required fields and lookup pickers work; select **Cancel** without submitting | No extra Incident record is created |
-| T09 | Run **App checker** (stethoscope icon, where available) | Resolve formula errors, unexpected warnings and control accessibility issues before publishing |
+| `txtAlarmSearch` | `32` / `104` | `Parent.Width * 0.38` / `44` |
+| `galAlarms` | `32` / `170` | `Parent.Width * 0.39` / `Parent.Height - 198` |
+| `frmAlarmView` | `galAlarms.X + galAlarms.Width + 24` / `170` | `Parent.Width - galAlarms.Width - 88` / `Parent.Height - 198` |
 
-For T04–T05, use the **existing** Incident record rather than creating duplicate seed rows. After testing, select **File → Save** or the current Studio **Save** command, and then **Publish → Publish this version** where available. Return to **Solutions → SunnyVerse Data Center Operations 360 → Apps** (or **Objects**) and confirm **DC Operations Command Center** is listed. Reopen it to verify the saved version displays the five screens.
+Select `frmAlarmView → Edit fields → Add field` and add: **Alarm Name, Alarm Code, Alarm Type, Alarm Severity, Alarm Status, Detection Source, Detected At, Alarm Details, Source Asset, Source Sensor**. Set the form to one column because it occupies only the right portion of the screen. An empty form before an alarm is selected is expected; choose a gallery row to populate it.
 
-If the app reports a missing data source or permission error, confirm its Dataverse connections and the signed-in user's actual privileges before proceeding. **Visibility of a screen or button is not Dataverse security.** Sharing the app with another person requires authorization, appropriate licensing and access to the underlying Dataverse tables. Do not share the fictional operational dashboard with arbitrary institution users.
+**Checkpoint 7 — Alarm browser.** Search `ALM-0001` and select the result. The right-hand form shows the alarm's type, severity, status, detected time and related asset/sensor records. **Home** returns to the summary. This screen is read-only; no alarm acknowledgment or automatic notification is introduced here.
 
-### Finish Part 06
+### S06.08 — End-to-end checks, save and publish
 
-You should now have **one working Canvas App** inside the existing solution, containing **five screens** for summary KPIs, Incident browsing, Incident details, Incident creation/editing and Alarm browsing. The incident save form should persist changes to Dataverse; searches, lookups, navigation, cancellation and refresh should work. The original Alarm, Incident and Asset tables remain the data sources, with no duplicate tables or new CSV files.
+Run the following activities from **Preview (Play/F5)**. These are meaningful functional checks—not extra steps for creating controls.
 
-The command center is ready for later notification, assignment and escalation automations. It remains a fictional educational interface and does not control physical equipment.
+| Check | Action | Expected result |
+| --- | --- | --- |
+| Home | Open the app and select **Refresh data** | Count labels show available Dataverse totals rather than unexplained zeros; recent incidents appear |
+| Navigation | Open Incidents, Home, Alarms, Home | All routes work without formula errors |
+| Search | Search `INC-0002` and `ALM-0001` | Both matching records appear on the correct screen |
+| Details | Select `INC-0002` | Complete Incident Display form shows the chosen record |
+| Edit/save | Change its custom **Incident Status**, save, reopen and restore | Edit form persists the new value to Dataverse |
+| Cancel | Open New incident, then Cancel | No new incident is saved |
+| Relationships | Inspect Source Asset, Reported By and Assigned Engineer | Related records resolve through actual lookup controls |
+| Alarms | Select `ALM-0001` | Read-only form shows details and related records |
+| App checker | Open **App checker**, review warnings and errors | No unresolved blocking formula errors or hidden required fields |
+
+If a form is blank, verify its **DataSource**, **Item**, field list and navigation selection variable. If a gallery contains generic image squares, delete those **template images** rather than deleting the gallery. If save buttons still display `Button`, select the correct named button and set its **Text** property. Resolve errors before publishing rather than hiding them.
+
+Select **Save** in Power Apps Studio (you may include version notes), then **Publish → Publish this version**. Save and publish are separate actions: saving stores your edits; publishing makes the saved version available to people who already have appropriate access. Return to **Solutions → SunnyVerse Data Center Operations 360 → Apps** to confirm the single **DC Operations Command Center** app exists.
+
+### Finish Part 06 — Functional checkpoint
+
+Your solution should now include **one published tablet Canvas App**, five working screens, correct Dataverse counts, searchable text-only galleries, a populated Incident Details form, a working Incident New/Edit form with lookup controls and Save/Cancel behavior, and a read-only Alarm browser. The tables from Parts 01–05 remain the source of truth. This completes the technical build; you can stop here or continue with the optional visual styling below.
+
+### S06.09 — Optional visual design: Deep Ocean Operations theme
+
+The technical build is complete. This optional pass gives the same application a clean **industrial operations dashboard** appearance: deep navy for control and reliability, teal for active operational actions, and warm amber for attention. It changes only Canvas control presentation—not Dataverse columns, relationships or business rules.
+
+#### Color palette
+
+| Use | Color name | Hex | Power Fx |
+| --- | --- | --- | --- |
+| **Primary** — title bar, main identity | Deep Ocean Navy | **#16364F** | `ColorValue("#16364F")` |
+| **Secondary** — navigation/action | Operations Teal | **#086B78** | `ColorValue("#086B78")` |
+| **Accent** — important counts or highlights | Signal Amber | **#F3B547** | `ColorValue("#F3B547")` |
+| **Background neutral** | Arctic Mist | **#F3F7FA** | `ColorValue("#F3F7FA")` |
+| **Surface neutral** — cards/forms | White | **#FFFFFF** | `ColorValue("#FFFFFF")` |
+| **Text** — high contrast | Ink Slate | **#192F42** | `ColorValue("#192F42")` |
+| **Secondary text** | Muted Blue Gray | **#536A7B** | `ColorValue("#536A7B")` |
+| **Border / dividers** | Cool Line | **#D9E4EB** | `ColorValue("#D9E4EB")` |
+| **Selection background** | Pale Teal | **#E1F2F3** | `ColorValue("#E1F2F3")` |
+| **Alert/error** | Alarm Red | **#B83D51** | `ColorValue("#B83D51")` |
+| **Success** | Verified Green | **#20715B** | `ColorValue("#20715B")` |
+
+Use **navy text on amber**, not white text on amber, to keep the contrast readable. Do not use color alone to identify a status; always retain its text label.
+
+#### Apply the theme, without changing the formulas
+
+Select each control in Tree view and set its appearance properties. These formulas apply to **Classic** controls; Modern controls may use theme tokens or a different property pane. If your editor uses Modern controls, choose the closest theme settings while retaining the functional formulas from S06.01–S06.08.
+
+| Controls | Property | Value / formula |
+| --- | --- | --- |
+| All five screens | Fill | `ColorValue("#F3F7FA")` |
+| All title labels (`lblHomeTitle`, etc.) | Color | `ColorValue("#16364F")` |
+| All title labels | Size / Font weight | `24` / Bold |
+| All KPI labels | Fill / Color | `ColorValue("#FFFFFF")` / `ColorValue("#192F42")` |
+| All KPI labels | BorderColor / BorderThickness | `ColorValue("#D9E4EB")` / `1` |
+| KPI labels | PaddingLeft / PaddingTop | `16` / `12` |
+| All primary-action buttons | Fill / Color | `ColorValue("#086B78")` / `ColorValue("#FFFFFF")` |
+| All primary-action buttons | HoverFill / PressedFill | `ColorValue("#07515B")` / `ColorValue("#06444C")` |
+| All primary-action buttons | BorderThickness | `0` |
+| Back/Cancel buttons | Fill / Color | `ColorValue("#FFFFFF")` / `ColorValue("#16364F")` |
+| Back/Cancel buttons | BorderColor / BorderThickness | `ColorValue("#D9E4EB")` / `1` |
+| Text inputs | Fill / Color / BorderColor | `ColorValue("#FFFFFF")` / `ColorValue("#192F42")` / `ColorValue("#D9E4EB")` |
+| `galRecentIncidents`, `galIncidents`, `galAlarms` | TemplateFill | `If(ThisItem.IsSelected, ColorValue("#E1F2F3"), ColorValue("#FFFFFF"))` |
+| Gallery title labels | Color | `ColorValue("#192F42")` |
+| Gallery meta labels | Color | `ColorValue("#536A7B")` |
+| Display/Edit forms | Fill | `ColorValue("#FFFFFF")` |
+
+For Classic buttons, when the properties are available, set **RadiusTopLeft, RadiusTopRight, RadiusBottomLeft and RadiusBottomRight = 8** for softened corners. Use **Font = Segoe UI** where available. Keep action-button height around **44–48 px** and a consistent **16–24 px** spacing rhythm.
+
+For a purposeful accent, select `lblCountAlarms` and set **BorderColor = `ColorValue("#F3B547")`**, while retaining its **BorderThickness = 1**. Use amber as a thin highlight, not a full bright background. Keep incident severity and alarm status readable as text; use red only for clearly labeled critical/error conditions, never as decoration.
+
+**Optional design checkpoint.** Preview the five screens once more. Check that labels are legible, buttons and fields do not overlap, the blank gallery layout contains no image placeholders, form fields remain visible, and keyboard focus is not obscured by color choices. Select **Save**, then **Publish this version** again if you want the themed version available to your authorized app users.
 
 ## Microsoft Learn references
 
