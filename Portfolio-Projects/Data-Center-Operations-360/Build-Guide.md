@@ -2,13 +2,13 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–06 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center
+**Published:** Parts 00–07 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
 Welcome to Data Center Operations 360. In this project, you will build a fictional data center operations solution using Microsoft Power Platform. The work is completed in an environment where you have permission to develop, and all practice records are fictional.
 
-Part 00 prepares the solution. Parts 01–04 build the reference data, Part 05 adds alarms and incidents, and Part 06 creates a connected Canvas App. Follow the lessons in order in an authorized learning environment.
+Part 00 prepares the solution. Parts 01–04 build reference data, Part 05 adds alarms and incidents, Part 06 creates the desktop command center, and Part 07 adds a phone-oriented field inspection app. Follow the lessons in order in an authorized learning environment.
 
 Follow the activities in order. The menu labels in your environment may differ slightly; choose the equivalent command and inspect the actual settings before saving.
 
@@ -1046,6 +1046,364 @@ Select **Save**, then **Publish → Publish this version**. Return to **Solution
 You have a **five-screen Operations Command Center** with consistent navy, teal, amber and neutral colors, live Dataverse KPI formulas, searchable image-free incident and alarm lists, readable details, and a working incident New/Edit form. The app uses the existing fictional records and does not operate real equipment or send real notifications.
 
 
+---
+
+## Part 07 — Build the Field Engineer Mobile App
+
+Our Operations Command Center provides a desktop view of alarms and incidents. Next, we'll create **DC FieldOps**, a portrait Canvas App for a fictional field engineer carrying a phone. The app will show existing incidents, allow an update to an incident's operational status, and record equipment inspections with notes and supporting evidence. It uses the existing Assets, Incidents and Employee Profiles from earlier lessons.
+
+First we'll create **DC Field Inspection**, a small Dataverse table for inspection records. Then we'll create the mobile app and enter two sample inspections through its own form. **No CSV import or new Power Automate flow is needed.** We'll use the same deep-navy, teal, amber and light-neutral colors as the command center.
+
+### S07.01 — Create the DC Field Inspection table
+
+Open [Power Apps](https://make.powerapps.com), select the same authorized environment, then navigate to **Solutions → SunnyVerse Data Center Operations 360 → New → Table**. Open the advanced table properties so that the primary name, ownership and attachment settings are visible.
+
+| Table property | Enter |
+| --- | --- |
+| Display name / plural | `DC Field Inspection` / `DC Field Inspections` |
+| Description | `Fictional mobile equipment inspections with findings, follow-up decisions and supporting evidence.` |
+| Primary name column | `Inspection Name` |
+| Primary-column description | `Readable title of the fictional equipment inspection.` |
+| Type / record ownership | Standard / **Organization** |
+| Table schema name (target) | `svrg_DCFieldInspection` |
+| Primary-name schema name (target) | `svrg_InspectionName` |
+| Enable attachments / Notes | **Yes** — enable notes and attachments for this table |
+
+Choose **Organization** ownership because these training inspection records form a shared reference history. Set **Enable attachments** (sometimes labeled **Notes and attachments**) to **On** when the table's properties expose it. This permits supported form-based evidence uploads; it is **not** a separate text or image column.
+
+Select **Create** and reopen the table's properties to confirm that the primary name reads **Inspection Name** and that attachments are enabled. Leave the generated Dataverse GUID column unchanged. If the notes/attachments setting was not available during creation, locate it under **Table properties → Advanced options** and enable it before making the app.
+
+### S07.02 — Add the inspection columns
+
+Open **DC Field Inspection → Schema → Columns → New column**. Enter the display names, descriptions, types and options from the table. The first row is the primary name column created in S07.01; **do not create it again**. Use **Done** after each new column and **Save table** when prompted. Set **Behavior = Simple** for applicable fields, and retain the generated numeric Choice values.
+
+| Exact display name | Schema name (target) | Description | Type / Required | Other properties |
+| --- | --- | --- | --- | --- |
+| `Inspection Name` | `svrg_InspectionName` | `Readable title of the fictional equipment inspection.` | Primary Text; Business required | Created with table; no default |
+| `Inspection Code` | `svrg_InspectionCode` | `Stable fictional inspection identifier for later reporting.` | Single-line Text; Business required | Format Text; max 24; Searchable Yes; no default |
+| `Inspection Date` | `svrg_InspectionDate` | `Date on which the fictional equipment inspection was performed.` | Date Only; Business required | Date-only behavior; no default |
+| `Inspection Status` | `svrg_InspectionStatus` | `Progress of the inspection through its work lifecycle.` | Single-select Choice; Business required | **Local Choice:** Planned, In Progress, Completed; Searchable Yes; no default |
+| `Inspection Result` | `svrg_InspectionResult` | `Outcome recorded after examining the asset.` | Single-select Choice; Optional | **Local Choice:** Pass, Attention, Fail, Not Assessed; Searchable Yes; no default |
+| `Finding Description` | `svrg_FindingDescription` | `Observed condition or issue identified during the inspection.` | Multiline Text; Optional | Max 2000 characters if available; no default |
+| `Action Taken` | `svrg_ActionTaken` | `Action completed during the inspection or recommended next step.` | Multiline Text; Optional | Max 2000 characters if available; no default |
+| `Follow-up Required` | `svrg_FollowUpRequired` | `Whether another action is needed after the inspection.` | Yes/No Boolean; Optional | Labels Yes / No; default No; Searchable No if available |
+| `Duration Minutes` | `svrg_DurationMinutes` | `Illustrative number of minutes spent on the inspection.` | Whole Number; Optional | Format None; minimum 0, maximum 1440 if offered; no default |
+
+To create **Inspection Status**, select **Data type → Choice → View more → Local choice**, add the three labels exactly as shown, and leave its default empty. Repeat for **Inspection Result**, using its four labels. These are two independent **Local Choices**, not new Global Choices. **Follow-up Required** is a Boolean Yes/No column, not a Choice.
+
+**Checkpoint 1 — Table definition.** Reopen **Schema → Columns**. Confirm the primary name and all eight additional business columns, with the intended `svrg` schema prefix and the exact Local Choice labels. No Asset or Employee fields should have been created as plain text.
+
+### S07.03 — Add the inspection relationships
+
+Each inspection concerns an existing equipment asset and identifies a fictional employee profile who performed it. An inspection may also reference an earlier incident, but that is optional.
+
+Open **DC Field Inspection → Schema → Relationships → New relationship → Many-to-one** for each row below. Keep **DC Field Inspection** as the current table, choose the indicated **Related table**, enter the exact lookup display name, and save the relationship. The lookup column is created with the relationship; **do not add it again** from Columns.
+
+| Lookup display name | Schema name (target) | Description | Related table | Requirement / other settings |
+| --- | --- | --- | --- | --- |
+| `Asset` | `svrg_Asset` | `Existing equipment asset examined during this inspection.` | **DC Asset** | Business required; Searchable Yes; Referential / Restrict Delete where available |
+| `Inspected By` | `svrg_InspectedBy` | `Fictional employee profile who completed the inspection.` | **DC Employee Profile** | Business required; Searchable Yes; Referential / Restrict Delete where available |
+| `Related Incident` | `svrg_RelatedIncident` | `Existing incident associated with the finding when applicable.` | **DC Incident** | Optional; Searchable Yes; Referential / Restrict Delete where available |
+
+In **Schema → Columns**, verify that **Asset**, **Inspected By** and **Related Incident** each have type **Lookup**, and that their related tables match the table above. The employee profile is fictional reference data; it does not represent the signed-in user's Microsoft identity or grant access permissions.
+
+**Checkpoint 2 — Relationships.** The DC Field Inspection table has **three** lookups: two required and one optional. The related Asset, Employee Profile and Incident tables already contain the practice records created earlier.
+
+### S07.04 — Create DC FieldOps and apply its mobile theme
+
+Return to **Solutions → SunnyVerse Data Center Operations 360 → New → App → Canvas app**. Choose **Phone / Portrait** and enter **DC FieldOps** as the app's name. In the editor open **Data → Add data → Microsoft Dataverse** and connect these existing tables:
+
+| Studio data source | Purpose |
+| --- | --- |
+| `'DC Incidents'` | Browse and update incident records |
+| `'DC Assets'` | Select an asset for inspection |
+| `'DC Employee Profiles'` | Select a fictional inspector in the form |
+| `'DC Field Inspections'` | Create, browse and edit inspection records |
+
+Select **App → Formulas** and enter the same reusable named colors used by the desktop command center:
+
+```powerfx
+clrPrimary = ColorValue("#16364F");
+clrSecondary = ColorValue("#086B78");
+clrAccent = ColorValue("#F3B547");
+clrCanvas = ColorValue("#F3F7FA");
+clrSurface = ColorValue("#FFFFFF");
+clrText = ColorValue("#192F42");
+clrMuted = ColorValue("#536A7B");
+clrBorder = ColorValue("#D9E4EB");
+clrSelected = ColorValue("#E1F2F3");
+clrDanger = ColorValue("#B83D51");
+clrSuccess = ColorValue("#20715B");
+```
+
+Create the six blank screens in **Tree view**, using **New screen → Blank** and **… → Rename**:
+
+| Screen | Purpose | Controls to add in its later section |
+| --- | --- | --- |
+| `scrFieldHome` | Mobile landing page | KPIs, navigation, refresh |
+| `scrFieldIncidents` | Incident search | Search, unassigned filter, incident gallery |
+| `scrFieldIncidentDetail` | Read selected incident | Display form, Edit and Back buttons |
+| `scrFieldIncidentEdit` | Update selected incident | Edit form, Save and Cancel |
+| `scrFieldInspections` | Inspection list | Search, inspection gallery, New button |
+| `scrFieldInspectionEdit` | Create or update inspection | Edit form including attachments, Save and Cancel |
+
+On **each screen**, set **Fill = `clrCanvas`**. Create a rectangle (**Insert → Shapes → Rectangle**) and a text label for its header. Give the rectangle **X = 0, Y = 0, Width = Parent.Width, Height = 72, Fill = `clrPrimary`, BorderThickness = 0**. Add a thin second rectangle with **X = 0, Y = 72, Width = Parent.Width, Height = 3, Fill = `clrAccent`**. Send both rectangles to the back. Set each title label's **X = 18, Y = 13, Width = Parent.Width - 36, Height = 44, Color = `clrSurface`, Fill = `Color.Transparent`, Size = 20, FontWeight = `FontWeight.Bold`**.
+
+| Screen title label | Text |
+| --- | --- |
+| `lblFieldHomeTitle` | `"DC FIELDOPS"` |
+| `lblFieldIncidentsTitle` | `"FIELD INCIDENTS"` |
+| `lblFieldIncidentDetailTitle` | `"INCIDENT DETAILS"` |
+| `lblFieldIncidentEditTitle` | `"UPDATE INCIDENT"` |
+| `lblFieldInspectionsTitle` | `"EQUIPMENT INSPECTIONS"` |
+| `lblFieldInspectionEditTitle` | `If(varNewInspection, "NEW INSPECTION", "EDIT INSPECTION")` |
+
+Use **Classic** Text labels, Buttons, Text inputs, and **Blank vertical** Galleries when available, so the formulas use the classic `Text` property. Add each title to its screen and rename it as above. Set **App → StartScreen = `scrFieldHome`**.
+
+Buttons will use consistent mobile styling: **Fill = `clrSecondary`**, **Color = `clrSurface`**, **Height = 48**, **Size = 16**, **BorderThickness = 0**. Set **HoverFill = `ColorValue("#07515B")`** and **PressedFill = `ColorValue("#06444C")`** for Classic buttons. For **Back** and **Cancel** buttons use **Fill = `clrSurface`**, **Color = `clrPrimary`**, **BorderColor = `clrBorder`**, **BorderThickness = 1**. Use a 12–16 pixel margin between touch controls.
+
+### S07.05 — Build the FieldOps Home screen
+
+Open `scrFieldHome`. Add two large labels for the KPIs and three buttons below them. Rename the controls exactly and set their properties:
+
+| Control | Property | Formula / value |
+| --- | --- | --- |
+| `lblFieldIncidentCount` | Text | `"INCIDENTS" & Char(10) & Text(CountIf('DC Incidents', true), "0")` |
+| `lblFieldInspectionCount` | Text | `"INSPECTIONS" & Char(10) & Text(CountIf('DC Field Inspections', true), "0")` |
+| Both KPI labels | Fill / Color / BorderColor / BorderThickness | `clrSurface` / `clrText` / `clrBorder` / `1` |
+| Both KPI labels | X / Width / Height / Align | `18` / `Parent.Width - 36` / `90` / `Align.Center` |
+| `lblFieldIncidentCount` | Y | `104` |
+| `lblFieldInspectionCount` | Y | `212` |
+| `btnFieldOpenIncidents` | Text / OnSelect | `"Browse incidents"` / `Navigate(scrFieldIncidents, ScreenTransition.Fade)` |
+| `btnFieldOpenInspections` | Text / OnSelect | `"Record inspection"` / `Navigate(scrFieldInspections, ScreenTransition.Fade)` |
+| `btnFieldRefresh` | Text / OnSelect | `"Refresh"` / `Refresh('DC Incidents'); Refresh('DC Field Inspections'); Notify("Records refreshed.", NotificationType.Information)` |
+
+Set each button's **X = 18**, **Width = Parent.Width - 36**, and use **Y = 330, 398, and 466**, respectively. The first two buttons use teal; make Refresh white with navy text and a cool-gray border.
+
+With the original practice data, Incidents should initially show approximately **200**, and Inspections should initially show **0**. Dataverse counts can be cached or delegation-limited; the `CountIf` formula is intended to request an exact count in supported Dataverse environments with enhanced delegation enabled. If a count contradicts the table's records, inspect the formula warning rather than replacing the number with a fixed literal.
+
+**Checkpoint 3 — Mobile Home.** The portrait screen shows two readable white KPI cards, three large touch buttons, and a navy header with a thin amber divider. Both Browse incidents and Record inspection navigate to their respective screens.
+
+### S07.06 — Browse and open existing incidents
+
+On `scrFieldIncidents` insert **Classic Text input** `txtFieldIncidentSearch`, **Button** `btnFieldOnlyUnassigned`, **Blank vertical Gallery** `galFieldIncidents` and **Button** `btnFieldIncidentsHome`. Place the search field at the top, the filter button beneath it, and the list below. Keep the Home action visible at the bottom.
+
+| Control or screen | Property | Formula / value |
+| --- | --- | --- |
+| `txtFieldIncidentSearch` | HintText / Default | `"Search incident code or name"` / `""` |
+| `txtFieldIncidentSearch` | X / Y / Width / Height | `18` / `94` / `Parent.Width - 36` / `48` |
+| `txtFieldIncidentSearch` | Fill / Color / BorderColor / FocusedBorderColor | `clrSurface` / `clrText` / `clrBorder` / `clrSecondary` |
+| `scrFieldIncidents` | OnVisible | `Set(varFieldOnlyUnassigned, false)` |
+| `btnFieldOnlyUnassigned` | Text | `If(varFieldOnlyUnassigned, "Show all incidents", "Unassigned only")` |
+| `btnFieldOnlyUnassigned` | OnSelect | `Set(varFieldOnlyUnassigned, !varFieldOnlyUnassigned)` |
+| `btnFieldOnlyUnassigned` | X / Y / Width | `18` / `158` / `Parent.Width - 36` |
+| `galFieldIncidents` | X / Y / Width / Height | `18` / `222` / `Parent.Width - 36` / `Parent.Height - 315` |
+| `galFieldIncidents` | Fill / TemplateFill | `clrSurface` / `If(ThisItem.IsSelected, clrSelected, clrSurface)` |
+| `galFieldIncidents` | TemplateSize / TemplatePadding | `82` / `4` |
+| `galFieldIncidents` | OnSelect | `Set(varFieldIncident, ThisItem); Navigate(scrFieldIncidentDetail, ScreenTransition.Fade)` |
+| `btnFieldIncidentsHome` | Text / OnSelect | `"Home"` / `Navigate(scrFieldHome, ScreenTransition.None)` |
+
+Set **galFieldIncidents.Items**:
+
+```powerfx
+Sort(
+    Filter(
+        'DC Incidents',
+        IsBlank(txtFieldIncidentSearch.Text) ||
+            StartsWith('Incident Code', txtFieldIncidentSearch.Text) ||
+            StartsWith('Incident Name', txtFieldIncidentSearch.Text),
+        !varFieldOnlyUnassigned || IsBlank('Assigned Engineer')
+    ),
+    'Reported At',
+    SortOrder.Descending
+)
+```
+
+Inside the gallery template insert **two labels**, `lblFieldIncidentRowName` and `lblFieldIncidentRowMeta`. Do not use a photo gallery. Give the first **Text = `ThisItem.'Incident Name'`**, **Color = `clrText`**, **Size = 15**; the second **Text = `ThisItem.'Incident Code' & "  ·  " & Text(ThisItem.'Incident Status')`**, **Color = `clrMuted`**, **Size = 12**. Set both **OnSelect = `Select(Parent)`**, **Fill = `Color.Transparent`**, **X = 12** and **Width = Parent.TemplateWidth - 24**. Use **Y = 9** for the first and **Y = 42** for the second. Remove any placeholder image control from the template.
+
+On `scrFieldIncidentDetail` choose **Insert → Forms → Display form** and rename it `frmFieldIncidentView`. Add two buttons, `btnFieldOpenEdit` and `btnFieldDetailBack`. Configure:
+
+| Control | Property | Formula / value |
+| --- | --- | --- |
+| `frmFieldIncidentView` | DataSource / Item | `'DC Incidents'` / `varFieldIncident` |
+| `frmFieldIncidentView` | X / Y / Width / Height | `18` / `96` / `Parent.Width - 36` / `Parent.Height - 194` |
+| `frmFieldIncidentView` | Columns / Fill | `1` / `clrSurface` |
+| `btnFieldOpenEdit` | Text / OnSelect | `"Update incident"` / `EditForm(frmFieldIncidentEdit); Navigate(scrFieldIncidentEdit, ScreenTransition.Fade)` |
+| `btnFieldDetailBack` | Text / OnSelect | `"Back to incidents"` / `Navigate(scrFieldIncidents, ScreenTransition.None)` |
+
+Under **frmFieldIncidentView → Edit fields → Add field**, include **Incident Name**, **Incident Code**, **Priority**, **Incident Status**, **Reported At**, **Incident Description**, **Source Asset**, **Reported By**, **Assigned Engineer**, **Related Alarm** and **Resolution Notes**. Remove any automatically included *system* Status or Status Reason cards from the form; keep the custom **Incident Status**. Set card caption colors to `clrMuted` and displayed values to `clrText`. Use a one-column form so field labels and lookup names remain readable on a phone.
+
+**Checkpoint 4 — Incident navigation.** Search `INC-0002`, select it, and verify the Incident Details form displays the selected existing record. The Back button returns to the incident gallery without creating anything.
+
+### S07.07 — Update an existing incident from the phone
+
+Open `scrFieldIncidentEdit`, choose **Insert → Forms → Edit form**, and rename it `frmFieldIncidentEdit`. This is a **limited update form**, not a new-incident wizard. It changes the operational fields needed for practice without changing the record's originating Asset or reporting employee.
+
+| Control | Property | Formula / value |
+| --- | --- | --- |
+| `frmFieldIncidentEdit` | DataSource / Item | `'DC Incidents'` / `varFieldIncident` |
+| `frmFieldIncidentEdit` | X / Y / Width / Height | `18` / `96` / `Parent.Width - 36` / `Parent.Height - 194` |
+| `frmFieldIncidentEdit` | Columns / Fill | `1` / `clrSurface` |
+| `btnFieldSaveIncident` | Text / OnSelect | `"Save update"` / `SubmitForm(frmFieldIncidentEdit)` |
+| `btnFieldCancelIncident` | Text / OnSelect | `"Cancel"` / `ResetForm(frmFieldIncidentEdit); Navigate(scrFieldIncidentDetail, ScreenTransition.None)` |
+
+Under **Edit fields → Add field**, choose only **Incident Status**, **Assigned Engineer**, **Resolution Notes** and **Incident Description**, in that order. Keep their generated Choice/Lookup/Multiline controls and **Update** bindings. The remaining Incident fields retain their previously saved values because they are not being modified by these cards.
+
+Set `frmFieldIncidentEdit.OnSuccess`:
+
+```powerfx
+Set(varFieldIncident, frmFieldIncidentEdit.LastSubmit);
+Refresh('DC Incidents');
+Notify("Incident updated.", NotificationType.Success);
+Navigate(scrFieldIncidentDetail, ScreenTransition.Fade)
+```
+
+Set `frmFieldIncidentEdit.OnFailure`:
+
+```powerfx
+Notify(
+    Coalesce(frmFieldIncidentEdit.Error, "Update not saved."),
+    NotificationType.Error
+)
+```
+
+Position Save update and Cancel beneath the form; use teal for Save and outlined white for Cancel. For each form-card caption choose **Color = `clrMuted`**. For editable controls use **Fill = `clrSurface`**, **Color = `clrText`** and **BorderColor = `clrBorder`**, where supported. Error labels use `clrDanger`. Leave the generated Combo box's lookup source and any card **DataField / Default / Update** settings unchanged.
+
+**Checkpoint 5 — Update.** Open `INC-0002`, update its **Incident Status** from Assigned to In Progress, save and confirm the status is shown in the read-only details. Change it back to Assigned so the fictional seed data stays consistent. Canceling the form must not save a change.
+
+### S07.08 — Create the inspection list and mobile inspection form
+
+On `scrFieldInspections` insert **Classic Text input** `txtFieldInspectionSearch`, **Blank vertical Gallery** `galFieldInspections`, **Button** `btnFieldNewInspection` and **Button** `btnFieldInspectionsHome`. Use the existing title and theme header.
+
+| Control | Property | Formula / value |
+| --- | --- | --- |
+| `txtFieldInspectionSearch` | HintText / Default | `"Search inspection code or name"` / `""` |
+| `txtFieldInspectionSearch` | X / Y / Width / Height | `18` / `96` / `Parent.Width - 36` / `48` |
+| `galFieldInspections` | Items | See formula below |
+| `galFieldInspections` | X / Y / Width / Height | `18` / `211` / `Parent.Width - 36` / `Parent.Height - 304` |
+| `galFieldInspections` | Fill / TemplateFill | `clrSurface` / `If(ThisItem.IsSelected, clrSelected, clrSurface)` |
+| `galFieldInspections` | TemplateSize | `80` |
+| `galFieldInspections` | OnSelect | `Set(varFieldSelectedInspection, ThisItem); Set(varNewInspection, false); EditForm(frmFieldInspectionEdit); Navigate(scrFieldInspectionEdit, ScreenTransition.Fade)` |
+| `btnFieldNewInspection` | Text / OnSelect | `"New inspection"` / `Set(varNewInspection, true); NewForm(frmFieldInspectionEdit); Navigate(scrFieldInspectionEdit, ScreenTransition.Fade)` |
+| `btnFieldInspectionsHome` | Text / OnSelect | `"Home"` / `Navigate(scrFieldHome, ScreenTransition.None)` |
+
+Set **galFieldInspections.Items**:
+
+```powerfx
+Sort(
+    Filter(
+        'DC Field Inspections',
+        IsBlank(txtFieldInspectionSearch.Text) ||
+            StartsWith('Inspection Code', txtFieldInspectionSearch.Text) ||
+            StartsWith('Inspection Name', txtFieldInspectionSearch.Text)
+    ),
+    'Inspection Date',
+    SortOrder.Descending
+)
+```
+
+Inside the gallery template add **two labels**: `lblFieldInspectionRowName` (**Text = `ThisItem.'Inspection Name'`**, Color `clrText`, Size 15), and `lblFieldInspectionRowMeta` (**Text = `ThisItem.'Inspection Code' & "  ·  " & Text(ThisItem.'Inspection Status')`**, Color `clrMuted`, Size 12). Set **OnSelect = `Select(Parent)`**, **Fill = `Color.Transparent`**, **X = 12** and **Width = Parent.TemplateWidth - 24** for both. Put New inspection above the gallery and Home below it.
+
+Next open `scrFieldInspectionEdit`, insert **Forms → Edit form**, rename it `frmFieldInspectionEdit`, then add the **Save inspection** and **Cancel** buttons below the form.
+
+| Control | Property | Formula / value |
+| --- | --- | --- |
+| `frmFieldInspectionEdit` | DataSource | `'DC Field Inspections'` |
+| `frmFieldInspectionEdit` | Item | `varFieldSelectedInspection` |
+| `frmFieldInspectionEdit` | X / Y / Width / Height | `18` / `94` / `Parent.Width - 36` / `Parent.Height - 198` |
+| `frmFieldInspectionEdit` | Columns / Fill | `1` / `clrSurface` |
+| `btnFieldSaveInspection` | Text / OnSelect | `"Save inspection"` / `SubmitForm(frmFieldInspectionEdit)` |
+| `btnFieldSaveInspection` | DisplayMode | `If(frmFieldInspectionEdit.Valid, DisplayMode.Edit, DisplayMode.Disabled)` |
+| `btnFieldCancelInspection` | Text / OnSelect | `"Cancel"` / `ResetForm(frmFieldInspectionEdit); Navigate(scrFieldInspections, ScreenTransition.None)` |
+
+Under **frmFieldInspectionEdit → Edit fields → Add field**, select these fields in this order. Each should remain a **Dataverse-generated data card** so its Choice, Date, Yes/No and Lookup values save correctly.
+
+| Form order | Field | Learner action |
+| --- | --- | --- |
+| 1 | **Inspection Name** | Enter a readable inspection title |
+| 2 | **Inspection Code** | Enter a fictional unique business code |
+| 3 | **Inspection Date** | Select the inspection date |
+| 4 | **Asset** | Choose an existing **DC Asset** through its lookup picker |
+| 5 | **Inspected By** | Choose an existing **DC Employee Profile** |
+| 6 | **Inspection Status** | Select Planned, In Progress or Completed |
+| 7 | **Inspection Result** | Select Pass, Attention, Fail or Not Assessed |
+| 8 | **Finding Description** | Explain the observation |
+| 9 | **Action Taken** | Describe the action or recommendation |
+| 10 | **Follow-up Required** | Choose Yes or No |
+| 11 | **Duration Minutes** | Enter the training duration |
+| 12 | **Related Incident** | Optionally select an existing related incident |
+| 13 | **Attachments** | Add a staged photo or supporting file where the tenant permits |
+
+**Evidence upload:** The table's **Enable attachments** setting allows a Dataverse form to offer an **Attachments** field. Choose **Edit fields → Add field → Attachments**, if shown. Keep the generated attachment card and its data binding unchanged. The file is not stored just because it was selected; **SubmitForm** saves the record and the staged file together. On Power Apps Mobile, files are normally selected one at a time. Use a **fictional/staged image or non-sensitive sample file**—never a real facility photo. If Attachments isn't available, verify table attachment enablement and refresh the Dataverse connection; do not substitute an unbound Add picture control and assume it saved to Dataverse. The attachment feature may depend on the tenant configuration and permissions.
+
+For the form's existing card captions use **clrMuted** and for supported inputs use **Fill = clrSurface**, **Color = clrText**, **BorderColor = clrBorder**; use **clrDanger** for error labels. Keep **DataField**, **Update**, **Default**, **Required** and attachment control bindings as generated. The single-column form is taller than a phone's display; keep the form scrollable and its Save/Cancel buttons outside its scrollable cards.
+
+Set `frmFieldInspectionEdit.OnSuccess`:
+
+```powerfx
+Set(varFieldSelectedInspection, frmFieldInspectionEdit.LastSubmit);
+Set(varNewInspection, false);
+Refresh('DC Field Inspections');
+Notify("Inspection saved.", NotificationType.Success);
+Navigate(scrFieldInspections, ScreenTransition.Fade)
+```
+
+Set `frmFieldInspectionEdit.OnFailure`:
+
+```powerfx
+Notify(
+    Coalesce(frmFieldInspectionEdit.Error, "Inspection was not saved. Check required fields and evidence."),
+    NotificationType.Error
+)
+```
+
+**Create two fictional practice records** from the app. Select **New inspection**, complete the form, choose the actual Asset and Inspected By lookup records, and save. Do not import additional CSVs.
+
+| Field | Practice inspection A | Practice inspection B |
+| --- | --- | --- |
+| Inspection Name | `UPS 001 Surface Review` | `Cooling Unit 002 Visual Check` |
+| Inspection Code | `INSP-0001` | `INSP-0002` |
+| Inspection Date | Today's date in the app | Today's date in the app |
+| Asset | UPS 001 | Cooling Unit 002 |
+| Inspected By | Noah Morales | Sana Kim |
+| Inspection Status | Completed | Completed |
+| Inspection Result | Pass | Attention |
+| Finding Description | `No visible damage observed in the fictional inspection.` | `Synthetic inspection notes describe a cooling performance concern.` |
+| Action Taken | `Recorded completed visual review.` | `Recommended follow-up review of cooling performance.` |
+| Follow-up Required | No | Yes |
+| Duration Minutes | 15 | 20 |
+| Related Incident | Leave blank | Leave blank |
+| Attachments | Optional staged sample image/file | Optional staged sample image/file |
+
+After saving, select one inspection from `galFieldInspections` to reopen the edit form. Verify its Asset, inspector, status, result, notes and any attachment remain associated with the saved record. The attachment should be retrievable from the record if the tenant supports it.
+
+**Checkpoint 6 — Inspection workflow.** The inspection gallery shows **two** records with distinct codes; opening one shows its saved fields, lookups and evidence where enabled. The form can create and edit inspection records without duplicating the underlying Assets or Employees.
+
+### S07.09 — Test, save and publish DC FieldOps
+
+Use **Preview (Play/F5)** in Power Apps Studio, then test on an authorized phone with **Power Apps Mobile** where available. Browser preview is useful for formulas, but a mobile device is more representative for touch controls and its file picker.
+
+| Test | Action | Expected result |
+| --- | --- | --- |
+| T01 | Open DC FieldOps | Portrait layout, navy header, amber divider, teal buttons and readable controls |
+| T02 | Tap Browse incidents; search `INC-0002` | Existing incident appears |
+| T03 | Open its details | Priority, status, asset and reporting employee are visible |
+| T04 | Update Incident Status; save; restore original value | The change persists and the form reports success |
+| T05 | Open Record inspection | Inspection list opens |
+| T06 | Create `INSP-0001` and `INSP-0002` | Both records save, with valid Asset and Inspected By lookups |
+| T07 | Add a staged attachment using the inspection form, where available | The saved record retains the attachment |
+| T08 | Reopen and edit an inspection, then Cancel | Changes that weren't submitted are discarded |
+| T09 | Check **App checker** | No blocking formula errors; examine delegation, form, accessibility and permission warnings |
+
+Do not mistake a fictional **Inspected By** lookup for real user authentication. App visibility and button rules do not replace Dataverse security roles; access to the app and its Dataverse tables must be authorized for each real user.
+
+Select **Save**, then **Publish → Publish this version**. Return to the solution and confirm **DC FieldOps** appears as a second Canvas App alongside **DC Operations Command Center**.
+
+### Finish Part 07
+
+Your solution now contains a **phone-oriented FieldOps Canvas App** and a **DC Field Inspection** Dataverse table with three lookup relationships. The app can browse and update existing fictional incidents, create and edit inspections, record observations and follow-up decisions, and save supporting evidence through a supported Dataverse attachment form. Confirm the two sample inspection records persist after reopening the table and that the previous incident, asset and employee data remain intact.
+
+
 ## Microsoft Learn references
 
 - [Create a Power Platform solution](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-solution)
@@ -1062,5 +1420,8 @@ You have a **five-screen Operations Command Center** with consistent navy, teal,
 - [Power Fx: Search, Filter and LookUp](https://learn.microsoft.com/en-us/power-platform/power-fx/reference/function-filter-lookup)
 - [Power Fx: SubmitForm and EditForm](https://learn.microsoft.com/en-us/power-platform/power-fx/reference/function-form)
 - [Understand Canvas App delegation](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/delegation-overview)
+- [Enable attachments on a Dataverse table](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/create-edit-tables)
+- [Attachments control in canvas apps](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/controls/control-attachments)
+- [Build phone-sized Canvas Apps](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/app-from-image)
 
 *All organizations, facilities, staff, and operational scenarios in this learning project are fictional. Do not use this guide to control live data center infrastructure.*
