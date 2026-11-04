@@ -2,13 +2,13 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–07 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App
+**Published:** Parts 00–08 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
 Welcome to Data Center Operations 360. In this project, you will build a fictional data center operations solution using Microsoft Power Platform. The work is completed in an environment where you have permission to develop, and all practice records are fictional.
 
-Part 00 prepares the solution. Parts 01–04 build reference data, Part 05 adds alarms and incidents, Part 06 creates the desktop command center, and Part 07 adds a phone-oriented field inspection app. Follow the lessons in order in an authorized learning environment.
+Part 00 prepares the solution. Parts 01–04 build reference data, Part 05 adds alarms and incidents, Part 06 creates the command center, Part 07 adds FieldOps, and Part 08 connects changes to controlled notifications. Follow the lessons in order in an authorized learning environment.
 
 Follow the activities in order. The menu labels in your environment may differ slightly; choose the equivalent command and inspect the actual settings before saving.
 
@@ -1454,6 +1454,178 @@ Select **Save**, then **Publish → Publish this version**. Return to the soluti
 Your solution now contains a **phone-oriented FieldOps Canvas App** using a fully black, cyan/violet/gold mobile theme and Comic Sans MS text where supported, plus a **DC Field Inspection** Dataverse table with three lookup relationships. The app can browse and update existing fictional incidents, create and edit inspections, record observations and follow-up decisions, and save supporting evidence through a supported Dataverse attachment form. Confirm the two sample inspection records persist after reopening the table and that the previous incident, asset and employee data remain intact.
 
 
+---
+
+## Part 08 — Automate Incident Updates and Inspection Follow-ups
+
+Our Command Center and FieldOps apps now let an operator update incidents and record equipment inspections. In this lesson, we'll make Dataverse respond to those changes using **two solution-aware automated cloud flows**. The first sends a test notification when an incident's **Incident Status** is updated. The second sends a test follow-up when an inspection's **Follow-up Required** field changes to **Yes**.
+
+Both flows will send to an **email address that you personally control and are authorized to use for testing**. The fictional **Reported By**, **Assigned Engineer** and **Inspected By** lookups remain training records; they are not valid email recipients or authenticated users. No new data tables, sample CSVs or extra apps are required.
+
+| Cloud flow | Trigger | Result |
+| --- | --- | --- |
+| `DC08 Incident Status Notice` | **DC Incident** — Modified, Incident Status column | Send a training email describing the updated incident |
+| `DC08 Inspection Follow-up Notice` | **DC Field Inspection** — Modified, Follow-up Required column | Send a training email only when follow-up is Yes |
+
+The new and classic Power Automate designers may display configuration fields differently. Follow the action names, Dataverse table names and selected-column logic rather than relying on a specific screen layout.
+
+### S08.01 — Set up one reusable test recipient
+
+Open [Power Automate](https://make.powerautomate.com) in the same authorized environment. Select **Solutions → SunnyVerse Data Center Operations 360** and choose **New → More → Environment variable** (or **New → Environment variable**, depending on the maker portal).
+
+| Environment variable property | Enter |
+| --- | --- |
+| Display name | `DC Automation Test Recipient` |
+| Name / schema name (target) | `svrg_DCAutomationTestRecipient` |
+| Description | `Authorized mailbox receiving fictional DC360 training notifications.` |
+| Data type | **Text** |
+| Default value | Leave blank |
+| Current value | Your own verified, authorized email address |
+
+Save the environment variable. **Never put a real email address, tenant identifier, token or connection information in the public practice files.** The environment variable holds the recipient for both flows; it is not a Dataverse business column or a CSV header.
+
+Confirm that your Power Automate connection list includes a permitted **Microsoft Dataverse** connection and **Office 365 Outlook — Send an email (V2)** connection. Sign in only through the authorized connector consent flow if prompted.
+
+**Checkpoint 1 — Notification destination.** The solution contains one Text environment variable with a current value pointing to your authorized test inbox. No message has been sent yet.
+
+### S08.02 — Create the Incident Status notification flow
+
+Inside **Solutions → SunnyVerse Data Center Operations 360**, choose **New → Automation → Cloud flow → Automated** (menu labels may show **New → Cloud flow → Automated**). Name the flow **DC08 Incident Status Notice** and choose the **Microsoft Dataverse** trigger **When a row is added, modified or deleted**.
+
+| Trigger property | Select / enter | Why |
+| --- | --- | --- |
+| Connector | Microsoft Dataverse | Reads actual saved Dataverse changes |
+| Trigger | When a row is added, modified or deleted | Starts from data changes, not button clicks |
+| Change type | **Modified** | Existing incident update only; avoid replaying all seeded records |
+| Table name | **DC Incidents** | The existing `svrg_DCIncident` table |
+| Scope | **Organization** | Includes rows in the learning environment that the flow connection can access |
+| Select columns / Filter columns | `svrg_incidentstatus` | React to requests that include the custom Incident Status field |
+| Filter rows | Leave blank | No severity or priority restriction in this exercise |
+
+**Find the correct column name:** Open **DC Incident → Columns → Incident Status → Advanced options** to verify the *logical name* in your environment; use that exact logical name in **Select columns**. It is usually `svrg_incidentstatus`. Do **not** use the display label `Incident Status` or the unrelated system `statuscode`. **Select columns** applies to Modified events and expects comma-separated logical names, not CSV headers. The trigger fires when that column is present in an update request; this does **not** prove that its previous and new values differ.
+
+Under the Dataverse trigger choose **+ New step / +**, search **Office 365 Outlook**, and select **Send an email (V2)**. Enter:
+
+| Send an email (V2) property | Value / instructions |
+| --- | --- |
+| To | Select **DC Automation Test Recipient** from **Dynamic content → Environment variables**, using its current Text value |
+| Subject | `[DC360 TRAINING] Incident status changed: ` followed by the trigger's **Incident Code** dynamic content |
+| Body, line 1 | `Fictional incident update — training notification only.` |
+| Body, line 2 | `Incident: ` + **Incident Name** dynamic content |
+| Body, line 3 | `Code: ` + **Incident Code** dynamic content |
+| Body, line 4 | `Current status: ` + **Incident Status** display label, if the trigger exposes a formatted/label token; otherwise include the returned value and explain it is an option value |
+| Body, line 5 | `Review the incident in the DC Operations Command Center using the incident code.` |
+| Importance | Normal |
+
+To insert a dynamic token, click in the relevant field, choose the **lightning-bolt / Dynamic content** picker and select the field from the **Dataverse trigger**, not a hand-typed placeholder. In new designer versions, look under the trigger's output section if a field is not initially visible.
+
+If the environment variable is not available in the To picker, reopen the flow designer after saving the environment variable, then choose **Enter custom value** where offered. Do not substitute the fictional employee's name as a recipient. For a permitted single-environment learning run, you may enter **your own authorized test address directly** until the dynamic environment variable is accessible, but record the configuration as environment-specific.
+
+Save the flow. The flow may ask you to resolve a **connection reference** for Dataverse and Outlook; select authorized connections. Avoid adding another action that updates the incident, because an update inside the same table can re-trigger automation.
+
+### S08.03 — Validate the Incident flow using one existing record
+
+Open **DC Operations Command Center** or **DC Incident → Columns and data**, and locate the existing fictional record `INC-0002`. Its initial **Incident Status** is **Assigned**.
+
+| Action | Expected result |
+| --- | --- |
+| In `INC-0002` change Incident Status from **Assigned** to **In Progress** and save | One event is eligible to start the flow |
+| Open **Power Automate → DC08 Incident Status Notice → Run history** | A successful run appears for the saved change |
+| Open the authorized test inbox | Message with the fictional incident code and status arrives |
+| Change the same Incident Status back to **Assigned** and save | Another eligible flow run; original practice status restored |
+
+The two deliberate saves may produce two emails. **Do not assume every flow execution is once-only:** Dataverse can trigger for each update request containing the selected column, even if the resulting value is unchanged. Test against one record before enabling the flow during wider data changes.
+
+If no run appears, check **flow enabled state**, table name, Scope, logical column name, connection references and permissions. If the flow runs but email fails, open that action in **Run history** to inspect the Outlook connection, To value and error message. Do not use a real operator or fictional employee record to troubleshoot mail delivery.
+
+**Checkpoint 2 — Incident notifications.** The flow has a successful run, the email reaches the authorized test inbox, and `INC-0002` has been restored to **Assigned**.
+
+### S08.04 — Create the Inspection Follow-up notification flow
+
+Return to the same solution and create a second **Automated cloud flow** named **DC08 Inspection Follow-up Notice**, again using **Microsoft Dataverse → When a row is added, modified or deleted**.
+
+| Trigger property | Select / enter |
+| --- | --- |
+| Change type | **Modified** |
+| Table name | **DC Field Inspections** (the `svrg_DCFieldInspection` table) |
+| Scope | **Organization** |
+| Select columns | `svrg_followuprequired` — verify the actual logical name under the **Follow-up Required** Dataverse column |
+| Filter rows | Leave blank |
+
+Next, choose **+ → Control → Condition**. We want a notification only when the updated inspection **still requires follow-up**.
+
+| Condition property | Enter |
+| --- | --- |
+| Left operand | **Follow-up Required** dynamic content from the Dataverse trigger |
+| Operator | **is equal to** |
+| Right operand | Boolean **true** (use the **Expression** tab if the designer treats typed text as a string) |
+| If yes | Add **Office 365 Outlook — Send an email (V2)** |
+| If no | Leave empty — the flow ends without an email |
+
+For a designer that accepts a full expression, the equivalent condition is:
+
+```text
+equals(triggerBody()?['svrg_followuprequired'], true)
+```
+
+Use the actual column logical name if it differs. The Boolean is **true**, not the literal text `"Yes"`. The trigger may also expose a formatted Yes/No label; use that label only for readable message text, not for Boolean comparison.
+
+Configure the **Send an email (V2)** action **inside If yes**, using this table:
+
+| Email property | Value |
+| --- | --- |
+| To | **DC Automation Test Recipient** environment variable, as in S08.02 |
+| Subject | `[DC360 TRAINING] Inspection needs follow-up: ` + **Inspection Code** dynamic content |
+| Body heading | `Fictional equipment inspection follow-up — training notification only.` |
+| Body details | **Inspection Name**, **Inspection Code**, **Inspection Status**, **Finding Description**, **Action Taken** from the triggering Dataverse row |
+| Final line | `Follow-up Required: Yes. Open DC FieldOps and review this inspection.` |
+| Importance | Normal |
+
+Use the trigger's dynamic tokens for each field. Do not assume that **Inspected By** is a real mail account or that **Related Incident** is populated.
+
+Save the flow and validate its Dataverse and Outlook connections. The flow sends mail based on the **Boolean follow-up flag**; it does not alter the inspection record or create an incident.
+
+### S08.05 — Test inspection follow-up without creating duplicate records
+
+In **DC FieldOps → Equipment Inspections**, open the already saved fictional practice record `INSP-0002` (Cooling Unit 002 Visual Check). That record originally has **Follow-up Required = Yes**.
+
+| Test action | Expected result |
+| --- | --- |
+| Change Follow-up Required to **No** and save | The flow may run, but **If no** sends no email |
+| Change Follow-up Required back to **Yes** and save | The flow enters **If yes** and sends one training email |
+| Open the second flow's **Run history** | Inspect both runs and the Yes/No branch taken |
+| Reopen `INSP-0002` | Follow-up Required is **Yes**, preserving the exercise data |
+| Check authorized test inbox | One new inspection follow-up email corresponding to the Yes save |
+
+If the result is incorrect, inspect the Condition input in **Run history**. A formatted string `"Yes"` and a Boolean `true` are different values; use the real Boolean token/expression. If the numeric duration or lookup data appears incomplete in the notification, keep the message restricted to the verified trigger fields rather than constructing an untested related-record expression.
+
+**Checkpoint 3 — Inspection notifications.** The No branch sends no email, the Yes branch sends a training email, and the inspection record is returned to its original Yes flag.
+
+### S08.06 — Review runs, connections and operational safeguards
+
+Open each flow's **Details → Run history**. Use a successful run and, if there was a failure during setup, one failed run to understand how cloud flows record their execution.
+
+| Review item | What to inspect | Expected learning outcome |
+| --- | --- | --- |
+| Trigger | Table, event type and selected logical column | Only the intended table and update request start the flow |
+| Condition | The Boolean value received by the inspection flow | Yes and No branches behave predictably |
+| Actions | Green success or red failure state for Send an email (V2) | Message delivery and failures are observable |
+| Connections | Dataverse and Outlook connection references | Both use authorized connections |
+| Recipient | Environment variable Current value | Only the authorized test inbox receives notifications |
+| Run duration | Start/end times and retry history | A successful action can still take time or retry |
+| App record | Saved Dataverse row after the flow runs | Automation doesn't silently change business fields |
+
+Keep the flows **turned off during large data imports or repeated test edits** unless you intentionally want notifications for every qualifying update. During development, send only to a controlled inbox. An incident's **Assigned Engineer** and an inspection's **Inspected By** are fictional Dataverse lookups, not licensed real users; these flows do not assign tasks, perform approvals or confer security rights.
+
+The **Select columns** property filters update requests by included scalar columns. It is not a reliable *old-value versus new-value comparison*, and lookup columns should not be used in that filter. For higher-volume deployments, add explicit idempotency and change-history design before treating these flows as production alerting.
+
+### S08.07 — Finish Part 08
+
+Reopen the solution and confirm the **DC Automation Test Recipient** environment variable and both cloud flows are present. Review one successful incident status run and one successful inspection follow-up run. Both tests should have used only your authorized mailbox, with `INC-0002` restored to **Assigned** and `INSP-0002` restored to **Follow-up Required = Yes**. The pre-existing Canvas Apps, Dataverse tables and fictional practice records remain intact.
+
+You have now connected the existing apps and Dataverse records to two controlled cloud-flow notifications, with observable run history, reusable recipient configuration and safe testing boundaries. No direct messaging to fictional employees or real facility systems is required.
+
+
 ## Microsoft Learn references
 
 - [Create a Power Platform solution](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-solution)
@@ -1473,5 +1645,8 @@ Your solution now contains a **phone-oriented FieldOps Canvas App** using a full
 - [Enable attachments on a Dataverse table](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/create-edit-tables)
 - [Attachments control in canvas apps](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/controls/control-attachments)
 - [Build phone-sized Canvas Apps](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/app-from-image)
+- [Dataverse: trigger cloud flows on added/modified/deleted rows](https://learn.microsoft.com/en-us/power-automate/dataverse/create-update-delete-trigger)
+- [Use environment variables in solution cloud flows](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/environmentvariables-power-automate)
+- [Create a cloud flow in Power Automate](https://learn.microsoft.com/en-us/power-automate/get-started-logic-flow)
 
 *All organizations, facilities, staff, and operational scenarios in this learning project are fictional. Do not use this guide to control live data center infrastructure.*
