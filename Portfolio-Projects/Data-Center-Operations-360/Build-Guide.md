@@ -3969,43 +3969,67 @@ Reopen an Insight record and use its actual Rule and Incident, Work Order or Inv
 
 **Checkpoint F16-06:** All three model-driven app views and selected real Lookups are shown without changes to source rows or approvals.
 
-### S16.07 — Explain automation using historic evidence, not new side effects
+### S16.07 — Review the five flow records using historical evidence only
 
-In [Power Automate](https://make.powerautomate.com), open the original solution → **Cloud flows** and show only safe **details and historical Run history**. Inspect distinct internal flow identities rather than combining two entries just because both are titled **DC08 Incident Status Notice**. Do not turn Off flows On, trigger an outgoing notification, edit DC10 approvals, change connection owners or rerun DC14 without approval.
+Open [Power Automate](https://make.powerautomate.com) → the **same authorized solution** → **Cloud flows**. Use **Details** and **Run history** read-only. Do not turn on an Off flow, trigger a new message, send an approval, change the DC14 rule or edit a connection reference.
 
-The previous engineering review reported 14 historical **Succeeded** runs: six associated with DC08, six with DC10, and two with DC14. In the **second DC14 run**, the “Add a new row” action was **Skipped** when the Insight Code already existed. This illustrates repeat-run deduplication for that case; it does **not** exercise an unobserved Cancelled termination branch or prove race-free concurrency under simultaneous flow runs.
+The reference learning implementation has **five distinct flow records**:
 
-Explain the architecture of connected flows in plain language: **trigger → source lookup → conditions → authorization/connection boundary → record or notification → run-history evidence**. Identify whether the source flow is On/Off **at recording time**; historical action success is not permission to reactivate it.
+| Flow record | Previously observed state | Historical Succeeded runs | Interpretation |
+| --- | --- | ---: | --- |
+| **DC08 Incident Status Notice** — earlier-created record | Off | **4** | Original incident notification history |
+| **DC08 Incident Status Notice** — later-created record | Off | **0** | Separate duplicate-display-name flow; no run evidence |
+| **DC08 Inspection Follow-up Notice** | Off | **2** | Historical inspection follow-up notifications |
+| **DC10 Change Approval** | Off | **6** | Historical approval example |
+| **DC14_Incident_Insight_Demo** | On | **2** | Guarded manual insight creation and no-duplicate repeat |
+| **Total** | **Four Off; one On** | **14** | Confirm actual current states from the maker portal |
 
-**Checkpoint F16-07:** Historical success, skipped, Off and Not Run states are quoted exactly; no additional flow activity is introduced.
+The **second DC14 run Succeeded**, but **Add a new row** was **Skipped** because its deterministic Insight Code already existed. The configured **Terminate (Cancelled)** path was **not exercised** in either recorded run. Do not describe an unobserved Cancelled branch as tested. These two historical runs demonstrate the expected sequential duplicate guard, **not** an atomic lock against simultaneous flow executions.
 
-### S16.08 — Reopen the local Power BI analytics model and validate the report
+A **connection reference belongs to a flow** and links it to an authorized Dataverse/Outlook/Approvals connection; it is not a Dataverse column that independently sends messages. If two flows have the same display name, identify them by their distinct records and run histories—do not delete either based only on its name.
 
-Use your locally authorized **Power BI Desktop**, if accessible, to open the saved `DC360-Operations-Intelligence.pbix` or the [path-sanitized PBIP learning source](./powerbi/README.md). For the source archive, restore the ten monitoring CSVs in a dedicated folder and the six reference files in their own directory, correct neutral local paths, then **Refresh**. Do not claim a new Desktop test if the application cannot be operated in the current session.
+**Checkpoint F16-07:** Five flow records, **4 + 0 + 2 + 6 + 2 = 14** prior successful runs, skipped-action semantics, untested termination branch and unchanged states are recorded correctly.
 
-| Model component | Baseline to confirm after clearing all slicers and chart selections |
+### S16.08 — Open Power BI Desktop and distinguish current tests from prior source evidence
+
+The Part 13 analytical design is available as a saved local **Power BI Desktop PBIX** and a [path-sanitized public PBIP source project](./powerbi/README.md). Reopen **Power BI Desktop** in an authorized local session, correct its own local CSV paths if needed, then run **Refresh** and inspect **all five pages**. A reviewed PBIP folder, Power Query source or CSV count does not prove that the Desktop report was reopened in this verification cycle.
+
+For a true **Pass**, clear all slicers **and visual cross-highlighting** before checking the table, measure and card values:
+
+| Item | Required baseline |
 | --- | --- |
-| Model | **7 loaded tables; 6 active single-direction relationships; 20 measures; 5 report pages** |
-| Monitoring | **50,000 readings; 24 sensor codes** |
-| Flagged samples | **290 High; 193 Low; 49,517 Normal; 483 out of range** |
-| Operational sources | **120 alarms; 200 incidents; 500 source work orders** |
-| Quality measures | **0 Sensor Code mismatches; 0 flag-vs-threshold mismatches** |
+| Data model | **7 loaded tables / 6 active single-direction relationships / 20 measures** |
+| Pages | **Executive Overview; Monitoring & Trends; Alarm Operations; Incident Operations; Maintenance Operations** |
+| Samples | **50,000 readings from 24 sensors** in ten 5,000-row files |
+| Threshold flags | **290 High / 193 Low / 49,517 Normal**, or 483 out-of-range samples |
+| Operational CSV facts | **120 Alarms / 200 Incidents / 500 starting Work Orders** |
+| Quality checks | Sensor-key and threshold-state mismatches both **0** |
 
-Show **Executive Overview**, **Monitoring & Trends**, **Alarm Operations**, **Incident Operations**, and **Maintenance Operations**. Selecting only `Unit = kW` does not necessarily isolate one metric because Output Power and Electrical Power both use kW; the defended Avg/Peak measure appropriately blanks when different metric types remain in scope. Clearing chart cross-highlighting matters before quoting peak values.
+Select **DC-SEN-001** and inspect the previously verified High example **RDG-000001 = 560.00 kW**, against its 500.00 kW maximum. Remove selections before reading Peak/Average again. When a Unit slicer selects **kW**, two distinct metric types can still be present, and the guarded measure may correctly return **Blank** rather than an invalid cross-metric average.
 
-If Desktop access is absent, use public source-file evidence and label the **current-session runtime test Not Run**. A previously successful Part 13 report is useful historical evidence, but cannot become a fresh Part 16 test by wording alone. Publishing to Power BI Service is separate, and **not required**.
+**Important verification limit:** In the latest reported **Part 16** exercise, **Power BI Desktop was not opened**. That test was **Not Run**; its earlier Part 13 Desktop results and verified CSV/PBIP source remained valid *prior evidence* but were not freshly re-executed. If you cannot access Desktop now, **mark F16-08 = Not Run** and stop there; do not claim a current refresh or a Power BI Service deployment.
 
-**Checkpoint F16-08:** Model facts actually rechecked in Desktop or explicitly marked Not Run.
+**Checkpoint F16-08:** A real current-session Desktop refresh and page review is evidenced—or is explicitly Not Run without fabricated screenshots.
 
-### S16.09 — Present engineering, security, release and deployment limits accurately
+### S16.09 — Explain engineering readiness without converting prior results into new passes
 
-Open [Part 15](./Build-Guide.md#part-15--engineer-test-and-prepare-the-solution-for-release) and review its engineering evidence pattern. The previous maker report recorded **13 Pass, 5 Not Run, 0 Fail** in a **private** 18-case UAT result. The remaining cases were Command Center Play search/navigation, FieldOps Play navigation, potentially write-capable capacity overlap testing and a repeat Power BI Desktop model/card verification. These values must never be presented as new Part 16 results.
+Open [Part 15 — Engineering and ALM](./Build-Guide.md#part-15--engineer-test-and-prepare-the-solution-for-release) and its [public 18-test UAT template](./quality/Part-15-UAT-Matrix.csv). That CSV intentionally starts **all tests Not Run** for each new learner. The separate **post-export maker report** previously recorded **13 Pass / 5 Not Run / 0 Fail**. An older private CSV can still show **12 Pass / 6 Not Run** because it was saved before the export was completed; do not silently overwrite the older snapshot, and do not count UAT-18 twice.
 
-The same report recorded **148 Medium solution-checker findings**, including **143 accessibility findings** in the Capacity Planner; two DC08 flows with matching display names; non-admin role isolation untested; some tables without enforced alternate keys; and absent target-environment import validation. An unmanaged source archive was exported and privately hash-verified, but **no authorized target import** was performed. The export is **not** a database backup, a tested recovery procedure, a production release or evidence that all dependencies were found in a target system.
+The **Part 16 twelve-check matrix is a separate exercise**, and prior Part 15 results do not automatically carry over. The last reported final walkthrough actually exercised most application and flow evidence but **did not run the Power BI Desktop check or complete the privacy-reviewed capture/presentation work**. Keep those separate statuses intact.
 
-Classify each gate as **Pass / Conditional / Blocked / Not Tested** with evidence. In this state, an educational portfolio demonstration may be **conditionally ready**, while an enterprise production deployment is **not verified ready**.
+| Engineering area | Recorded finding | Accurate claim |
+| --- | --- | --- |
+| Canvas app quality | **143 Capacity Planner accessibility errors**; 148 Medium Solution checker findings, no High/Critical | App quality evaluated; accessibility remediation remains |
+| Identity and sharing | No authorized lower-privilege test identity used | Role separation not proven |
+| Dataverse integrity | Eight of 24 tables without alternate keys; one extra training Work Order | Current data checked; uniqueness not enforced everywhere |
+| Capacity | Rack 013 Hold not shown on Detail; blank zeros; overlap may submit; no server-side atomic guard | Functional demonstration with known limitations |
+| Automation | Two separate DC08 flows share a display name; DC14 skipped duplicate add; Cancelled branch untested | Historical behavior observed; no full resilience proof |
+| Analytics | Earlier Desktop model tested, not reopened in the final session | Source is reproducible; current Desktop verification distinct |
+| ALM | Unmanaged development ZIP previously exported and privately hash-verified | Packaging **Conditional**; target import and recovery untested |
 
-**Checkpoint F16-09:** None of the known limitations is erased from the case study or final presentation.
+The appropriate outcome can be **Educational portfolio demonstration ready — with conditions**. This is *not* a claim of enterprise production readiness, electrical-safety authorization, least-privilege sign-off or validated deployment to a second environment. Any future security-role change, flow cleanup, app remediation or target import requires its own approval and evidence.
+
+**Checkpoint F16-09:** Quality findings, unexecuted tests, source-file verification and genuine runtime evidence are labelled separately and truthfully.
 
 ### S16.10 — Finish the public GitHub case study and evidence index
 
