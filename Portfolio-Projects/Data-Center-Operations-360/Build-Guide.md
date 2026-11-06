@@ -2,13 +2,13 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–08 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation
+**Published:** Parts 00–09 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
 Welcome to Data Center Operations 360. In this project, you will build a fictional data center operations solution using Microsoft Power Platform. The work is completed in an environment where you have permission to develop, and all practice records are fictional.
 
-Part 00 prepares the solution. Parts 01–04 build reference data, Part 05 adds alarms and incidents, Part 06 creates the command center, Part 07 adds FieldOps, and Part 08 connects changes to controlled notifications. Follow the lessons in order in an authorized learning environment.
+Part 00 prepares the solution. Parts 01–04 build reference data, Part 05 adds alarms and incidents, Part 06 creates the command center, Part 07 adds FieldOps, Part 08 configures notification flows, and Part 09 adds maintenance work orders and a model-driven app. Follow the lessons in order in an authorized learning environment.
 
 Follow the activities in order. The menu labels in your environment may differ slightly; choose the equivalent command and inspect the actual settings before saving.
 
@@ -1634,7 +1634,226 @@ In the solution, confirm **one** test-recipient environment variable, **two** co
 You have connected the two existing apps and Dataverse records to controlled, auditable training notifications without creating new tables or flows that write back to incident or inspection data.
 
 
+---
+
+## Part 09 — Build the Asset and Maintenance Manager
+
+The fictional data center already has 100 assets, 200 incidents, employee profiles and inspection records. Now we'll add a work-order register and use a **model-driven app** to manage preventive work, corrective repairs, assignments, planned dates and completion evidence. Model-driven apps build forms, views and table navigation directly from Dataverse metadata, so this lesson doesn't require a new Canvas App or hand-written Power Fx.
+
+The target is **DC Asset & Maintenance Manager**, a dedicated maintenance workspace backed by a new **DC Work Order** table. We will also use the [500-row work-order practice dataset](./data/work-orders.csv). Its Asset, Assigned Engineer and Related Incident fields point to records created earlier.
+
+| Component | Result |
+| --- | --- |
+| `DC Work Order` Dataverse table | Work-order identity, scheduling, lifecycle and relationships |
+| 500 fictional work-order records | Repeatable synthetic maintenance data with lookup references |
+| Work-order main form | Sections for identity, assignment, execution and related records |
+| Work-order system views | All, Active, Overdue and Unassigned queues |
+| `DC Asset & Maintenance Manager` model-driven app | Navigation across Work Orders, Assets, Incidents and Inspections |
+
+### S09.01 — Create the DC Work Order table
+
+Open [Power Apps](https://make.powerapps.com) in the authorized environment, then **Solutions → SunnyVerse Data Center Operations 360 → New → Table**. Configure the advanced properties before creating the table.
+
+| Table property | Enter |
+| --- | --- |
+| Display / plural names | `DC Work Order` / `DC Work Orders` |
+| Description | `Synthetic data center maintenance work orders for planning and completion tracking.` |
+| Table type | **Standard** |
+| Record ownership | **Organization** |
+| Primary name column | `Work Order Name` |
+| Primary column description | `Readable name of a fictional maintenance task.` |
+| Primary name format / maximum | Single-line Text / 200 characters |
+| Table schema target | `svrg_DCWorkOrder` |
+| Primary name schema target | `svrg_WorkOrderName` |
+| Notes and attachments | **On**, if exposed, for optional evidence associated with records |
+| Activity / routing flags | Leave off unless an authorized tenant requirement calls for them |
+
+Create the table. Open **Schema → Columns** and confirm that **Work Order Name** exists as the primary name; don't create it a second time. The automatically generated row GUID is a system identifier and must remain intact.
+
+**Checkpoint 1 — Table shell.** The solution contains one **DC Work Order** table with the correct primary name and publisher prefix.
+
+### S09.02 — Add exact work-order business columns and Choices
+
+Open **DC Work Order → Schema → Columns → New column** for each row below, saving one at a time. **Work Order Name** is already present. Use the exact display names shown because [work-orders.csv](./data/work-orders.csv) uses those headers. Schema names below are target names; verify what your environment actually saves.
+
+| Display name / target schema | Description | Data type | Required | Additional properties |
+| --- | --- | --- | --- | --- |
+| **Work Order Name** / `svrg_WorkOrderName` | Human-readable task title | Primary Text | Business required | Created with table; max 200; not duplicated |
+| **Work Order Code** / `svrg_WorkOrderCode` | Stable fictional work-order identifier | Text single line | Business required | Format Text; max 24; Searchable Yes; no default |
+| **Work Order Type** / `svrg_WorkOrderType` | Category of maintenance activity | **Local Choice** single select | Business required | Preventive Maintenance, Corrective Repair, Inspection Follow-up, Emergency Response; no default; Searchable Yes |
+| **Work Order Priority** / `svrg_WorkOrderPriority` | Relative urgency of maintenance | **Local Choice** single select | Business required | Critical, High, Medium, Low; no default; Searchable Yes |
+| **Work Order Status** / `svrg_WorkOrderStatus` | Lifecycle stage | **Local Choice** single select | Business required | Planned, Assigned, In Progress, On Hold, Completed, Cancelled; no default; Searchable Yes |
+| **Work Description** / `svrg_WorkDescription` | Work instructions written for this synthetic exercise | Multiline Text | Business required | Plain text; up to 2,000 characters; no default |
+| **Requested On** / `svrg_RequestedOn` | Time the maintenance task was requested | Date and Time | Business required | User local behavior; date and time; no default |
+| **Due On** / `svrg_DueOn` | Planned completion deadline | Date and Time | Optional | User local; no default |
+| **Estimated Minutes** / `svrg_EstimatedMinutes` | Planned labor duration | Whole Number | Optional | 0–1,440; Format None; no default |
+| **Safety Review Required** / `svrg_SafetyReviewRequired` | Marks work needing an additional human safety review | Yes/No | Optional | Labels Yes/No; default No |
+| **Completed On** / `svrg_CompletedOn` | When work was recorded complete | Date and Time | Optional | User local; no default |
+| **Actual Minutes** / `svrg_ActualMinutes` | Actual time logged in training | Whole Number | Optional | 0–1,440; Format None; no default |
+| **Completion Notes** / `svrg_CompletionNotes` | Synthetic completion commentary | Multiline Text | Optional | Plain text; up to 2,000 characters; no default |
+
+For each **Local Choice**, open **Data type → Choice** and keep it **local to the current column**. If the designer shows **Sync with global choice**, switch it off and enter the option labels exactly as listed, in the specified order. Do not create a separate Global Choice for each column. Leave the choice's generated numeric option values unchanged. The three work-order choices are **not** the same columns as the Incident Status or Incident Priority used earlier.
+
+For **Work Order Code**, open **Schema → Keys → New key** after the column has saved. Name the key `DC Work Order Code Key` and select **Work Order Code** as its sole component. Save, then wait until the key reaches **Active** before attempting a bulk import. An alternate key enforces unique work-order codes; matching display names alone does not prevent duplicates.
+
+**Checkpoint 2 — Column definitions.** The table has one primary name column and 12 additional nonlookup business fields with the listed data types and exact Choice options. The Work Order Code key is Active.
+
+### S09.03 — Add Asset, employee, Incident and Inspection relationships
+
+Go to **DC Work Order → Schema → Relationships → New relationship → Many-to-one**. For each row, the current table is **DC Work Order**, and the related table is the pre-existing target. Creating the relationship creates a Lookup column; do not add a duplicate text or Lookup column afterward.
+
+| Lookup display name / target schema | Related table | Description | Requirement / settings |
+| --- | --- | --- | --- |
+| **Asset** / `svrg_Asset` | **DC Asset** | Equipment receiving the maintenance work | **Business required**, Searchable Yes |
+| **Assigned Engineer** / `svrg_AssignedEngineer` | **DC Employee Profile** | Fictional employee responsible for the task | Optional, Searchable Yes |
+| **Related Incident** / `svrg_RelatedIncident` | **DC Incident** | Existing incident from which the task originated | Optional, Searchable Yes |
+| **Related Inspection** / `svrg_RelatedInspection` | **DC Field Inspection** | Inspection that may have requested maintenance | Optional, Searchable Yes |
+
+For relationship deletion behavior choose **Referential / Restrict Delete**, or the closest supported option that prevents removing a referenced parent. Confirm the Actual **Lookup** data type and target table from **Columns** after saving each relationship. The row data uses existing **Asset Name**, **Employee Name**, **Incident Name** and **Inspection Name** values as human-readable lookup references; those values are **not Dataverse GUIDs**.
+
+**Checkpoint 3 — Relationships.** Exactly four new Lookups exist on DC Work Order. Asset is required; other references are optional. Existing tables haven't been recreated or changed.
+
+### S09.04 — Import the 500 fictional work orders and verify references
+
+Download [**work-orders.csv**](./data/work-orders.csv) from this repository. It has **500 work-order rows** (codes `WO-0001` through `WO-0500`), **17 exact display-name headers**, and fictional references to the 100 assets and existing employee/incident records. This is sample data only.
+
+| Import group | CSV columns | Treatment |
+| --- | --- | --- |
+| Text / Choice / date / numbers | Work Order Name, Work Order Code, Work Order Type, Work Order Priority, Work Order Status, Work Description, Requested On, Due On, Estimated Minutes, Safety Review Required, Completed On, Actual Minutes, Completion Notes | Map to their matching display-name columns; map each local Choice label to an existing option |
+| Required lookup | **Asset** | Resolve against **DC Asset → Asset Name** |
+| Optional lookup | **Assigned Engineer** | Resolve against **DC Employee Profile → Employee Name**; leave blank source cells blank |
+| Optional lookup | **Related Incident** | Resolve against **DC Incident → Incident Name**; leave blank source cells blank |
+| Optional lookup | **Related Inspection** | Resolve against **DC Field Inspection → Inspection Name**; empty in this starting dataset |
+
+**Import carefully.** Open **DC Work Order → Data → Import**. Select **Import from CSV** or the available import wizard that supports **Lookup Reference** mapping. Upload `work-orders.csv` and open **Review mapping**. For each lookup, explicitly choose the corresponding related table and the existing primary-name field. Verify that lookup preview values resolve to actual rows instead of being treated as GUID strings or arbitrary new text. If your environment only offers a simplified import that tries to coerce a parent name into a GUID without reference mapping, **do not execute that import**. Use the supported model-driven-app Import Data wizard, an authorized Dataverse dataflow, or an administrator-approved record-creation method that resolves existing row IDs first. Do not temporarily replace a Lookup with a text column or weaken the required Asset relationship to make an import pass.
+
+The CSV includes ISO 8601 **UTC timestamps**. Dataverse Date and Time with User local behavior may display a different clock time depending on the user's timezone; compare the stored instant, not a naive local string. Import numeric durations as numbers, not text. Use the Active **Work Order Code** alternate key to prevent duplicate business codes where the chosen import interface supports alternate-key mapping.
+
+**Before running the complete file**, validate lookup mapping and data types with a **five-row test in a nonduplicating preview or controlled import**. If the wizard inserts the five test rows, the full import must **skip or update those five by Work Order Code**, never create them again. Review the selected import mode and existing records before proceeding. In the finished table, filter by work-order code and confirm exactly one `WO-0001` and one `WO-0500`. Check `WO-0001` points to **UPS 001**, and inspect a record with a related Incident.
+
+| Post-import validation | Expected result |
+| --- | --- |
+| Record count | **500** unique work-order codes after a successful full import |
+| Asset references | All 500 Work Orders resolve to an existing DC Asset |
+| Employees | Nonblank Assigned Engineer lookups resolve to fictional employee profiles |
+| Incident links | Nonblank Related Incident lookups resolve to existing DC Incidents |
+| Choice fields | All labels mapped to existing Work Order Type / Priority / Status options |
+| Completed work | Completed On, Actual Minutes and Completion Notes appear on Completed rows |
+| Invalid relationships | No unresolved lookup names and no duplicate records |
+
+If imports are blocked by licensing, permissions or lookup mapping, finish the app design with a small manually created set of **uniquely named training records** while leaving the unresolved bulk import unclaimed. Avoid importing the same rows twice.
+
+**Checkpoint 4 — Work-order data.** The table contains 500 valid linked records if the import succeeded. Otherwise, record the exact import limitation and use only validated manual test records; do not report 500 as loaded without checking.
+
+### S09.05 — Create a maintenance Main form with sections
+
+Open **DC Work Order → Forms → New form → Main form**, and name it **DC Work Order — Maintenance Main**. Use the modern model-driven form designer to create readable sections. You will configure **Dataverse columns**, not add Canvas control names or Power Fx formulas.
+
+| Form area | Columns to place | Reason |
+| --- | --- | --- |
+| **Identity & Priority** | Work Order Name, Work Order Code, Work Order Type, Work Order Priority, Work Order Status | Find, classify and prioritize work quickly |
+| **Asset & Assignment** | Asset, Assigned Engineer, Requested On, Due On, Estimated Minutes | Establish equipment context, owner and schedule |
+| **Execution & Safety** | Work Description, Safety Review Required, Completed On, Actual Minutes, Completion Notes | Record work performed and safety attention |
+| **Related Context** | Related Incident, Related Inspection | Connect maintenance work to initiating records |
+
+In the **Form designer → Sections / Components**, add a **two-column section** for Identity and Assignment where supported, and a **one-column section** for long Description and Completion Notes. Drag the actual fields into their intended sections. Keep the **Work Order Code**, required **Asset** Lookup and Status fields visible without requiring excessive scrolling. Do not display unrelated Dataverse system `Status` or `Status Reason` as if they were the custom **Work Order Status**.
+
+Use the built-in model-driven controls for Choices, Lookups, numbers and date/time values. These inherit the model-driven app's supported Fluent/theme settings and do not expose the same `Fill`, `Font` or `OnSelect` properties as Canvas controls. **Do not attempt to force Comic Sans MS or custom per-field colors into the model-driven designer.** Give the form concise labels, clear sections and readable column widths instead.
+
+Choose **Save and publish** for the form, then return to **DC Work Order → Forms** and confirm the new main form is present.
+
+**Checkpoint 5 — Maintenance form.** One published main form shows every intended work-order field, including the required Asset Lookup and the four relationship fields.
+
+### S09.06 — Create operational system views
+
+Open **DC Work Order → Views → New view**. Add the four public/system views below. For each view choose the listed fields under **Edit columns / Add view column**, arrange them in the stated order, add filters, then **Save and publish**. These are Dataverse views usable by multiple app users, not a Canvas gallery.
+
+| View | Columns in display order | Filter |
+| --- | --- | --- |
+| **DC All Work Orders** | Work Order Code, Work Order Name, Work Order Priority, Work Order Status, Asset, Assigned Engineer, Due On | None; sort Due On ascending where sensible |
+| **DC Active Work Orders** | Work Order Code, Work Order Name, Work Order Status, Work Order Priority, Asset, Due On | Work Order Status is not **Completed** AND not **Cancelled** |
+| **DC Overdue Work Orders** | Work Order Code, Work Order Name, Due On, Work Order Status, Asset, Assigned Engineer | Due On **is before Today** AND Work Order Status is not Completed AND not Cancelled |
+| **DC Unassigned Work Orders** | Work Order Code, Work Order Name, Work Order Priority, Asset, Due On | Assigned Engineer **does not contain data** |
+
+For the overdue view, explicitly exclude **Due On is blank** if the editor does not automatically exclude blanks. Since Requested On / Due On use **User local** Date and Time, understand that the user's local time zone controls the displayed date. Use the view's condition builder and confirm AND groups rather than typing unsupported filter text.
+
+If the form/view editor offers a **model-driven Power Apps grid control**, keep its built-in accessibility and editing behavior; do not depend on legacy deprecated grid controls. A view lists records but does not override Dataverse security roles.
+
+**Checkpoint 6 — Queues.** All four views are saved and published. The All view shows records; the Active, Overdue and Unassigned views filter appropriately against the data actually loaded.
+
+### S09.07 — Assemble the model-driven maintenance app
+
+Inside the same solution choose **New → App → Model-driven app** and enter:
+
+| App property | Value |
+| --- | --- |
+| Name | **DC Asset & Maintenance Manager** |
+| Description | `Manage fictional equipment work orders and maintenance context in Dataverse.` |
+| Publisher/solution | Existing **SunnyVerse Data Center Operations 360** solution |
+| App type | Model-driven, standard modern designer |
+
+In the app designer choose **Add page → Dataverse table** (or the current **Table-based view and form** option) and add these **existing** tables. Do not create another copy of them.
+
+| Navigation group | Page / table | Purpose |
+| --- | --- | --- |
+| **Maintenance** | **DC Work Orders** | Open work-order views and the Maintenance Main form |
+| **Maintenance** | **DC Field Inspections** | See field findings that may motivate work |
+| **Equipment & Context** | **DC Assets** | Inspect asset registry and existing relationships |
+| **Equipment & Context** | **DC Incidents** | See originating incident context |
+
+Set the navigation labels and ordering using the current **Pages / Navigation** editor. For **DC Work Orders**, choose the new **DC Work Order — Maintenance Main** form and the four published views as the app components. Keep the other tables' existing appropriate forms and views; do not overwrite them merely for app navigation. Save the app, then **Publish**, and select **Play** to test.
+
+This is a **model-driven** application: it uses the environment's supported user interface theme, lookups, views and form metadata. Unlike the Canvas apps, it is not appropriate to apply arbitrary `ColorValue` formulas or raw CSS to its navigation. You can use supported app icon/description settings if offered without modifying the environment-wide theme.
+
+**Checkpoint 7 — Navigation.** The new app opens with Work Orders, Inspections, Assets and Incidents in the intended groups. Work Orders opens the published main form and operational views. The two Canvas Apps remain separate and unchanged.
+
+### S09.08 — Walk through a real maintenance workflow
+
+In **DC Asset & Maintenance Manager → DC Work Orders → DC All Work Orders**, open `WO-0001` if the 500-row import completed. Confirm its **Asset = UPS 001**, its **Work Order Type = Preventive Maintenance**, and its original **Work Order Status = Planned**. This record is part of the fictional practice data.
+
+| Exercise | Expected result |
+| --- | --- |
+| Open `WO-0001` | Work Order Code, Type, Priority, Asset and Requested/Due dates are visible |
+| Select the Asset Lookup | Opens an existing **DC Asset** record; no new asset is created |
+| Change Work Order Status from Planned to **Assigned**, save | The model-driven form persists the custom Choice value |
+| Reopen the record | Status is **Assigned**, and the work order appears in an appropriate active queue |
+| Change status back to **Planned**, save | Practice record is restored |
+| Open **DC Unassigned Work Orders** | Rows with no Assigned Engineer are visible if present |
+| Open **DC Overdue Work Orders** | Results reflect due dates and the current local date; no fixed count expected |
+
+To practice creating a row, choose **New** and enter a new code outside the published `WO-0001`–`WO-0500` range (for example, `WO-TRAIN-01`), choose an existing Asset, enter required classifications and description, then Save. Reopen it, confirm the relationships, and either retain it as an explicitly labeled test record or remove **only that authorized test row** if your environment permits deletion and you intend to keep the original 500-row count. The 500-row baseline should not be claimed after adding extra tests unless you filter them out.
+
+Model-driven form-level input is not automatic approval. The **Safety Review Required** field is a tracking flag, not a safety permit. Closing a fictional work order does not change actual equipment state or dispatch a technician.
+
+**Checkpoint 8 — Maintenance workflow.** Work-order edit, lookup navigation, custom Status, view filtering and data persistence work using the original Dataverse tables. No real equipment actions or unintended notifications occur.
+
+### S09.09 — Final validation, publication and handoff
+
+| Check | Validation |
+| --- | --- |
+| Data model | One DC Work Order table, three Local Choices, four actual Lookups and unique Work Order Code key |
+| Dataset | [work-orders.csv](./data/work-orders.csv) has 500 synthetic rows; verify actual imported count separately |
+| Forms | Maintenance Main form shows all business fields and related records |
+| Views | All, Active, Overdue and Unassigned work-order views function |
+| App | One published **DC Asset & Maintenance Manager** model-driven app in the existing solution |
+| Records | Existing Assets, Incidents, Inspections and Employees still resolve correctly |
+| Validation | Required Asset/Code/Status values and unique code behavior are enforced |
+| Security | Actual app and Dataverse table access requires the appropriate tenant roles |
+| Operations | Previous notification flows remain in their intended enabled/disabled states |
+
+Open **App designer → Save**, **Publish**, then **Play** after confirming the form/view changes were also published. Check for unresolved component warnings. Verify that model-driven users are not granted access merely because they can see the public GitHub instructions.
+
+### Finish Part 09
+
+You now have a **Dataverse Work Order register** and **DC Asset & Maintenance Manager** model-driven app for fictional maintenance planning and execution. Its linked work orders, operational system views and published forms reuse the Asset, Incident, Employee and Inspection tables already built. The supplied [work-orders.csv](./data/work-orders.csv) provides 500 deterministic synthetic practice rows; their successful import and lookup resolution must be verified in the learner's own authorized environment.
+
+
 ## Microsoft Learn references
+
+- [Build model-driven apps in Power Apps](https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/app-building-steps)
+- [Create or configure model-driven app forms](https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/create-and-edit-forms)
+- [Create and edit public views](https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/create-edit-views)
+- [Import CSV files with lookup-reference mapping](https://learn.microsoft.com/en-us/power-apps/user/import-data)
 
 - [Create a Power Platform solution](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-solution)
 - [Create and edit Dataverse tables](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-entities-portal)
