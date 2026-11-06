@@ -10,30 +10,15 @@ The architecture uses fictional SunnyVerse Renewable Group records to demonstrat
 flowchart TB
     USER[Authorized learning user] --> CANVAS
     USER --> MDA
-    CANVAS[Canvas Apps:
-    Operations Command Center
-    FieldOps
-    Capacity Planner] --> DV[(Dataverse
-    Operational and planning registers)]
-    MDA[Model-driven Apps:
-    Asset & Maintenance Manager
-    Change & Risk Manager
-    Supporting Operations Hub] --> DV
-    DV --> FLOW[Power Automate
-    solution-aware flows]
+    CANVAS["Canvas Apps:<br/>Operations Command Center<br/>FieldOps<br/>Capacity Planner"] --> DV[("Dataverse<br/>Operational and planning registers")]
+    MDA["Model-driven Apps:<br/>Asset & Maintenance Manager<br/>Change & Risk Manager<br/>Supporting Operations Hub"] --> DV
+    DV --> FLOW["Power Automate<br/>solution-aware flows"]
     FLOW --> DV
     DV --> CONNECT[Connection references
     Authenticated connector boundary]
-    CONNECT -. Approved notification examples only .-> M365[Outlook / Approvals / Teams
-    only where configured]
-    CSV[Public fictional CSVs:
-    24 sensors, 100 assets,
-    120 alarms, 200 incidents,
-    500 starting work orders,
-    50,000 readings] --> BI[Power BI Desktop Import
-    7-table learning model]
-    BI --> REPORT[5-page Operations Intelligence report]
-    DV -. No continuous live sync claimed .- BI
+    CONNECT -. "Approved notification examples only" .-> M365["Outlook / Approvals / Teams<br/>only where configured"]
+    CSV["Public fictional CSVs:<br/>24 sensors, 100 assets,<br/>120 alarms, 200 incidents,<br/>500 starting work orders,<br/>50,000 readings"] --> BI["Power BI Desktop Import<br/>7-table learning model"]
+    BI --> REPORT["5-page Operations Intelligence report"]
 ```
 
 ## Domains and actual separation
