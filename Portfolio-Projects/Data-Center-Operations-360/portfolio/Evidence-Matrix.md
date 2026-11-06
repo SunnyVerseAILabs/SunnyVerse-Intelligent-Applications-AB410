@@ -12,13 +12,14 @@ This public index separates **published teaching material**, **inspected files**
 | EV-04 | Monitoring experiment | [Monitoring CSVs](../data/monitoring/README.md) | Published fictional data | “50,000 readings from 24 sensor codes” |
 | EV-05 | Power BI model | [Sanitized PBIP source](../powerbi/README.md) | Inspectable public source + earlier reported Desktop test | “7 tables, 6 relationships, 20 measures and 5 pages in the source; no current-session Desktop retest” |
 | EV-06 | Three Canvas and three model-driven apps | [Parts 06–12](../Build-Guide.md) and [Part 16](../Build-Guide.md#part-16--present-and-verify-the-complete-data-center-operations-360-project) | Maker-reported published Play walkthrough | “Six app experiences were exercised read-only, with specific limitations disclosed” |
-| EV-07 | Corrected capacity-planning explanation | [Part 12](../Build-Guide.md#part-12--plan-data-hall-rack-capacity-and-power-headroom) | Design source + maker-reported Detail screen | “Rack 013 Hold is confirmed in Dataverse but not visible on Detail; zero reservations may appear blank” |
+| EV-07 | Corrected capacity-planning explanation | [Part 12](../Build-Guide.md#part-12--plan-data-hall-rack-capacity-and-power-headroom) | Design source + maker-reported Detail screen | “Rack 013 Hold is visible in the filtered rack list and Dataverse, but missing on Detail; reserved-zero fields appear blank” |
 | EV-08 | Historical flow diagnostics | [Part 14](../Build-Guide.md#part-14--build-rules-based-intelligent-operations-and-reviewed-knowledge) | Maker-reported historical run inspection | “Five flow records; historical 4 + 0 + 2 + 6 + 2 successful runs; duplicate creation skipped in DC14” |
 | EV-09 | Public QA starting point | [Part 15 UAT template](../quality/Part-15-UAT-Matrix.csv) | Unexecuted 18-case learner template | “Each learner starts at Not Run; actual tenant outcomes remain private” |
 | EV-10 | Verified development-source export procedure | [Part 15](../Build-Guide.md#part-15--engineer-test-and-prepare-the-solution-for-release) | Documented procedure + private, inspected package | “An unmanaged source export was verified; no target import/restore shown” |
 | EV-11 | Architecture diagram | [Architecture](./Architecture.md) | Published technical documentation | “Connectors belong to Power Automate; no unverified Teams ref or live BI pipeline” |
-| EV-12 | Final end-to-end walkthrough | [Demo](./Demo-Walkthrough.md), [Part 16](../Build-Guide.md#part-16--present-and-verify-the-complete-data-center-operations-360-project) | Public route + maker-reported app Play | “Real app routes were reported, but no public-safe capture/recording has yet been established” |
-| EV-13 | Final verification evidence | [Part 16 verification template](../quality/Part-16-Final-Verification.csv) | Unexecuted public template; private maker report | “Nine final checks reported Pass, two Not Run, one Blocked; raw results not published” |
+| EV-12 | Final end-to-end walkthrough | [Demo](./Demo-Walkthrough.md), [Part 16](../Build-Guide.md#part-16--present-and-verify-the-complete-data-center-operations-360-project) | Public route + maker-reported app Play | “Seven read-only Play-mode screen captures were reported as privately redacted; no public recording was published” |
+| EV-13 | Final verification evidence | [Part 16 verification template](../quality/Part-16-Final-Verification.csv) | Unexecuted public template; private maker report | “Ten Pass, one Fail (Power BI refresh), one Blocked (presentation) were reported; private results were not published” |
+| EV-15 | Read-only screen-capture provenance | [Part 16](../Build-Guide.md#part-16--present-and-verify-the-complete-data-center-operations-360-project) | Maker-reported private redacted captures, not public images | “Seven candidate Play-mode images exist privately; a final recording is still pending” |
 | EV-14 | Final presentation content | [Storyboard](./Presentation-Storyboard.md) | Published presentation source; private editable draft | “Twelve-slide draft exists; recorded/published demonstration evidence still pending” |
 
 ## How to interpret the categories
@@ -31,9 +32,9 @@ The source CSV has **500** maintenance work orders, while the earlier learning-t
 
 Two distinct cloud flows share the display name **DC08 Incident Status Notice**; the later flow has **zero history**, not an unreported successful run. The second DC14 run skipped duplicate record insertion, but its Cancelled branch was not exercised and concurrency safety was not demonstrated.
 
-The reported Capacity Planner Rack Detail did **not** display Rack 013 Hold, and zero reserved values appeared blank. The source Dataverse row remained Hold. Its overlap precheck can be write-capable, and server-side atomic reservation conflict protection is not implemented.
+The reported filtered Rack Browse list **did display Hold** for Rack 013, but its Detail screen did **not**, and zero reserved values appeared blank. The source Dataverse row remained Hold. Its overlap precheck can be write-capable, and server-side atomic reservation conflict protection is not implemented.
 
-The earlier engineering review documented **143 accessibility errors** and restricted role-sharing; a target solution import and non-admin role-separated testing remain unverified. Power BI Desktop was **not opened in the latest Part 16 session**, so the earlier Desktop validation does not become a new check.
+The earlier engineering review documented **143 accessibility errors** and restricted role-sharing; a target solution import and non-admin role-separated testing remain unverified. Power BI Desktop **was subsequently opened**, but **Refresh failed** with a Dim Sensor cyclic-reference error affecting six queries. The loaded values remained correct; **cached model checks are not a clean source refresh**.
 
 ## Rules for adding genuine media evidence
 
