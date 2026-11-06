@@ -3590,24 +3590,15 @@ You now have a **rules-first Intelligent Operations and Knowledge Review layer**
 
 ## Part 15 — Engineer, Test and Prepare the Solution for Release
 
-The previous chapter connected transparent intelligence rules, knowledge articles and reviewable operational insights. Before a learning solution can be presented as a coherent engineering portfolio, the maker must test its dependencies, security assumptions, performance, failure behavior, accessibility and release boundaries. This lesson turns the existing **SunnyVerse Data Center Operations 360** into a documented **release candidate** without creating another application, changing existing business records, or claiming that an educational environment is production-ready.
+The preceding chapters created an interconnected fictional data center learning solution: Canvas and model-driven applications, Dataverse operations, guarded automations, a local Power BI model and human-reviewed intelligence. Before building the final portfolio demonstration, **inspect the solution that actually exists**. Our purpose is engineering evidence, non-destructive regression, security review, and a private development-source export—not an unsupported claim of enterprise deployment.
 
-**Scope of this chapter:** inventory existing components; inspect security and connection references; run permitted solution/app/flow checkers; perform non-destructive functional and negative tests; review performance, observability and ALM exports; and record a repeatable release decision. The starting environment might not have privileges for solution checker, security-role administration, managed-environment pipelines or a second test environment. **Record those limitations rather than bypassing them.** No new Dataverse table, flow, app, live integration or premium service is mandatory.
+This chapter retains the original solution. It creates **no new Dataverse table, app, cloud flow, environment, user or recurring automation**, and it does not alter prior notifications, approvals or synthetic records. The reference package may differ from the starting CSV counts if an additional learner-created practice record exists. Keep those differences in the evidence log rather than deleting them.
 
-| Work product | Why it matters | Safe storage |
-| --- | --- | --- |
-| Component and dependency inventory | Establishes what is actually present, saved and published | Local engineering evidence; public summary without tenant identifiers |
-| Solution/App/Flow checker results | Identifies functional, performance and maintainability concerns | Redacted evidence; never expose user or connection data |
-| Security and connection-reference review | Distinguishes Dataverse authorization from fictional employee records | Private permission findings; public design principles |
-| [Part 15 UAT Matrix](./quality/Part-15-UAT-Matrix.csv) | Repeatable tests, expected results and honest execution status | Public **template**, all rows initially Not Run |
-| Local solution export, if permitted | Validates source portability and component completeness | **Private local backup**, not a public GitHub ZIP by default |
-| Release-readiness decision | Records unresolved blockers and next engineering action | Only a sanitized conclusion may be published |
-
-**Safety boundary:** use fictional records only. Do not change real university users or organization security policies, enable previously disabled flows, send emails/Teams posts, publish an app, import a managed solution, or run a deployment pipeline without authorization. A valid Dataverse write from a Canvas App is not evidence of race-free server validation. The Power BI monitoring dataset is still a local CSV Import model; the 50,000 readings do **not** belong in Dataverse.
+A valid completion can have **Pass**, **Conditional**, **Blocked** and **Not Tested** findings. A signed-in maker can verify some functions without being able to demonstrate least-privilege access, concurrency safety or target-environment deployment. Keep full solution archives, SHA-256 digests, working UAT results, user profile paths and tenant information **private**; GitHub remains only the reproducible learner guide and sanitized practice template.
 
 ### S15.01 — Open the existing solution and record the actual release baseline
 
-Open [Power Apps](https://make.powerapps.com) and choose the already authorized environment. Select **Solutions → SunnyVerse Data Center Operations 360 → Overview**. Verify the existing publisher, the saved prefix **`svrg`**, and the actual solution version. Do not create another solution. In the solution component list use **Object type** filters to inspect apps, Dataverse tables, cloud flows, choices, forms, views, connection references and environment variables.
+Begin with the **same authorized SunnyVerse Data Center Operations 360 solution**—do not create a duplicate. Open [Power Apps](https://make.powerapps.com) → **Solutions → SunnyVerse Data Center Operations 360 → Overview**. Inspect and record its **solution unique name**, actual version, publisher and saved `svrg` prefix. The baseline learning export uses unique name `SunnyVerseDataCenterOperations360` and version `1.0.0.0`, but verify what the current solution shows rather than assuming no intervening version change. Use the **Object type** filters to inspect Dataverse tables, apps, Choices, connections, environment variables, cloud flows and any separately surfaced app settings.
 
 Check these known products from the earlier build, then record the **observed** status in a private evidence log:
 
@@ -3623,13 +3614,15 @@ Check these known products from the earlier build, then record the **observed** 
 | Existing flows | DC08 notification flows, DC10 Change Approval, DC14_Incident_Insight_Demo | Connection-reference health, actual On/Off state, last observed run status |
 | Analytics | Locally saved DC360-Operations-Intelligence PBIX/PBIP | Local report verification, not a Power BI Service deployment |
 
-**Verify the Supporting Operations Hub version carefully.** It may have a newer published timestamp while an edited version is still unsaved or unpublished. Open the **published** version through **Play**, inspect the Intelligence & Knowledge, Shift Operations and Inventory & Partners groups, and compare its actual version/time with the designer. Record **Published**, **Saved but not published**, or **Unverified** from direct evidence. Do not change the app's publication state merely to simplify the record.
+**Verify published state from evidence, not the maker portal's absence of an “unpublished changes” label.** Compare the app's saved/modified metadata with the published version and timestamp, then select **Play** for the live published version. On the Supporting Operations Hub inspect **Shift Operations**, **Inventory & Partners**, and **Intelligence & Knowledge**. Record what version you actually played and whether anything newer remains unpublished. An editor can also show a misleading “unsaved changes” warning on exit; do not save blindly. Reopen version metadata to determine whether a change really occurred.
+
+**Duplicate-flow check:** When reviewing solution flows, identify every instance of **DC08 Incident Status Notice**. Identical display names can refer to distinct flow records. Record each unique internal flow identity and On/Off state privately; never treat a duplicate display name as permission to delete one. A local solution export and the portal may group/count components differently.
 
 **Checkpoint 1 — Baseline:** A single solution and its actual component statuses are recorded. No unsupported assertion about a published app or a passed test is made.
 
 ### S15.02 — Assemble the existing component and dependency inventory
 
-In the solution use **See all → Objects** (or the available component list) and inspect each major group. If the maker exposes **Show dependencies / See dependencies**, open that view for a representative Canvas App, model-driven app and cloud flow. Record both the component type and whether it is already in this solution. If a dependency belongs to another managed/system solution, do **not** try to copy or delete it just to make the inventory look complete.
+Use **See all → Objects** or the available solution component list and filter by type. Some forms and views are nested under their Dataverse table or app instead of appearing as separate top-level roots. Settings of type **10087** may represent model-driven **App channel** settings, not corrupt or unknown application data. Use **Show dependencies** or component summaries to explain entries before writing conclusions. If a required item belongs to another Microsoft or managed/system solution, **do not delete, clone or modify it** merely to make the inventory appear complete.
 
 | Dependency chain | What must resolve | What to do if missing |
 | --- | --- | --- |
@@ -3643,13 +3636,17 @@ In the solution use **See all → Objects** (or the available component list) an
 
 Create a private **component inventory** with columns: `Object Type`, `Display Name`, `Actual Schema/Logical Name`, `Solution Membership`, `Published/Enabled Status`, `Dependency`, `Finding`, `Evidence`. Record only the **necessary type and business name** in public materials. A private inventory may include opaque object IDs temporarily, but never upload them to GitHub.
 
+**Compare inventory scopes correctly.** A maker portal component count, a customizations file and a solution ZIP's `solution.xml → RootComponents` section may count different things. For the training export, the ZIP declares **42 root entries** (24 tables, 4 global Choices, 5 cloud flows, 3 Canvas apps and two different model-driven component types for 3 apps each), while the portal component count may be higher. Inspect types, not just totals. The same manifest includes six declared dependencies for three model-driven apps: Microsoft-provided **default-app-icon** and **AppChannel** resources. These are target-environment prerequisites to validate, not components to manually recreate in the source solution.
+
+**Connection-reference inventory:** Identify the two Dataverse, one Outlook and one Approvals connection references and the existing notification test-recipient environment variable by **type and presence only**, never by current address or credential. Resolve repeated flow names using immutable IDs in the private inventory, not visible names alone.
+
 **Checkpoint 2 — Dependency coverage:** Every app and flow used in the sample demonstrations has its critical prerequisites identified. Unavailable dependency views are documented, not guessed.
 
 ### S15.03 — Run the permitted solution and application checkers
 
 In **Solutions**, locate the **unmanaged** SunnyVerse solution. If **... → Solution checker → Run** (or the currently available Check action) is enabled, run it on that solution and read the resulting status. Microsoft solution checker may report **Running**, **Results as of [date/time]**, or a failure state; it does not guarantee deployment success. Review findings by component, severity, category and rule. Save a **sanitized local finding summary** without usernames, URLs, connection identifiers or raw environment metadata.
 
-Separately open each of the three Canvas Apps in Edit/Studio and inspect **App checker → Formulas, Accessibility, Performance, Data source**. Where modern editors use different headings, record the actual categories shown. A **0 Formula Errors** status does not cancel accessibility or performance findings. Review Power Fx delegation warnings and check for any new errors after earlier lessons.
+Inspect each Canvas App in **Studio → App checker**, keeping **Formulas**, **Accessibility**, **Performance**, and **Data source** as independent categories. Open Studio read-only when another maker holds the edit lock and do not take ownership or overwrite their session. A browser tab may prompt to save on exit even after **no intentional edit**; discard that transient state, then verify the application's saved/published metadata did not change. **Zero formula errors does not imply accessibility readiness.** For DC Capacity Planner, explicitly inspect keyboard focus, tab order, AccessibleLabel and focus-border findings, plus unused variables and cross-screen references. In the Command Center and FieldOps, review delegation and cross-screen performance warnings separately.
 
 For the three model-driven apps, inspect the app designer's validation result and reopen a representative Main form/view. For each solution-aware flow, open its checker, read any errors or warnings and inspect saved status and references. **Do not turn on, retest or publish** an app or flow merely because a checker prompts you to.
 
@@ -3661,6 +3658,8 @@ For the three model-driven apps, inspect the app designer's validation result an
 | Canvas Performance / Data source | Capture delegation, repeated calls, connection or rule findings |
 | Model-driven designer validation | Navigation/forms/views must still work in published Play |
 | Flow checker | No syntax errors does not prove connection health or runtime execution |
+
+**Reconcile static checker outcomes rather than merging them.** Solution checker may classify findings at **Medium** severity even when Canvas App checker classifies individual accessibility items as **errors**. The two labels describe different tools' severity systems and are not contradictory. If the flow checker requires entering Edit mode or risks modifying a locked cloud flow, record **Not Run**, keep the existing flow unchanged and do not claim the code has passed flow-specific inspection. A model-driven app validation can succeed with required-component **warnings**; inspect dependencies separately instead of treating “succeeded” as zero findings.
 
 **Checkpoint 3 — Findings register:** Document the actual result and unresolved blocker for each available checker. If unavailable for licensing or permission reasons, record **Not Run — permission/tool unavailable**; never invent a pass.
 
@@ -3681,6 +3680,8 @@ Use this **proposed role matrix** to discuss least privilege without claiming th
 
 For each row, distinguish **Read, Create, Write, Delete, Append, Append To** (and Assign/Share when relevant). A model-driven app's page being visible does not prove that the underlying Dataverse data is accessible. If a second **authorized** test account is available, have the owner run read-only access tests; otherwise record access separation **Not Tested**. Do not use a colleague's credentials, make dummy real users, weaken an institution's security roles or enable auditing without approval.
 
+**Distinguish current access from a proposed security design.** It is possible for a maker to have System Administrator, Basic User and Approvals User roles while the **Basic User role itself has no privileges on custom `svrg` tables**. Likewise, an app might be assigned only to System Administrator and System Customizer. Record both table privileges and app sharing, but do not call least-privilege access “tested” unless a separate permitted lower-privilege identity actually signs in and exercises it. Do not create real-looking fictional employee identities in Entra ID to simulate a sign-off.
+
 **Checkpoint 4 — Security review:** Record the current permission visibility and proposed matrix; state whether actual role-separated tests were performed. The organization-owned table limitation remains a documented architectural decision.
 
 ### S15.05 — Inspect connection references, environment variables and connector health
@@ -3691,11 +3692,13 @@ A reference with **no signed-in user or connection** may prevent a flow from bei
 
 If the solution has an environment variable representing a notification test recipient, inspect **schema name, type, default/current value presence and where consumed** without exposing its value. Do not change the recipient or trigger a notification. If no variable exists, write **Not present**—do not create a placeholder just to satisfy a template. Some deployment settings are populated at import time and are never safe to hard-code for a public learner repo.
 
+**Authenticated-reference check:** A Dataverse connection reference may appear configured while its selected connection lacks a signed-in user. If a historical flow required a different existing authenticated Dataverse reference, document that distinction. Do not replace the working reference during this audit or change flow On/Off states. Two cloud flows sharing a display name remain separate until their unique identities and dependencies are reconciled. Record each current state individually; never infer all flows are On simply because connection reference entries exist.
+
 **Checkpoint 5 — Connector inventory:** The dependencies, health and existing flow states are recorded. No email, Teams or approval run has been triggered.
 
 ### S15.06 — Inspect Canvas performance, delegation and user experience
 
-Open the **published** DC Operations Command Center, DC FieldOps and DC Capacity Planner in a controlled training session. Use ordinary navigation, search and **read-only** form operations first. Where the editor provides **Live monitor/Monitor**, launch a session only if authorized and inspect the calls for the tested screen. Do not copy personally identifying request headers or environment details into the portfolio.
+Open the **published** DC Operations Command Center, DC FieldOps and DC Capacity Planner in a controlled training session. Use ordinary navigation, search and **read-only** form operations first. **Opening a home screen and seeing correct counts is not a full Play-mode search/navigation test.** Treat menu/screen traversal as tested only when actually performed, and distinguish an app that opens in read-only Studio from one successfully exercised in Play. Where the editor provides **Live monitor/Monitor**, launch a session only if authorized and inspect the calls for the tested screen. Do not copy personally identifying request headers or environment details into the portfolio.
 
 | Diagnostic | What to observe | Engineering interpretation |
 | --- | --- | --- |
@@ -3709,6 +3712,8 @@ Open the **published** DC Operations Command Center, DC FieldOps and DC Capacity
 
 Use the environment's existing fictional records and **avoid writes** during a performance-only check. If you must run a single safe form submit, agree the target training row, record its baseline values and restore them immediately. Do not enable load testing against shared Dataverse tables or generate thousands of network calls. Capture only redacted timings and counts; do not invent measured response times.
 
+**Protect the reservation path:** A user-interface action called “Validate” is not necessarily non-writing: inspect its actual `OnSelect`, form `OnSuccess`, and related `SubmitForm` path before interacting. If you cannot demonstrate the overlap rejection without a possible Dataverse write, leave the corresponding UAT case **Not Run** and state why. Use Monitor only during an authorized interactive Play session. If no instrumented latency data exists, report **Not Measured** rather than a guessed response-time KPI.
+
 **Checkpoint 6 — Performance:** Actual inspected warnings and reproducible slow/error paths are documented, with explicit **Not Tested** for unavailable devices, accessibility tooling or load conditions.
 
 ### S15.07 — Verify data quality, relationship integrity and sample baselines
@@ -3719,13 +3724,19 @@ Use saved Dataverse views or supported read-only Dataverse queries and the alrea
 | --- | --- | --- |
 | Campus / Data Hall / Department | 1 / 2 / 6 | Records persist after refresh; real parent Lookups |
 | Employee Profile / Asset / Sensor | 20 / 100 / 24 | Unique codes, no orphaned Asset or Hall references |
-| Alarm / Incident / Work Order | 120 / 200 / 500 | Unique record codes; selected parent and status fields |
+| Alarm / Incident / Work Order | 120 / 200 / **500 starting rows** | Check actual present count; extra prior training records are not silently deleted |
 | Supporting Operations | 2 Vendors, 3 Spare Parts, 3 Balances, 2 Handovers | Open records, Low-stock Boolean manually reconciled |
 | Capacity | 2 Hall Baselines, 20 Rack Plans, 3 Allocations, 2 Requests | Hold Rack 013/019, capacity arithmetic and real Lookups |
 | Intelligence | 3 Rules, 2 Knowledge Articles, 3 Insights | Required Rule Lookup, source links, Active alternate keys |
 | Monitoring report | 50,000 imported CSV readings (24 sensors) | Local Power BI Desktop model refresh or sanitized source verification |
 
 Inspect several actual **alternate-key statuses** under table **Schema → Keys**. Reopen sample Lookup links, including **INS-INC-0001-P1 → INC-0001 / RUL-0001** and **INS-BAL-0002-REORDER → BAL-0002 / RUL-0003**, where each arrow represents an Insight Lookup pointing to its existing source or Rule. Count unique business codes rather than using a visual's row count as proof. Do not automatically repair mismatches by deleting records. For Capacity, note that the baseline Hall planning figures and simulated monitoring samples are distinct models; no measured rack power is reconciled to design headroom.
+
+**Handle legitimate practice differences without “fixing” the data:** A previously created record such as `WO-TRAIN-01` makes a tenant count **501** even though the original `work-orders.csv` has 500. Inspect the extra row's code, provenance and creation context, document the difference, and keep it intact unless the learner explicitly authorizes a separate cleanup. The goal is source reconciliation, not forcing the current tenant to match the CSV count.
+
+**Alternate-key coverage is not universal:** Inspect which tables actually have **Active** alternate keys; a unique code in all current rows does not establish that Dataverse enforces uniqueness without a key. For tables with no alternate key, perform a **read-only duplicate-code scan** and classify the result as current-data uniqueness only. Do not create keys across earlier tables during a review-only lesson.
+
+**Capacity requests and allocations are distinct:** The three training allocations may have blank optional **Related Request** Lookups, and that is valid for allocations created independently of requests. Confirm that the Rack Plan and Data Hall Lookups are correct and that no U-range overlaps; do not fabricate request links.
 
 **Checkpoint 7 — Data integrity:** Record exact present counts, unique keys and sampled Lookup outcomes. Any extra/missing records are investigated without overwriting prior practice data.
 
@@ -3742,7 +3753,9 @@ Open the [Part 15 UAT Matrix](./quality/Part-15-UAT-Matrix.csv). It is a **templ
 | Analytics | Seven Power BI tables, six relationships, 20 measures, five pages | Desktop-local testing, no Power BI Service publication |
 | Security/ALM | Role boundary review, solution checker, export readiness | No user-role edits or import/deploy without approval |
 
-**Negative tests:** For a record with a required field, inspect the form's validation UI without submitting invalid data. For lookup mismatch, inspect that the saved parent opens. For reservation overlap, use the already documented non-writing capacity precheck. For the DC14 duplicate flow, prefer **existing two run histories** unless explicitly approved to trigger it again. For error-path tests, use a copied local Power BI test session or a safe approved demo dataset, not a live user or actual notification recipient.
+**Negative tests:** For a record with a required field, inspect the form's validation UI without submitting invalid data. For lookup mismatch, inspect that the saved parent opens. For reservation overlap, **first trace the current button/form submission logic**: if the test could write a record, leave **UAT-08 Not Run** rather than assuming a client-side warning is read-only. For the DC14 duplicate flow, prefer **existing two run histories** unless explicitly approved to trigger it again. For error-path tests, use a copied local Power BI test session or a safe approved demo dataset, not a live user or actual notification recipient.
+
+**Update the private UAT working copy when export succeeds:** UAT-18 is an approval-gated packaging check. After an authorized export, set it to **Pass only if** the downloaded ZIP is identified, its saved manifest is readable, its hash is verified after moving/copying to the private target folder, and no import occurred. Preserve the original public [UAT template](./quality/Part-15-UAT-Matrix.csv) with all eighteen statuses initially **Not Run**. Recompute private Pass/Not Run totals after each result changes; do not treat an approved export as a pass for the separate UAT-06/07/08/15/16 tests.
 
 **Checkpoint 8 — Regression evidence:** An honest 18-row UAT result with no blank status values. **Not Run/Blocked** tests remain outstanding; they cannot be counted as Pass.
 
@@ -3760,24 +3773,36 @@ In [Power Automate](https://make.powerautomate.com) select the same environment 
 | Historical action failure | 400/403/429, required field, connector throttle | Record actual error category, not guessed cause |
 | Review trail | Insight Review Status, Reviewed At and restored baseline | Fictional review is not an authenticated electronic signature |
 
-If you lack permissions to view history, record **Not visible**. Do not create new monitoring flows or modify DC08, DC10 or DC14 in this chapter. **Checkpoint 9 — Resilience review:** Evidence and real limitations are logged without changing the operating system of record.
+If you lack permissions to view history, record **Not visible**. Do not create new monitoring flows or modify DC08, DC10 or DC14 in this chapter. **Interpret history correctly:** A flow run may have **Succeeded** while an intentionally guarded **Add a new row** action is **Skipped** because a record already exists. This demonstrates the no-duplicate path; it does not prove that a distinct **Terminate = Cancelled** branch executed. Inspect historical action-level statuses separately from the overall flow result. Where available, read-only Dataverse `flowruns` records can assist with visibility, but do not use them to infer unobserved branch execution. Historical successes also do not prove retry behavior, concurrency resistance or current connection availability.
 
-### S15.10 — Review ALM packaging and export an authorized local solution backup
+**Checkpoint 9 — Resilience review:** Evidence and real limitations are logged without changing the operating system of record.
 
-Return to **Solutions → SunnyVerse Data Center Operations 360 → Overview**. Check solution components, object dependencies, publish readiness and the version. If you have permission and **the owner authorizes a local export**, select **Export** and follow the solution export wizard. For a development source backup, an **Unmanaged** export may be appropriate; a **Managed** package is a deployment artifact for an authorized target—not something to import back into the original development environment as a casual test. **Do not import anything, install a managed layer, or create a deployment pipeline here.**
+### S15.10 — Export an authorized unmanaged solution and verify the package
 
-| Release artifact/step | Recommended action in this lesson | Important limit |
+Return to **Solutions → SunnyVerse Data Center Operations 360 → Overview** and verify the current publisher, `svrg` prefix, version, component readiness, visible dependency warnings and permission to export. For a source-oriented training backup select **Export → Unmanaged** when the solution owner has approved. Do **not** choose Managed solely to test another tier, import this ZIP into the source environment, trigger a pipeline, or change cloud-flow states.
+
+**Complete the export process and inspect the resulting archive:**
+
+1. Follow the current Power Apps solution export wizard. Depending on browser settings, the exported `.zip` typically arrives in the browser's **Downloads** directory even if you intend to keep it in a different private project folder. Do not claim the portal wrote it directly to a folder you selected unless you verified that behavior.
+2. Locate the exact downloaded filename, move or **copy** it into the approved private `exports` folder and note any second original still present in Downloads. Never delete a duplicate automatically: the owner decides when to remove it.
+3. Calculate **SHA-256** from the downloaded archive and again from the copy in the destination. Compare the full 64-hex-character digest. Record the digest **only in a private evidence record**, never in public GitHub documentation along with local user-profile paths.
+4. Inspect the ZIP without modifying it. Read its `solution.xml` `SolutionManifest` and record **UniqueName**, `Version`, and `Managed`; `Managed = 0` means the package is unmanaged. Inspect the top-level entries to confirm that solution metadata, workflow definitions and Canvas App packages are present.
+5. Inspect `solution.xml → RootComponents` and `MissingDependencies` separately. Do **not** assume the maker portal's component count must equal the manifest's root count. The fictional practice export may show a smaller root list because of the component types and representations counted in each view.
+6. Treat entries under `MissingDependencies` as **target-environment prerequisites to investigate**. In this example the solution declares Microsoft-supplied default model-driven app icons and `AppChannel` settings for the three existing model-driven apps. Do not silently recreate or copy those system resources into the development solution; verify availability in any future authorized target environment.
+7. Do not assume an unmanaged export includes every Dataverse row, live connection credential, private report, environment-specific configuration value or Power BI Desktop PBIX. The customizations archive is **not** a validated full tenant backup or a tested disaster-recovery snapshot.
+
+| Export / release evidence | What to verify and record privately | What it does **not** prove |
 | --- | --- | --- |
-| Unmanaged solution export | Download only to an authorized private local folder | May include configuration and connection-reference metadata; privacy-review before sharing |
-| Managed export | Optional if licensing/policy and intended target allow | Do not import to source environment or claim production deployment |
-| Component dependency report | Inspect before export | Solution checker success does not prove target import succeeds |
-| Connection-reference settings | Document types and whether a target connection is needed | Never commit real connection IDs, recipient addresses or tenant values publicly |
-| Environment-variable settings | Record schema/type and target value requirement | No secrets or hard-coded environment URLs in GitHub |
-| Version and package hash | Record release candidate version and optional SHA-256 privately | A saved ZIP is not a deployed release |
+| File downloaded | Exact archive exists in Downloads and intended private exports folder | A browser download is a target-environment deployment |
+| Hash match | SHA-256 calculated on both file copies agrees | The package is complete for a future import |
+| Solution manifest | Expected unique name, version and unmanaged flag | The target platform has every dependency |
+| ZIP entries | Customizations and app/flow assets are present | All sample Dataverse row data or secrets are packaged |
+| Missing dependency declarations | Named provider packages or settings inspected | Import will succeed or fail without a target check |
+| UAT-18 | Mark **Pass** in the **private** working matrix after actual successful export verification | Any other unexecuted UAT test has passed |
 
-Power Platform ALM uses **unmanaged customizations as development source** and **managed packages for controlled deployment to downstream environments**. Deployment also requires target-environment permissions, suitable connection references, solution dependencies and sometimes managed-environment licensing. Where a second authorized test environment is unavailable, mark an import-test **Not Performed**; do not create a new environment or use an institutional production environment without permission.
+**Release classification:** After a verified export, the **Packaging** gate may advance from **Not Tested** to **Conditional**. A correctly hashed ZIP is genuine export evidence, but **solution import, connection mapping and functional testing in an authorized target environment are still outstanding**. Microsoft's export process downloads via the browser and its solution checker is not a guarantee of successful import. Keep raw solution exports and the private file hash off GitHub.
 
-**Checkpoint 10 — ALM:** Record whether an export actually completed, its local destination and a sanitized hash if produced. No unauthorized GitHub upload, solution import or deployment occurs.
+**Checkpoint 10 — ALM:** An unmanaged package exists and its saved content and hash are verified **only when those actions were actually performed**. No import, managed layer, new deployment, policy change or unsafe file deletion is required.
 
 ### S15.11 — Decide release readiness and document rollback boundaries
 
@@ -3791,26 +3816,32 @@ Create a private release-candidate review using the actual evidence. Apply the f
 | Reliability | Flow run outcomes and retry/idempotency observations | No unverified notification/approval/external calls |
 | Accessibility and performance | App checker categories reviewed | Outstanding findings documented with severity |
 | Analytics | Source import, DAX and report evidence from Desktop | PBIX validated locally is not published to Power BI Service |
-| Packaging | Export/deployment readiness actually observed | An exported ZIP does not prove a test-environment import |
+| Packaging | Archive presence, matching SHA-256, manifest and dependencies | **Conditional** after a verified export; not Pass until authorized target import/reconciliation |
 | Privacy | No tenant/user identifiers in public material | Do not release unsanitized screenshots, URLs or packages |
 
 Classify each gate **Pass**, **Conditional**, **Blocked**, or **Not Tested** and record an owner-independent rationale. An overall **Learning demonstration ready** decision may be different from **Enterprise deployment ready**. With untested server-side rack concurrency, unknown tenant security-role separation and no authorized target environment, do not claim production readiness.
 
-For a failure after an authorized future deployment, the response is **stop further changes, capture the error, review versioned artifacts and obtain an approved recovery plan**. A “rollback” is not automatically achieved by deleting a managed solution; that may remove components or data. Do not attempt unapproved removal/import/restore. **Checkpoint 11 — Decision:** A written evidence-based release classification and bounded recovery procedure, not an invented deployment success.
+For a failure after an authorized future deployment, the response is **stop further changes, capture the error, review versioned artifacts and obtain an approved recovery plan**. A “rollback” is not automatically achieved by deleting a managed solution; that may remove components or data. Do not attempt unapproved removal/import/restore. **Worked classification after a review-only learning exercise:** An export can make Packaging **Conditional**, while **Solution integrity** remains conditional if duplicate-named flows and unresolved component dependencies exist, **Functional UAT** remains conditional with unfinished tests, **Security** remains Not Tested without a lower-privilege account, and **Accessibility/performance** remains conditional while checker issues and interactive measurements are unresolved. **Analytics** requires independently confirmed Desktop refresh, not a statement that source CSVs exist. A local PBIX built in an earlier part does not imply this particular audit session repeated those checks.
+
+Do not treat a finding of **zero Critical/High issues** as zero issues. Any retained Canvas accessibility errors, weak permissions or untested runtime paths must stay visible in the release decision. An exported solution is a valuable **development-source artifact**, but it is not a verified enterprise rollout or recovery procedure.
+
+**Checkpoint 11 — Decision:** A written evidence-based release classification and bounded recovery procedure, not an invented deployment success.
 
 ### S15.12 — Package safe portfolio evidence and complete the engineering review
 
-In an authorized private folder, consolidate the **test results, sanitized issue summary, component inventory, relevant screen evidence and export details if an export was permitted**. Keep source code, synthetic datasets and the cumulative learner guide in their existing GitHub location. Do **not** publish environment IDs, signed-in names, user profile paths, secrets, exact connection references, real addresses, private tenant reports, or original solution exports without an explicit security review and authorization.
+In an authorized private folder, consolidate the **actual test results**, solution inventory, checker findings, carefully redacted screenshots, unresolved risk register and **export metadata/hash evidence** when an export was authorized and completed. Retain the complete unmanaged solution ZIP **privately**, not on the public GitHub repository. Keep source code, synthetic datasets and the cumulative learner guide in their existing GitHub location. Do **not** publish environment IDs, signed-in names, user profile paths, secrets, exact connection references, real addresses, private tenant reports, or original solution exports without an explicit security review and authorization.
 
 Create a concise learner-readable completion record from the actually performed checks. This may report totals, generic component types, observed troubleshooting lessons and any honest outstanding limitations—but must not include a private implementation transcript or unperformed future scope. Preserve the Part 15 public UAT matrix with **Not Run** statuses so readers can perform their own tests independently. If you capture screenshots, crop/redact the browser chrome and user/tenant details.
 
 **Final verification:** Verify the original three Canvas apps, three model-driven apps, established Dataverse tables and current flows are **unchanged unless you deliberately and separately authorized a correction**. The Power BI Desktop source still opens locally. Review the Hub published version before concluding that Part 14 navigation is live. Confirm the solution has not been imported into any new environment and that no unauthorized messages, permissions changes, deletion or AI execution occurred.
 
+**Privacy review before making a portfolio claim:** The original ZIP contains application/flow definitions and connection-reference metadata, and the private UAT result may include local paths, identifiers and detailed environment behavior. Neither belongs in the public learner guide. A public case study may describe **three Canvas apps, three model-driven apps, Dataverse tables, reporting, a verified development export and outstanding quality gates** without distributing the actual tenant package. Verify that the public UAT template still says Not Run for all cases and that no private exports or inspection reports were added to GitHub.
+
 **Checkpoint 12 — Completion:** A traceable engineering/UAT evidence set and release decision. If anything remains unavailable, label it explicitly and preserve the working previous application state.
 
 ### Finish Part 15
 
-You have learned how to evaluate an existing Power Platform solution as an engineering release candidate: inventory and dependencies, static checkers, access control, connector health, accessibility and performance, data integrity, regression tests, observed run history, ALM export boundaries, release gates and safe evidence handling. The exercise documents **actual evidence and remaining risk**, not a claim that a fictional educational environment has become an enterprise production system.
+You have evaluated an existing Power Platform solution with component inventory, dependency inspection, static and interactive quality checks, role/connection assessment, historical flow diagnostics, non-destructive UAT and a verified **unmanaged development export**. The archive may be hash-verified while target-environment import remains untested. Any incomplete UAT, missing security-role evidence, accessibility issues or flow-identity ambiguity must remain explicit. The exercise documents **actual evidence and remaining risk**, not a claim that a fictional educational environment has become an enterprise production system.
 
 **Microsoft Learn references:**
 
@@ -3824,6 +3855,7 @@ You have learned how to evaluate an existing Power Platform solution as an engin
 - [Solution layers](https://learn.microsoft.com/en-us/power-platform/alm/solution-layers-alm)
 
 *The exercise uses fictitious data. It does not authorize changes to live data centers, real users, security administration, institutional policies or external deployments.*
+
 
 ## Microsoft Learn references
 - [Define alternate keys in Dataverse](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-reference-records)
