@@ -25,6 +25,8 @@ This directory will contain **original synthetic practice datasets** as the corr
 
 **Part 10 — Change, Risk and Procedure Approvals** creates three linked Dataverse tables and small fictional practice records through model-driven forms. It also creates one controlled approval flow using an authorized test approver. **No new CSV file** is needed. Follow [Part 10](../Build-Guide.md#part-10--build-change-risk-and-maintenance-procedure-approvals). The prior Work Orders CSV remains unchanged.
 
+**Part 11 — Supporting Operations** creates DC Vendor, DC Spare Part, DC Inventory Balance and DC Shift Handover, then builds **DC Supporting Operations Hub** with a small, manually entered fictional practice set. **No new CSV dataset** is required. Follow [Part 11](../Build-Guide.md#part-11--run-supporting-operations-vendors-spares-inventory-and-shift-handover). The existing 500 work orders and other datasets remain unchanged.
+
 The CSV headers exactly match the **display names** introduced in the [Build Guide](../Build-Guide.md). The guide identifies the intended **svrg-prefixed schema names** separately. Dataverse may suggest field mapping automatically, but always review Choice and lookup values before completing an import. Import referenced parent records before child records: campus before halls; halls before assets; assets before sensors; alarms after assets and sensors; incidents after alarms. If you have entered the same rows manually, do not also import the CSVs.
 
 Do not import datasets from previous experiments, previous Power Platform solutions, or unrelated AB-410 course modules. Every future dataset will be fictional and checked for consistency with the published schema.
