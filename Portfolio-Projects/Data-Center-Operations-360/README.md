@@ -11,13 +11,17 @@ This is a **hands-on learning project**, not a deployed facility management syst
 
 **[Open the Step-by-Step Build Guide](./Build-Guide.md)**
 
+**[Explore the Final Portfolio Case Study](./portfolio/Case-Study.md)** — architecture, reproducible evidence links, demo walkthrough and presentation storyboard.
+
+[Open the Part 16 verification template](./quality/Part-16-Final-Verification.csv) — twelve checks initially Not Run.
+
 [Open the Part 15 UAT template](./quality/Part-15-UAT-Matrix.csv) — 18 non-destructive test cases, initially Not Run.
 
 [Open the Power BI Desktop report source](./powerbi/README.md) — a reviewed, privacy-sanitized PBIP project archive with the Part 13 model and five report pages; requires a local CSV refresh before use.
 
 The Build Guide is the single cumulative learner document. Follow the published instructions in order. Each completed lesson includes the exact navigation, field settings, expected results, validation checks, troubleshooting, and links to downloadable practice files where appropriate.
 
-**Published:** Parts 00–15 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center Canvas App, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations, Capacity Management and Rack Planning, Monitoring and Operational Intelligence, Rules-Based Intelligent Operations and Knowledge Review, Engineering Validation and Release Readiness.
+**Published:** Parts 00–16 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center Canvas App, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations, Capacity Management and Rack Planning, Monitoring and Operational Intelligence, Rules-Based Intelligent Operations and Knowledge Review, Engineering Validation and Release Readiness, Final Portfolio and Demonstration.
 
 ### Learning goals
 
