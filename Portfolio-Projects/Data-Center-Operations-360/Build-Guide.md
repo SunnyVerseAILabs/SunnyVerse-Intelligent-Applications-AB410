@@ -3008,7 +3008,7 @@ If you get **5,000 rows**, inspect the Combine Files step and its directory sour
 
 ### S13.04 — Load the operational reference dimensions
 
-Choose **Home → Get data → Text/CSV** four times to import the separately downloaded `sensors.csv`, `assets.csv`, `data-halls.csv` and (if not already present) the ten-reading query from S13.03. Use **Transform Data** for each dimension and rename the first three queries exactly:
+Choose **Home → Get data → Text/CSV** three times to import the separately downloaded `sensors.csv`, `assets.csv` and `data-halls.csv`. The combined readings query already exists from S13.03; **do not reimport it**. Use **Transform Data** for each dimension and rename the first three queries exactly:
 
 | Power BI query | Source | Primary business key | Type checks |
 | --- | --- | --- | --- |
