@@ -2013,7 +2013,7 @@ For each OR condition, use a dedicated group in the filter builder; combining tw
 
 ### S10.06 — Assemble DC Change & Risk Manager and working Asset context
 
-In **Solutions → SunnyVerse Data Center Operations 360 → New → App → Model-driven app**, enter **DC Change & Risk Manager**. Description: \`Review fictional changes, assess risks and track method-of-procedure steps.\` Use **Add page → Dataverse table** to add these existing tables:
+In **Solutions → SunnyVerse Data Center Operations 360 → New → App → Model-driven app**, enter **DC Change & Risk Manager**. Description: `Review fictional changes, assess risks and track method-of-procedure steps.` Use **Add page → Dataverse table** to add these existing tables:
 
 | Group | Page | Select in this app |
 | --- | --- | --- |
@@ -2096,7 +2096,7 @@ Choose **New → Automation → Cloud flow → Automated**, name the flow **DC10
 | Change type | **Modified** |
 | Table name | **DC Change Requests** |
 | Scope | **Organization** |
-| Select columns | \`svrg_changestatus\` — verify the logical name under the Change Status column |
+| Select columns | `svrg_changestatus` — verify the logical name under the Change Status column |
 | Filter rows | Leave empty |
 
 For **Change Status** verify the saved Choice metadata. In the documented publisher setup **Submitted = 479120001**, but do not hardcode this value for another environment without checking.
@@ -2105,21 +2105,21 @@ For **Change Status** verify the saved Choice metadata. In the documented publis
 
 Add **Control → Condition** with **all three AND tests** on *Get_change_fresh* outputs: Change Status = Submitted, MOP Reviewed = Boolean true, Approval Requested = Boolean false. In the Expression editor this is:
 
-\`\`\`text
+```text
 and(
   equals(outputs('Get_change_fresh')?['body/svrg_changestatus'], 479120001),
   equals(outputs('Get_change_fresh')?['body/svrg_mopreviewed'], true),
   equals(outputs('Get_change_fresh')?['body/svrg_approvalrequested'], false)
 )
-\`\`\`
+```
 
 Replace the numeric Submitted value if the saved Choice differs. If your designer exposes current-row fields directly, use them in the Condition builder instead. **Reading the current row is not a transactional lock**—parallel requests can still race—so this lesson must not be treated as a production exactly-once system.
 
 In **If yes**, create these actions **in this order**:
 
 1. **Dataverse → Update a row** on the same Change Request GUID: set **Approval Requested = Yes**, **Change Status = Under Review**. Leave unrelated fields untouched.
-2. **Standard approvals → Start and wait for an approval** (choose the nondeprecated action). If authorization is required, sign in through the authorized connector flow. Add or confirm its **Standard approvals** solution connection reference (for example \`svrg_DC10StandardApprovals\`). **Inspect the actual Connector field and saved connector ID**: a search selector can choose an unrelated connector even if the reference was given a familiar display name.
-3. Set **Approval type = Approve/Reject — First to respond**. **Assigned to = DC Automation Test Recipient** environment-variable current value. **Title:** \`[DC360 TRAINING] Review change \` plus Change Code dynamic content. **Details:** Change Name, MOP Summary, Backout Plan, Verification Plan and readable Business Impact. If available in the trigger output, the Business Impact label expression is \`triggerOutputs()?['body/_svrg_businessimpact_label']\`. A Lookup typically exposes only a GUID: to show an Asset name, add a separate Dataverse **Get a row by ID** on DC Assets, or omit the name. Do not mistake the GUID for a user-readable asset name.
+2. **Standard approvals → Start and wait for an approval** (choose the nondeprecated action). If authorization is required, sign in through the authorized connector flow. Add or confirm its **Standard approvals** solution connection reference (for example `svrg_DC10StandardApprovals`). **Inspect the actual Connector field and saved connector ID**: a search selector can choose an unrelated connector even if the reference was given a familiar display name.
+3. Set **Approval type = Approve/Reject — First to respond**. **Assigned to = DC Automation Test Recipient** environment-variable current value. **Title:** `[DC360 TRAINING] Review change ` plus Change Code dynamic content. **Details:** Change Name, MOP Summary, Backout Plan, Verification Plan and readable Business Impact. If available in the trigger output, the Business Impact label expression is `triggerOutputs()?['body/_svrg_businessimpact_label']`. A Lookup typically exposes only a GUID: to show an Asset name, add a separate Dataverse **Get a row by ID** on DC Assets, or omit the name. Do not mistake the GUID for a user-readable asset name.
 4. Add a **Condition** comparing the Standard approvals **Outcome** to the exact text **Approve**. In **If yes**, **Dataverse → Update a row** sets **Change Status = Approved**, **Approval Decision Note = "Approved during fictional training review"**, **Decision On = utcNow()**. In **If no**, update **Change Status = Rejected**, **Approval Decision Note = "Rejected during fictional training review"**, **Decision On = utcNow()**.
 5. Leave the *first readiness guard's* **If no** branch empty.
 
