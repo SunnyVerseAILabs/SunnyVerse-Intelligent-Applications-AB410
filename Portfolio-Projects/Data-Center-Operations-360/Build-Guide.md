@@ -2,13 +2,13 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–11 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations
+**Published:** Parts 00–12 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations, Capacity Management and Rack Planning
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
 Welcome to Data Center Operations 360. In this project, you will build a fictional data center operations solution using Microsoft Power Platform. The work is completed in an environment where you have permission to develop, and all practice records are fictional.
 
-Part 00 prepares the solution. Parts 01–04 build reference data, Part 05 adds alarms and incidents, Part 06 creates the command center, Part 07 adds FieldOps, Part 08 configures notification flows, Part 09 adds maintenance operations, Part 10 adds change and risk reviews, and Part 11 introduces vendors, spares, inventory and shift handovers. Follow the lessons in order in an authorized learning environment.
+Part 00 prepares the solution. Parts 01–04 build reference data, Part 05 adds alarms and incidents, Part 06 creates the command center, Part 07 adds FieldOps, Part 08 configures notification flows, Part 09 adds maintenance operations, Part 10 adds change and risk reviews, and Part 11 introduces vendors, spares, inventory and shift handovers, and Part 12 builds a fictional rack and power capacity planning experience. Follow the lessons in order in an authorized learning environment.
 
 Follow the activities in order. The menu labels in your environment may differ slightly; choose the equivalent command and inspect the actual settings before saving.
 
@@ -2486,6 +2486,447 @@ Review the published model-driven app through **Play** and verify forms, views, 
 
 You now have a connected **Supporting Operations Hub** for fictional vendor coordination, spare catalog management, per-hall stock visibility and shift handover notes. The four new Dataverse tables reuse the existing Assets, Data Halls, Employees, Incidents, Work Orders and Changes. The training data demonstrates what the next shift needs to know and which spare parts need review—without pretending that manual counts or handover flags are authenticated operational controls.
 
+
+
+---
+
+## Part 12 — Plan Data Hall Rack Capacity and Power Headroom
+
+Our fictional **Pacific Resilience Campus** already contains **Data Hall 01** and **Data Hall 02**, 100 registered assets and **20 existing Server Rack assets**. Supporting Operations is now connected to equipment and data-hall context. In this chapter, we will create a **planning** layer, then build **DC Capacity Planner**, a desktop Canvas App for rack-space reservations, power budgets, conflict checks and fictional planning requests.
+
+Use only an authorized learning environment. Confirm the column settings, choices, relationships, formulas and results in your own saved solution before moving on. The fictional planning records must not be used for real infrastructure decisions.
+
+We will create four small planning tables, reusing the existing Data Hall, Asset and Employee references:
+
+| New table | Why it exists |
+| --- | --- |
+| `DC Hall Planning Baseline` | One explicit fictional planning load snapshot and reserve margin per hall |
+| `DC Rack Plan` | One planning record linked to each existing Server Rack asset; total U and allowable planning power |
+| `DC Rack Allocation` | Proposed or reserved U-ranges and planning power for a particular rack |
+| `DC Capacity Request` | Requests for prospective space/power; not real purchase orders or approvals |
+
+By the end, a learner should be able to inspect the existing 20 racks, compare free rack units and reserved kW, propose a nonoverlapping allocation, recognize a deliberate conflict, and create a separate capacity request. **A request is not an allocation; a saved allocation is not a live device load; a Data Hall design rating is not its real spare capacity.**
+
+### S12.01 — Confirm prerequisite records and define the planning model
+
+Open [make.powerapps.com](https://make.powerapps.com), choose your authorized development environment, and open **Solutions → SunnyVerse Data Center Operations 360**. Confirm the existing records before creating anything:
+
+| Reference | Existing target | What to inspect |
+| --- | --- | --- |
+| DC Campus | Pacific Resilience Campus | Existing campus record; no duplicate |
+| DC Data Hall | Data Hall 01; Data Hall 02 | Hall 01 Design IT Capacity = **2,350.00 kW**; Hall 02 = **2,500.00 kW** |
+| DC Asset | 20 Server Rack records | `Server Rack 001` through `Server Rack 020`, category Server Rack, codes `DC-RACK-001` through `DC-RACK-020` |
+| DC Asset | Rack status | Rack 013 is **Standby** and Rack 019 is **Under Maintenance**; do not silently treat these as available |
+| DC Employee Profile | Existing 20 fictional people | Optional request originator Lookup only; no user authentication assumption |
+
+The existing `assets.csv` assigns odd-numbered racks to Data Hall 01 and even-numbered racks to Data Hall 02. Its `Rated Power kW = 30.00` values are **illustrative equipment nameplate data**, not live rack consumption or available planning capacity. In this lesson we select a separate conservative fictional **Rack Power Budget kW = 20.00** for each rack. Do not combine or sum rated values as facility telemetry.
+
+A **rack unit (U)** is a space height measure; a 42U rack has 42 integer U positions. **Reserved U** is a planned space commitment, not a measured percentage of occupied hardware. A **hall planning baseline** is a manually selected, fixed illustrative load; the design capacity only enters a *planning arithmetic model* after a baseline and buffer are explicitly supplied. These three concepts are not interchangeable.
+
+The project is educational and uses only fake inputs. If the previously published tables are missing from the actual environment, first resolve the earlier lesson without creating substitute parent records.
+
+### S12.02 — Create DC Hall Planning Baseline and its columns
+
+Inside the solution choose **New → Table**, using the advanced table settings where necessary:
+
+| Table property | Enter |
+| --- | --- |
+| Display / plural | `DC Hall Planning Baseline` / `DC Hall Planning Baselines` |
+| Description | `Fictional dated load and reserve assumptions used only for capacity planning exercises.` |
+| Type / ownership | Standard / **Organization** |
+| Primary name | `Baseline Name` (Business required; reopen after saving) |
+| Table schema target | `svrg_DCHallPlanningBaseline` |
+| Primary-name schema target | `svrg_BaselineName` |
+
+Add the business columns. Set their saved description, required level, data type, limits, behavior, defaults and actual schema as shown. Use `Done` for each and **Save table** if offered.
+
+| Exact display name / CSV header | Target schema | Type / Required | Other properties and meaning |
+| --- | --- | --- | --- |
+| Baseline Name | `svrg_BaselineName` | Primary Text / Business required | Human-readable fictional snapshot; created with the table |
+| Baseline Code | `svrg_BaselineCode` | Text / Business required | Max 24; Searchable Yes; unique business reference |
+| Baseline IT Load kW | `svrg_BaselineITLoadkW` | Decimal / Business required | Precision 2; minimum 0; fictional existing hall load *before* Part 12's new reservations |
+| Planning Reserve kW | `svrg_PlanningReservekW` | Decimal / Business required | Precision 2; minimum 0; explicit protected planning margin |
+| Baseline As Of | `svrg_BaselineAsOf` | Date Only / Business required | Date only; no automatic time conversion |
+| Basis Notes | `svrg_BasisNotes` | Multiline Text / Optional | Max 2,000; record assumptions, never source-of-truth telemetry |
+| Active | `svrg_Active` | Yes/No / Optional | Default Yes; marks the active exercise baseline |
+
+Plan one **Many-to-one** relationship from **DC Hall Planning Baseline** to existing **DC Data Hall**, giving it a Business required **Data Hall** Lookup (`svrg_DataHall`). Create that relationship **once in S12.06**, after all four tables exist, using Restrict Delete and No cascade where supported. Do not also create a Text hall field. Create an alternate key **DC Baseline Code Key** based only on `Baseline Code`; wait for **Active**. Because a hall may have multiple *dated* baselines, the key is the Baseline Code, not the Hall Lookup alone. For this lesson, choose one active baseline per hall; the application does not automatically enforce that policy across all possible future rows.
+
+After completing the Data Hall Lookup in S12.06, enter the two fictional baseline records directly in the table editor or a form:
+
+| Baseline Code | Baseline Name | Data Hall | Baseline IT Load kW | Planning Reserve kW | Baseline As Of | Active |
+| --- | --- | --- | ---: | ---: | --- | --- |
+| `HBL-0001` | Hall 01 Training Baseline | Data Hall 01 | 1800.00 | 100.00 | 2026-11-05 | Yes |
+| `HBL-0002` | Hall 02 Training Baseline | Data Hall 02 | 1850.00 | 150.00 | 2026-11-05 | Yes |
+
+The initial modeled headroom **before new reserved allocations** is **450.00 kW** for Hall 01 and **500.00 kW** for Hall 02: 2350−1800−100 and 2500−1850−150. These are illustrative model outputs, not measured facility headroom. Save, leave the grid, and reopen both rows.
+
+### S12.03 — Create DC Rack Plan and its planning fields
+
+Create one Standard, Organization-owned table with:
+
+| Table property | Enter |
+| --- | --- |
+| Display / plural | `DC Rack Plan` / `DC Rack Plans` |
+| Description | `Fictional rack-unit and planning-power budgets linked to existing server rack assets.` |
+| Primary name | `Rack Plan Name`, Business required |
+| Table schema target | `svrg_DCRackPlan` |
+| Primary schema target | `svrg_RackPlanName` |
+
+Add the following. The last two columns are Lookups, created *after* the regular columns via S12.06:
+
+| Exact display / header | Target schema | Type / Required | Configuration |
+| --- | --- | --- | --- |
+| Rack Plan Name | `svrg_RackPlanName` | Primary Text / Business required | Existing primary name; no duplicate |
+| Rack Plan Code | `svrg_RackPlanCode` | Text / Business required | Max 24; Searchable Yes; match rack asset code in this training set |
+| Total Rack Units | `svrg_TotalRackUnits` | Whole number / Business required | Minimum 1; maximum 52; training default 42 |
+| Rack Power Budget kW | `svrg_RackPowerBudgetkW` | Decimal / Business required | Precision 2; minimum 0; training budget 20.00 |
+| Planning Status | `svrg_PlanningStatus` | **Local single Choice** / Business required | `Available`, `Hold`, `Retired`; no default |
+| Active | `svrg_Active` | Yes/No / Optional | Default Yes |
+| Planning Notes | `svrg_PlanningNotes` | Multiline Text / Optional | Max 2,000; note constraints and training assumptions |
+| Asset | `svrg_Asset` | **Lookup to DC Asset** / Business required | Reuse an existing Server Rack row; verified relationship |
+| Data Hall | `svrg_DataHall` | **Lookup to DC Data Hall** / Business required | Must agree with that Asset's Data Hall |
+
+Create the **DC Rack Plan Code Key** on Rack Plan Code; wait for Active. Do **not** create a second asset register and do not rely on a plain text Asset Code in place of the relationship. The single-select status is a **local Choice**, not a shared global option set. Save its labels in the given order and retain the generated numeric values.
+
+For this lesson, 20 Rack Plans correspond to the 20 existing Server Rack assets. The linked practice CSV has the same **display-name headers** as the new table, with Asset and Data Hall represented by existing primary names for lookup mapping. Rack 013 (Standby) and Rack 019 (Under Maintenance) start on **Hold**. The other 18 start on **Available**. This holds training reservations away from assets not in service.
+
+### S12.04 — Create DC Rack Allocation to reserve an exact U-range
+
+Create a Standard, Organization-owned table with display **DC Rack Allocation**, plural **DC Rack Allocations**, primary name **Allocation Name** (Business required), table schema target `svrg_DCRackAllocation`, primary schema target `svrg_AllocationName`, and description `Fictional rack-space and power planning allocations with an explicit reserved flag.`
+
+| Exact display / header | Target schema | Type / Required | Configuration |
+| --- | --- | --- | --- |
+| Allocation Name | `svrg_AllocationName` | Primary Text / Business required | Readable workload label |
+| Allocation Code | `svrg_AllocationCode` | Text / Business required | Max 24; Searchable Yes |
+| Start U | `svrg_StartU` | Whole number / Business required | Minimum 1; maximum 52; first rack-unit position |
+| Units Reserved | `svrg_UnitsReserved` | Whole number / Business required | Minimum 1; maximum 52; contiguous U-space length |
+| Power Reserved kW | `svrg_PowerReservedkW` | Decimal / Business required | Precision 2; minimum 0; planned kW |
+| Allocation Status | `svrg_AllocationStatus` | Local single Choice / Business required | `Draft`, `Reserved`, `Released`, `Cancelled`; no default |
+| Capacity Reserved | `svrg_CapacityReserved` | Yes/No / Optional | Default No; **must be Yes exactly when reservation should consume capacity** |
+| Requested On | `svrg_RequestedOn` | Date Only / Optional | Date only; fictional request date |
+| Allocation Notes | `svrg_AllocationNotes` | Multiline Text / Optional | Max 2,000 |
+| Rack Plan | `svrg_RackPlan` | Lookup to DC Rack Plan / Business required | Existing saved Rack Plan |
+| Data Hall | `svrg_DataHall` | Lookup to DC Data Hall / Business required | Must match that Rack Plan's hall; aids hall-level filters |
+| Related Request | `svrg_RelatedRequest` | Lookup to DC Capacity Request / Optional | Added after request table exists; optional linkage |
+
+Create **DC Allocation Code Key** on Allocation Code and wait for Active. The Date Only field is not a live activation timestamp. `Capacity Reserved` is an explicit, manually maintained educational projection flag. A `Reserved` Choice without `Capacity Reserved = Yes`, or `Released` with Yes, would make the calculations misleading. We will test and inspect both fields on every sample row; Part 12 does not provide a server-side rule guaranteeing consistency across integrations.
+
+Important validations before a new row is saved: `Start U ≥ 1`; `Units Reserved ≥ 1`; `Start U + Units Reserved − 1 ≤ Total Rack Units`; planned kW is nonnegative; no overlap with a previously reserved U-range for the same rack; and planned total rack power must stay within its budget. The app demonstrates these checks, but client-side validation alone does not prevent a simultaneous competing user, an import or an external API call from bypassing the rule. **Do not claim transaction-safe capacity booking.**
+
+### S12.05 — Create DC Capacity Request for prospective demand
+
+Create **DC Capacity Request** / **DC Capacity Requests**, Standard / Organization ownership; primary name **Request Name** (Business required), target schema `svrg_DCCapacityRequest`, target primary name `svrg_RequestName`, description `Fictional requests for future rack units and planning power, independent of allocations.`
+
+| Exact display / header | Target schema | Type / Required | Configuration |
+| --- | --- | --- | --- |
+| Request Name | `svrg_RequestName` | Primary Text / Business required | Readable request title |
+| Request Code | `svrg_RequestCode` | Text / Business required | Max 24; Searchable Yes |
+| Requested Units | `svrg_RequestedUnits` | Whole number / Business required | Minimum 1; maximum 52 |
+| Requested Power kW | `svrg_RequestedPowerkW` | Decimal / Business required | Precision 2; minimum 0 |
+| Request Status | `svrg_RequestStatus` | Local single Choice / Business required | `Draft`, `Ready for Review`, `Planned`, `Withdrawn`; no default |
+| Needed By | `svrg_NeededBy` | Date Only / Optional | Projected date; no promise of delivery |
+| Business Justification | `svrg_BusinessJustification` | Multiline Text / Business required | Max 2,000; fictional explanation |
+| Review Notes | `svrg_ReviewNotes` | Multiline Text / Optional | Max 2,000 |
+| Data Hall | `svrg_DataHall` | Lookup to DC Data Hall / Business required | Destination hall |
+| Preferred Rack Plan | `svrg_PreferredRackPlan` | Lookup to DC Rack Plan / Optional | Candidate rack, not an actual reservation |
+| Requested By Employee | `svrg_RequestedByEmployee` | Lookup to DC Employee Profile / Optional | Fictional directory context only |
+
+Create the **DC Capacity Request Code Key** on Request Code, wait until Active. A `Planned` state is a manual exercise label, not an enterprise approval. A request does **not** subtract space or power: only allocations with `Capacity Reserved = Yes` do so. Do not create a new cloud flow or send an approval message in Part 12.
+
+### S12.06 — Create and verify the nine real Lookup relationships
+
+Open each **current table → Schema → Relationships → New relationship → Many-to-one**. Select the **related table** exactly as shown. Set **Restrict Delete** and No cascade for Assign/Share/Unshare/Reparent/Merge when available; inspect the actual saved settings. A relationship auto-creates the Lookup column—do not add that same name again as Text.
+
+| Current table | Lookup display name / target schema | Related table | Required |
+| --- | --- | --- | --- |
+| DC Hall Planning Baseline | Data Hall / `svrg_DataHall` | DC Data Hall | Business required |
+| DC Rack Plan | Asset / `svrg_Asset` | DC Asset | Business required |
+| DC Rack Plan | Data Hall / `svrg_DataHall` | DC Data Hall | Business required |
+| DC Rack Allocation | Rack Plan / `svrg_RackPlan` | DC Rack Plan | Business required |
+| DC Rack Allocation | Data Hall / `svrg_DataHall` | DC Data Hall | Business required |
+| DC Rack Allocation | Related Request / `svrg_RelatedRequest` | DC Capacity Request | Optional |
+| DC Capacity Request | Data Hall / `svrg_DataHall` | DC Data Hall | Business required |
+| DC Capacity Request | Preferred Rack Plan / `svrg_PreferredRackPlan` | DC Rack Plan | Optional |
+| DC Capacity Request | Requested By Employee / `svrg_RequestedByEmployee` | DC Employee Profile | Optional |
+
+This design adds **nine** new Lookups. Verify all nine. The three links associated with Allocation are created only after both Rack Plan and Capacity Request exist; this is why the table creation order precedes the relationships. Likewise, the Baseline Data Hall link is created **here once**, not earlier in S12.02. When a builder has already created a correct Lookup, inspect and reuse it rather than duplicating it.
+
+**Cross-reference rule:** The Hall on a Rack Plan must match the Hall on its linked Asset; the Hall on an Allocation must match its Rack Plan's Hall; the Hall on a Request must match its preferred Rack if one is selected. Required Lookups alone do not enforce these equality rules; verify them in the form and sample tests, and treat server-side validation as a future enterprise hardening task.
+
+### S12.07 — Populate the rack planning reference, without duplicating Assets
+
+Download the new practice file [`rack-plans.csv`](./data/rack-plans.csv) before importing. Its first line is:
+
+```csv
+Rack Plan Name,Rack Plan Code,Total Rack Units,Rack Power Budget kW,Planning Status,Active,Planning Notes,Asset,Data Hall
+```
+
+This 20-row original synthetic dataset corresponds to the existing Server Rack assets. Its headers use Dataverse display names, but the two Lookup columns still require explicit reference mapping. Download the linked CSV before importing.
+
+Open **DC Rack Plan → Import from CSV** in a Dataverse import experience that supports Lookup Reference mapping, select `rack-plans.csv`, and use **Review Mapping**. Match Text, Whole Number, Decimal and Boolean columns by their exact display names. Map Planning Status labels to the existing local Choice options. For the **Asset** Lookup, choose `DC Asset → Asset Name`; source values are `Server Rack 001` … `Server Rack 020`. For **Data Hall**, choose `DC Data Hall → Hall Name`; source values are Data Hall 01/02. Do not point either lookup at a GUID field or free-text column. If the wizard cannot set Lookup References, do not force the import—use a supported import route or enter the 20 records through the editor with real pickers.
+
+Use one creation method only, and verify count before rerunning. Inspect the 20 rows after a completed import and select three references from the grid: Rack 001 → Server Rack 001 → Hall 01, Rack 002 → Server Rack 002 → Hall 02, and Rack 019 → Server Rack 019 → Hall 01 with **Planning Status = Hold**. Check Rack 013 is also on Hold. Every Total Rack Units value is 42 and every **planning** budget is 20.00 kW.
+
+Create these two **DC Hall Planning Baseline** rows from S12.02 first if they have not yet been saved. Reopen them before proceeding. Do not import a second copy if the records already exist.
+
+### S12.08 — Add the three starting allocations and two capacity requests
+
+Use the table's New form or the editable data grid. Choose real Lookup records using the record picker and enter the following exact fictional examples:
+
+| Allocation Code | Allocation Name | Rack Plan / Hall | Start U | Units Reserved | End U (calculated) | Power Reserved kW | Status | Capacity Reserved |
+| --- | --- | --- | ---: | ---: | ---: | ---: | --- | --- |
+| `ALC-0001` | UPS Analytics Pilot | DC-RACK-001 / Hall 01 | 1 | 8 | 8 | 4.00 | Reserved | Yes |
+| `ALC-0002` | Telemetry Collector Trial | DC-RACK-001 / Hall 01 | 12 | 6 | 17 | 3.00 | Reserved | Yes |
+| `ALC-0003` | Cooling Diagnostic Simulation | DC-RACK-002 / Hall 02 | 1 | 10 | 10 | 5.00 | Reserved | Yes |
+
+`End U` is explained and calculated as `Start U + Units Reserved − 1`, **not** created as a new Dataverse column. For Rack 001, the reserved positions are 1–8 and 12–17, leaving **28** U by total count. There are 3 unreserved U positions in the gap at 9–11, illustrating why total free units alone is not enough to guarantee a contiguous placement. Rack 001 has 7.00 kW reserved and **13.00 kW** of its 20.00 kW budget unreserved. Rack 002 has 10U reserved and 5.00 kW reserved, leaving 32U and 15.00 kW in the simplified plan.
+
+Add these two requests *separately*—a request does not change reservation totals:
+
+| Request Code | Request Name | Data Hall | Preferred Rack Plan | Requested Units | Requested Power kW | Request Status | Business Justification |
+| --- | --- | --- | --- | ---: | ---: | --- | --- |
+| `REQ-0001` | Monitoring Dashboard Pilot | Data Hall 01 | DC-RACK-001 | 5 | 3.00 | Draft | Fictional analytics workload planning exercise. |
+| `REQ-0002` | Lab Workload Expansion | Data Hall 02 | DC-RACK-002 | 10 | 12.00 | Ready for Review | Fictional expansion capacity review. |
+
+REQ-0002 represents 12.00 kW of prospective demand. Rack 002 currently has 5.00 kW reserved, so a later accepted 12.00 kW allocation would total 17.00 kW, within its 20.00 kW budget; however, a request alone does not consume capacity. Later examples should evaluate both power and U position constraints.
+
+**Hall planning arithmetic:** Because the baseline inputs deliberately exclude the **new reserved allocations**, the simplified model computes:
+
+`Modeled Hall Headroom = Hall Design IT Capacity − Baseline IT Load − Planning Reserve − Sum(New Part 12 Allocations with Capacity Reserved = Yes)`.
+
+At the starting state: Hall 01 = **2,350 − 1,800 − 100 − (4 + 3) = 443 kW**. Hall 02 = **2,500 − 1,850 − 150 − 5 = 495 kW**. These are not live DCIM measurements. If someone changes or replaces the baseline, re-evaluate the model; do not count an allocation in both the baseline and the new sum.
+
+### S12.09 — Build the DC Capacity Planner desktop Canvas App
+
+Inside **Solutions → SunnyVerse Data Center Operations 360**, choose **New → App → Canvas app** (or New app within the solution). Name it exactly **DC Capacity Planner** and select **Tablet / landscape**. In **Data**, connect these existing Dataverse tables: `DC Hall Planning Baselines`, `DC Rack Plans`, `DC Rack Allocations`, `DC Capacity Requests`, `DC Data Halls`, and `DC Assets`. Also connect `DC Employee Profiles` only if the optional request-originator field is shown in an app form. Select Classic Label, Button, Text input, Gallery and Form controls when available; **Classic inputs use `.Text`**. Modern inputs can use `.Value`—do not mix the two without adjusting formulas.
+
+Use the same restrained navy / teal visual language as the previously published Command Center. Functional formulas come first. In **App → OnStart**, set:
+
+```powerfx
+Set(varCapacityNavy, ColorValue("#123A56"));
+Set(varCapacityTeal, ColorValue("#147D86"));
+Set(varCapacityBg, ColorValue("#F3F7FA"));
+Set(varRack, Blank());
+Set(varHall, Blank());
+Set(varRequest, Blank());
+Set(varAllocationValid, false)
+```
+
+Run **App → Run OnStart** once after adding the formula, if the editor offers that command. Do not count on OnStart rerunning on every screen navigation. Set each screen **Fill = varCapacityBg**. Use a meaningful text label for every status, not color alone.
+
+Create and rename six blank screens in Tree view:
+
+| Screen | Purpose | Named controls to add |
+| --- | --- | --- |
+| `scrCapacityHome` | Model boundaries, hall planning snapshot and navigation | `lblCapacityTitle`, `galHallBaselines`, `lblScopeNotice`, `btnBrowseRacks`, `btnBrowseRequests`, `btnRefreshCapacity` |
+| `scrRackBrowse` | Browse 20 racks and select a plan | `lblRackBrowseTitle`, `txtRackSearch`, `galRackPlans`, `btnRackBrowseHome`, `btnRackBrowseRefresh` |
+| `scrRackDetail` | Selected rack's U/power budget and existing allocations | `lblRackTitle`, `lblRackTotalU`, `lblRackReservedU`, `lblRackFreeU`, `lblRackBudgetKW`, `lblRackReservedKW`, `lblRackFreeKW`, `galRackAllocations`, `btnProposeAllocation`, `btnRackDetailBack` |
+| `scrAllocationEdit` | Create a draft or reserved allocation with explicit validation | `lblAllocationTitle`, `frmAllocation`, `btnValidateAllocation`, `btnSaveAllocation`, `btnCancelAllocation`, `lblAllocationCheck`, `txtAllocStartU`, `txtAllocUnits`, `txtAllocPowerKw` (rename the three inner form inputs) |
+| `scrRequestBrowse` | Browse existing planning requests | `lblRequestBrowseTitle`, `galCapacityRequests`, `btnNewRequest`, `btnRequestBrowseHome`, `btnRequestRefresh` |
+| `scrRequestEdit` | Create or edit an educational capacity request | `lblRequestEditTitle`, `frmCapacityRequest`, `btnSaveRequest`, `btnCancelRequest`, `lblRequestError` |
+
+For each inserted Label or Button, set its **Text** to its intended readable caption. For galleries choose a vertical layout; keep a visible text name and one useful secondary field. Use screen-specific rectangles only as optional visuals; never cover form controls. Keep total App instances one: updating an app is not the same as creating it again.
+
+### S12.10 — Set the exact navigation and read-only calculation formulas
+
+The formulas below use the suggested English display names and the Dataverse table names described above. **Power Apps may expose option sets or relationships under slightly different identifiers.** Use IntelliSense to confirm the generated names after adding each real data source. Do not paste code blindly when your saved schema differs. Formulas are intended for a small 20-rack educational dataset; test all delegation warnings, especially aggregates over child records.
+
+**Home navigation:**
+
+| Control/property | Formula |
+| --- | --- |
+| `btnBrowseRacks.Text` | `"Browse rack capacity"` |
+| `btnBrowseRacks.OnSelect` | `Navigate(scrRackBrowse, ScreenTransition.Fade)` |
+| `btnBrowseRequests.Text` | `"Capacity requests"` |
+| `btnBrowseRequests.OnSelect` | `Navigate(scrRequestBrowse, ScreenTransition.Fade)` |
+| `btnRefreshCapacity.OnSelect` | `Refresh('DC Hall Planning Baselines'); Refresh('DC Rack Plans'); Refresh('DC Rack Allocations'); Refresh('DC Capacity Requests')` |
+| `lblScopeNotice.Text` | `"SIMULATED capacity planning — not live power or reserved physical infrastructure"` |
+| `galHallBaselines.Items` | `Filter('DC Hall Planning Baselines', Active = true)` |
+| `galRackPlans.Items` | `Sort(Filter('DC Rack Plans', IsBlank(txtRackSearch.Text) || StartsWith('Rack Plan Code', txtRackSearch.Text)), 'Rack Plan Code', SortOrder.Ascending)` |
+| `galRackPlans.OnSelect` or an inner row button | `Set(varRack, ThisItem); Navigate(scrRackDetail, ScreenTransition.Fade)` |
+| `btnRackBrowseHome.OnSelect` | `Navigate(scrCapacityHome, ScreenTransition.Fade)` |
+| `btnRackBrowseRefresh.OnSelect` | `Refresh('DC Rack Plans')` |
+| `galCapacityRequests.Items` | `Sort('DC Capacity Requests', 'Request Code', SortOrder.Ascending)` |
+| `btnRequestBrowseHome.OnSelect` | `Navigate(scrCapacityHome, ScreenTransition.Fade)` |
+
+Choose `scrRackDetail` in Tree view and set **OnVisible** to:
+
+```powerfx
+Refresh('DC Rack Allocations');
+ClearCollect(
+    colRackReservations,
+    Filter('DC Rack Allocations', 'Rack Plan' = varRack && 'Capacity Reserved' = true)
+)
+```
+
+This code is a **small-data client collection**. It is appropriate for validating only the published training scale after confirming no delegation warning affects the filtered results. `ClearCollect` is not a server-side lock or full-dataset query. If more racks or allocations are introduced later, replace this pattern with a validated delegable/server-side calculation.
+
+For the selected Rack display labels, set **Text** to the formulas:
+
+| Label | Formula |
+| --- | --- |
+| `lblRackTitle` | `varRack.'Rack Plan Name'` |
+| `lblRackTotalU` | `"Total U: " & Text(varRack.'Total Rack Units')` |
+| `lblRackReservedU` | `"Reserved U: " & Text(Sum(colRackReservations, 'Units Reserved'))` |
+| `lblRackFreeU` | `"Unreserved U: " & Text(varRack.'Total Rack Units' - Sum(colRackReservations, 'Units Reserved'))` |
+| `lblRackBudgetKW` | `"Budget kW: " & Text(varRack.'Rack Power Budget kW', "0.00")` |
+| `lblRackReservedKW` | `"Reserved kW: " & Text(Sum(colRackReservations, 'Power Reserved kW'), "0.00")` |
+| `lblRackFreeKW` | `"Unreserved kW: " & Text(varRack.'Rack Power Budget kW' - Sum(colRackReservations, 'Power Reserved kW'), "0.00")` |
+| `galRackAllocations.Items` | `Filter('DC Rack Allocations', 'Rack Plan' = varRack)` |
+| `btnRackDetailBack.OnSelect` | `Navigate(scrRackBrowse, ScreenTransition.Fade)` |
+
+`Sum(colRackReservations, ...)` totals only saved allocations explicitly marked `Capacity Reserved = Yes`. A request record does not appear here. **Free U count does not promise a contiguous block**: racks can have holes between placements. A separate interval-overlap check follows.
+
+For the Home hall snapshot, use a label in `galHallBaselines` to display the baseline only:
+
+```powerfx
+"Baseline modeled headroom before new allocations: " &
+Text(
+    ThisItem.'Data Hall'.'Design IT Capacity kW' -
+    ThisItem.'Baseline IT Load kW' -
+    ThisItem.'Planning Reserve kW',
+    "0.00"
+) & " kW"
+```
+
+Inspect the actual related Data Hall field in IntelliSense. If the lookup expansion is not available in your editor, retrieve the existing Hall row using LookUp on `DC Data Halls` and the selected Hall primary name, instead of replacing the reference with Text. This Home label intentionally shows **baseline headroom before allocations**, not the 443/495 kW totals. Show those totals separately only after verifying the child allocation aggregation for the actual Hall. Never label either number as measured energy consumption.
+
+### S12.11 — Configure the allocation form and the conflict-check action
+
+Open `scrAllocationEdit` and insert **Edit form**, rename it `frmAllocation`, set **DataSource = 'DC Rack Allocations'** and **Item = Defaults('DC Rack Allocations')** for new-only exercises. Add cards for Allocation Name, Allocation Code, Start U, Units Reserved, Power Reserved kW, Allocation Status, Capacity Reserved, Requested On, Allocation Notes, Rack Plan, Data Hall and Related Request. Select each numeric card's inner **Classic Text input** and rename it `txtAllocStartU`, `txtAllocUnits` or `txtAllocPowerKw`. Keep its parent DataCard's `Update` property as the appropriately typed `Value(txtAlloc...Text)`; do not accidentally submit numeric strings. Keep the Lookup cards as typed Dataverse record pickers and the Choice card as an Option Set—not a text box.
+
+For this **new-only Reserved allocation** exercise, bind the typed Lookup cards to the rack chosen on `scrRackDetail`. Unlock the **Rack Plan** data card and set its **Update** to `varRack`; unlock **Data Hall** and set its **Update** to `varRack.'Data Hall'`. Keep a read-only label showing each selected record, and prevent the user from choosing a different rack or hall on this screen. Verify that the cards submit Dataverse records, not text. Keep the **Allocation Status** and **Capacity Reserved** cards in the form: set their **Update** to the typed **Reserved** local Choice (choose the actual enum member using IntelliSense) and Boolean `true`, respectively. Do not use the text string `"Reserved"` for a Choice field. Test all four typed updates by saving and reopening one valid sample row before adding more. For later changes from Reserved to Released or Cancelled, use the standard Dataverse form after applying the appropriate manual Capacity Reserved flag.
+
+```powerfx
+Set(varAllocationValid, false);
+NewForm(frmAllocation);
+Navigate(scrAllocationEdit, ScreenTransition.Fade)
+```
+
+Set `btnValidateAllocation.OnSelect` to the following deliberately explicit client-side check:
+
+```powerfx
+Set(varStartU, IfError(Value(txtAllocStartU.Text), Blank()));
+Set(varUnits, IfError(Value(txtAllocUnits.Text), Blank()));
+Set(varNewPowerKW, IfError(Value(txtAllocPowerKw.Text), Blank()));
+Set(varEndU, varStartU + varUnits - 1);
+Refresh('DC Rack Allocations');
+ClearCollect(
+    colRackReservations,
+    Filter('DC Rack Allocations', 'Rack Plan' = varRack && 'Capacity Reserved' = true)
+);
+Set(
+    varAllocationValid,
+    !IsBlank(varStartU) && !IsBlank(varUnits) && !IsBlank(varNewPowerKW) &&
+    varStartU >= 1 && varUnits >= 1 && varNewPowerKW >= 0 &&
+    varStartU = RoundDown(varStartU, 0) &&
+    varUnits = RoundDown(varUnits, 0) &&
+    varEndU <= varRack.'Total Rack Units' &&
+    varRack.Active = true &&
+    varRack.'Planning Status' = 'Planning Status (DC Rack Plans)'.Available &&
+    CountRows(
+        Filter(
+            colRackReservations,
+            'Start U' <= varEndU &&
+            ('Start U' + 'Units Reserved' - 1) >= varStartU
+        )
+    ) = 0 &&
+    Sum(colRackReservations, 'Power Reserved kW') + varNewPowerKW <=
+        varRack.'Rack Power Budget kW'
+);
+If(
+    varAllocationValid,
+    Notify("The rack-space and power checks pass for this demo.", NotificationType.Success),
+    Notify("Allocation is invalid, overlaps a reserved U-range, is on hold, or exceeds the planned budget.", NotificationType.Error)
+)
+```
+
+Use `lblAllocationCheck.Text = If(varAllocationValid, "Demo validation passed — review fields before saving", "Validate the allocation first")`. The check reads the selected `varRack` and currently saved reservations. The two Lookup DataCards must remain bound to that rack and its hall; verify the first submitted row by reopening it in Dataverse. These client-side checks are not a substitute for transaction-safe server validation.
+
+**Choice type check:** Power Fx compares Dataverse Choices against a typed enum member, not a displayed or translated text label. The example `'Planning Status (DC Rack Plans)'.Available` illustrates the intended local Choice reference. IntelliSense might present a different generated option-set name in your saved environment; choose the **Available** member of the actual local Choice and re-test. Do not replace a Choice with a Text column just to silence an error.
+
+Set `varAllocationValid` to **false** before every new form session. In the **OnChange** of each of the three numeric text inputs, the Rack Plan Lookup picker, the Data Hall Lookup picker, and the `Capacity Reserved` or Allocation Status selection controls, set:
+
+```powerfx
+Set(varAllocationValid, false)
+```
+
+The Rack Plan and Data Hall form cards must submit the selected `varRack` and its related hall as typed Lookup records. If these field values or the Choice update cannot be verified after the first save, disable Save and keep this screen read-only; enter valid sample rows with a supported Dataverse form until the bindings are corrected.
+
+Set `btnSaveAllocation.DisplayMode` to `If(varAllocationValid, DisplayMode.Edit, DisplayMode.Disabled)` and `btnSaveAllocation.OnSelect` to:
+
+```powerfx
+If(
+    varAllocationValid,
+    Set(varAllocationValid, false);
+    SubmitForm(frmAllocation),
+    Notify("Validate the selected rack, hall, space and power first.", NotificationType.Error)
+)
+```
+
+Set `frmAllocation.OnSuccess` to:
+
+```powerfx
+Notify("Training allocation saved", NotificationType.Success);
+Refresh('DC Rack Allocations');
+Set(varAllocationValid, false);
+Navigate(scrRackDetail, ScreenTransition.Fade)
+```
+
+Set `frmAllocation.OnFailure` to `Notify(frmAllocation.Error, NotificationType.Error)`, `btnCancelAllocation.OnSelect` to `ResetForm(frmAllocation); Set(varAllocationValid, false); Navigate(scrRackDetail, ScreenTransition.Fade)`, and `frmAllocation.Item` to `Defaults('DC Rack Allocations')` if keeping this as a new-only form. Invalidate the validation flag whenever a reservation-related input changes and re-run validation before using Save. The Save button requires the latest successful check but does not prevent concurrent or external writes; do not present it as a transaction-safe booking operation.
+
+A Canvas App query and form submission are **not an atomic booking transaction**. Concurrent makers can pass the same pre-check and still save overlapping reservations. This must be stated in the lesson and in its portfolio evidence. For a real solution, use a server-side enforcement design, concurrency rules and tests before calling a slot reserved.
+
+### S12.12 — Capacity requests, negative tests and publish
+
+On `scrRequestBrowse`, set `btnNewRequest.OnSelect`:
+
+```powerfx
+Set(varRequest, Blank());
+NewForm(frmCapacityRequest);
+Navigate(scrRequestEdit, ScreenTransition.Fade)
+```
+
+In `scrRequestEdit`, insert an **Edit form** `frmCapacityRequest`, set **DataSource = 'DC Capacity Requests'**, Item `Defaults('DC Capacity Requests')` for new requests, and include cards for Request Name, Request Code, Requested Units, Requested Power kW, Request Status, Needed By, Business Justification, Review Notes, Data Hall, Preferred Rack Plan and optionally Requested By Employee. Use the form's typed lookup pickers, not text copies. Set `btnSaveRequest.OnSelect = SubmitForm(frmCapacityRequest)`. Set `frmCapacityRequest.OnSuccess` to `Notify("Training request saved", NotificationType.Success); Refresh('DC Capacity Requests'); Navigate(scrRequestBrowse, ScreenTransition.Fade)` and `frmCapacityRequest.OnFailure` to `Notify(frmCapacityRequest.Error, NotificationType.Error)`. Set `btnCancelRequest.OnSelect = ResetForm(frmCapacityRequest); Navigate(scrRequestBrowse, ScreenTransition.Fade)` and `lblRequestError.Text = frmCapacityRequest.Error`. A saved request **does not** create or consume an Allocation.
+
+Perform these deterministic checks using the records from S12.08. **Do not write invalid rows just to prove they are invalid.**
+
+| Test | Input or action | Expected learner evidence |
+| --- | --- | --- |
+| Baseline arithmetic | Hall 01 and 02 snapshots | 450 and 500 kW before new allocations |
+| Rack 001 space | ALC-0001 and ALC-0002 | 14 reserved U total; 28 unreserved U; 7 of 20 kW reserved |
+| Rack 002 space | ALC-0003 | 10 reserved U, 32 unreserved U, 5 of 20 kW reserved |
+| Contiguous overlap | Rack 001, Start U 6, Units 4 | Overlaps existing 1–8, so validation rejects |
+| Boundary conflict | Rack 001, Start U 40, Units 4 | End U 43 exceeds 42, so reject |
+| Power budget | Rack 001, Start U 20, Units 4, Power 14 kW | Existing 7 + 14 = 21, above budget 20: reject |
+| Rack availability | Rack 019, a new reservation | Status Hold due to source asset Under Maintenance; reject |
+| Request separation | REQ-0001 remains Draft | Counts unchanged until a distinct Allocation exists |
+| Hall planning totals | Reserved allocations by correct Hall | Hall 01 443 kW; Hall 02 495 kW (illustrative) |
+| Choice consistency | Each reserved Allocation | Status Reserved AND Capacity Reserved Yes; matching Hall Lookup |
+| Date and identity | Capacity Requests | No real Entra approval/sign-off inferred from fictional employee |
+| Idempotency | Rerun demo after save | No duplicate Rack Plan/Allocation Codes; alternate keys Active |
+
+**Publish sequence:** Use **App checker** to inspect formula errors and warnings. Reopen the saved tables and confirm Lookup targets, local Choices and Active alternate keys. In the Canvas editor select **Save**, wait for saved confirmation, then **Publish** the app, and **Play** the published version. Navigate through all six screens, inspect gallery selections, open real related records, save one valid controlled request, and review whether new allocations appear after Refresh. If the browser warns of unsaved changes despite publishing, inspect the app's saved version status, whether any pending edits remain, and the last app publish history; do not assume the warning alone proves a loss of Dataverse data.
+
+**Safe ending:** Restore any temporary allocation or request changes to the initial sample if they were only for test; the three baseline allocations remain as originally entered. No real equipment action, procurement request, data center power measurement or automated reservation was produced. Preserve the output as a fictional portfolio learning exercise. If a code formula or permission fails, fix and re-test that operation before declaring Part 12 complete.
+
+### Finish Part 12
+
+After completing and verifying the exercises, you have a **DC Capacity Planner** grounded in the existing two data halls and 20 Server Rack assets. It separates facility *design rating*, manually declared *planning baseline*, rack *unit space*, rack *planning power budget*, committed *allocation* and uncommitted *request*. The four Dataverse planning tables and one Canvas App show how these concerns fit together without pretending they are live monitoring or transaction-safe DCIM reservations.
+
+Before marking Part 12 complete, verify each Lookup after reopening its record, inspect the app checker and delegation warnings, and play the exact saved and published app version. This learner chapter describes reproducible steps; it does not certify that a particular Power Platform environment has completed them.
+
+**Microsoft Learn references:**
+
+- [Dataverse relationships](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/create-edit-1n-relationships-portal)
+- [Alternate keys](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-reference-records)
+- [Canvas app forms](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/working-with-forms)
+- [Power Fx Filter, Search and LookUp](https://learn.microsoft.com/en-us/power-platform/power-fx/reference/function-filter-lookup)
+- [Delegation in Canvas Apps](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/delegation-overview)
+- [Power Fx error handling](https://learn.microsoft.com/en-us/power-apps/guidance/coding-guidelines/error-handling)
+
+*All facilities, personnel, system loads, power budgets and requests are fictional; no live operational action is authorized.*
 
 ## Microsoft Learn references
 - [Define alternate keys in Dataverse](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-reference-records)

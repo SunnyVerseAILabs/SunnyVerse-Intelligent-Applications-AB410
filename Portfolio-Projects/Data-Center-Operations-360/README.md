@@ -13,7 +13,7 @@ This is a **hands-on learning project**, not a deployed facility management syst
 
 The Build Guide is the single cumulative learner document. Follow the published instructions in order. Each completed lesson includes the exact navigation, field settings, expected results, validation checks, troubleshooting, and links to downloadable practice files where appropriate.
 
-**Published:** Parts 00–11 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center Canvas App, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations.
+**Published:** Parts 00–12 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center Canvas App, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations, Capacity Management and Rack Planning.
 
 ### Learning goals
 

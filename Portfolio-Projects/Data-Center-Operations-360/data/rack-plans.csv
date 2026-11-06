@@ -1,0 +1,21 @@
+Rack Plan Name,Rack Plan Code,Total Rack Units,Rack Power Budget kW,Planning Status,Active,Planning Notes,Asset,Data Hall
+Server Rack 001 Capacity Plan,DC-RACK-001,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 001,Data Hall 01
+Server Rack 002 Capacity Plan,DC-RACK-002,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 002,Data Hall 02
+Server Rack 003 Capacity Plan,DC-RACK-003,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 003,Data Hall 01
+Server Rack 004 Capacity Plan,DC-RACK-004,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 004,Data Hall 02
+Server Rack 005 Capacity Plan,DC-RACK-005,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 005,Data Hall 01
+Server Rack 006 Capacity Plan,DC-RACK-006,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 006,Data Hall 02
+Server Rack 007 Capacity Plan,DC-RACK-007,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 007,Data Hall 01
+Server Rack 008 Capacity Plan,DC-RACK-008,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 008,Data Hall 02
+Server Rack 009 Capacity Plan,DC-RACK-009,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 009,Data Hall 01
+Server Rack 010 Capacity Plan,DC-RACK-010,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 010,Data Hall 02
+Server Rack 011 Capacity Plan,DC-RACK-011,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 011,Data Hall 01
+Server Rack 012 Capacity Plan,DC-RACK-012,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 012,Data Hall 02
+Server Rack 013 Capacity Plan,DC-RACK-013,42,20.00,Hold,Yes,Training hold: source asset not In Service,Server Rack 013,Data Hall 01
+Server Rack 014 Capacity Plan,DC-RACK-014,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 014,Data Hall 02
+Server Rack 015 Capacity Plan,DC-RACK-015,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 015,Data Hall 01
+Server Rack 016 Capacity Plan,DC-RACK-016,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 016,Data Hall 02
+Server Rack 017 Capacity Plan,DC-RACK-017,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 017,Data Hall 01
+Server Rack 018 Capacity Plan,DC-RACK-018,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 018,Data Hall 02
+Server Rack 019 Capacity Plan,DC-RACK-019,42,20.00,Hold,Yes,Training hold: source asset not In Service,Server Rack 019,Data Hall 01
+Server Rack 020 Capacity Plan,DC-RACK-020,42,20.00,Available,Yes,Fictional 42U / 20 kW planning budget; not measured load,Server Rack 020,Data Hall 02
