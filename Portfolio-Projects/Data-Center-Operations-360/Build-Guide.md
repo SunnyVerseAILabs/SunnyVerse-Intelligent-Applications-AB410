@@ -4031,59 +4031,78 @@ The appropriate outcome can be **Educational portfolio demonstration ready — w
 
 **Checkpoint F16-09:** Quality findings, unexecuted tests, source-file verification and genuine runtime evidence are labelled separately and truthfully.
 
-### S16.10 — Finish the public GitHub case study and evidence index
+### S16.10 — Reconcile the public case study, architecture and portfolio evidence
 
-Open [Case Study](./portfolio/Case-Study.md), [Evidence Matrix](./portfolio/Evidence-Matrix.md), [Architecture](./portfolio/Architecture.md) and [Demo Walkthrough](./portfolio/Demo-Walkthrough.md). Verify that the links are valid and every numerical claim belongs to a matching source or prior reported implementation outcome.
+Review the published [Case Study](./portfolio/Case-Study.md), [Architecture](./portfolio/Architecture.md), [Evidence Matrix](./portfolio/Evidence-Matrix.md), [Demo Walkthrough](./portfolio/Demo-Walkthrough.md), and [Presentation Storyboard](./portfolio/Presentation-Storyboard.md). These are public, **learner-facing materials**. None may contain a private environment address, original unmanaged solution ZIP, exact private hash, connection owner, unredacted screenshot, user-profile path or behind-the-scenes production notes.
 
-A good public claim uses precise verbs: **“published source,” “documented,” “verified from saved file,” “reported by maker,” “reopened in Desktop,” “not tested.”** A bad claim turns an educational design into “production deployed,” “real-time facility monitoring,” “fully security audited” or “all tests passed.”
+For every numerical statement, identify whether it comes from **published synthetic data**, **an inspected file**, **a prior maker-reported runtime action** or **a current verified app demonstration**. Keep the distinctions precise:
 
-Screenshots are optional. If you supply one, crop/redact its signed-in user, browser URL and tenant information; label its capture date, app name, published version and whether it shows a training record. Do not invent or render an application screenshot to make a missing test look successful. Never upload the original unmanaged solution ZIP, its private checksum, tenant-specific UAT report, connection metadata or non-sanitized screen recordings.
+| Claim | Evidence that supports it | What would overstate it |
+| --- | --- | --- |
+| 1 campus, 2 halls, 100 assets and 24 sensors | Published fictional datasets | Real facility equipment has been inventoried |
+| 500 starting work orders, 501 in a prior tenant review | Original CSV + extra retained practice record | Every environment must contain exactly 501 |
+| Three Canvas and three model-driven apps | Solution documentation + reported published Play tests | The apps are publicly shared or accessible to all roles |
+| 50,000 readings and a five-page Power BI report | Public CSVs/PBIP and prior Desktop test | Live Power BI monitoring was rerun in the current session |
+| Five cloud flow records and historical outcomes | Separately inspected flow identities and Run history | Both same-name DC08 flows were active or ran successfully |
+| Development source export | Original package inspected and privately hash-verified | A second environment imported successfully |
 
-**Checkpoint F16-10:** The case study can be read by a hiring reviewer without hidden links, an account login, confidential artifacts or unverifiable claims.
+When the Canvas screen hides the Hold status or displays a blank zero, disclose it as a **UI limitation** and link to the related saved Dataverse record only through an authorized, **nonpublic** demonstration. Do not create a fake app screenshot to repair missing evidence.
 
-### S16.11 — Assemble the final portfolio presentation and recording sequence
+**Checkpoint F16-10:** Every source link works, the case study communicates the actual learning architecture, and no private implementation evidence is published.
 
-Open the [12-slide presentation storyboard](./portfolio/Presentation-Storyboard.md). It uses the same verified learning sequence: problem → synthetic scale → architecture → Dataverse model → six apps → workflows → capacity → Power BI → quality → ALM → outcomes. Create slides or a local presentation from the approved content. Keep labels short, graphics source-supported and screenshots real and redacted.
+### S16.11 — Assemble the final presentation and plan real demonstration captures
 
-For an actual demonstration video, use the [twelve-scene walkthrough](./portfolio/Demo-Walkthrough.md) as your route (suggested **12–18 minutes**, depending on actual app load times). Record only permitted read-only states; save raw screen captures privately and inspect every frame for exposed account details before creating a public video. A storyboard and slide deck **are not a recorded or verified live demo**. If any scene is inaccessible, keep the recording accurate by displaying the published case-study source and saying the live scene was not demonstrated.
+Open the [12-slide storyboard](./portfolio/Presentation-Storyboard.md) and the [twelve-scene demo route](./portfolio/Demo-Walkthrough.md). Prepare an editable, visually consistent slide deck with short headings, one technical point per slide and citations to public sources. Diagrammatic architecture images must be marked as diagrams rather than screenshots.
 
-Conclude with the concrete engineering outcomes and open release gates, rather than making a fabricated performance claim. The final portfolio presentation may be published only after its source and privacy check.
+| Slides | Topics | Supporting evidence |
+| --- | --- | --- |
+| **01–03** | Project introduction, fictional operations challenge and fixed data scale | Case Study and CSV datasets |
+| **04–06** | Transactional vs analytical architecture; Dataverse relationships; the six app experiences | Architecture plus actual app screens where permitted |
+| **07–09** | Cloud-flow histories, capacity-planning constraints and Power BI Desktop model | Run histories, saved planning records and analytical source |
+| **10–12** | UAT/quality findings, ALM packaging boundaries and portfolio outcomes | Prior engineering evidence, public UAT template and privacy-reviewed results |
 
-**Checkpoint F16-11:** Each slide and demonstration scene maps to a concrete GitHub source, actual permitted app capture or explicitly labelled conceptual diagram.
+A prebuilt **draft PowerPoint** may exist, but **a draft slide deck is not a recorded end-to-end demo**. The final real-app captures must be collected separately from published versions, with identity and environment details cropped or redacted. Watch for the **developer environment banner** in Power Apps Play. Do not replace a missing runtime screen with a fabricated screenshot or claim that an unrecorded flow has run.
 
-### S16.12 — Conduct final portfolio quality assurance and close the core build
+If no actual redacted screenshots or recording have been captured, record **F16-03 Not Run** and **F16-11 Blocked**, even when the draft slides accurately reflect the published sources. If Power BI Desktop was not opened, keep that visual as a source-backed conceptual summary, not a current-session report capture.
 
-Use the [Part 16 verification CSV](./quality/Part-16-Final-Verification.csv) as a fresh learner **template**. It starts with 12 **Not Run** tests; record the real results in a **private copy**. Check the following without changing previous functionality:
+**Checkpoint F16-11:** Slide claims remain grounded; the recording is approved and verified **or** explicitly pending without being described as finished.
 
-- The single cumulative Build Guide contains Parts 00–16 in order and its linked files exist.
-- All synthetic datasets remain intact; no unnecessary Dataverse copy of the 50,000 monitoring rows was created.
-- The six application experiences are named accurately; Cloud flows are reported as **five actual flow records** (including duplicate DC08 display names), not as unverified original planning targets.
-- Architecture, case study, evidence index, demo walkthrough and slide storyboard agree on the data boundaries.
-- Any public image or video has been independently privacy reviewed and does not expose tenant/user details.
-- The actual published-app versions, new flow runs, role tests, Desktop refresh and import outcomes are **never assumed** from previous instructions.
-- The project includes an honest learning-demo readiness verdict and a separate enterprise-deployment limitations list.
-- The original source solution, private hash and private test evidence remain outside public GitHub.
+### S16.12 — Complete final public QA and preserve the existing solution
 
-A project can close its **core educational documentation** with some runtime verification still outstanding. Report exactly what has been completed: source-first guide and synthetic data published; demonstrated capabilities supported by prior reports and inspectable source; unresolved gates documented. Do not replace a missing result with a celebratory assumption.
+Use [Part-16-Final-Verification.csv](./quality/Part-16-Final-Verification.csv) as a fresh **twelve-test learner template**. Every row in that GitHub file must remain **Not Run** so readers can perform their own checks. Your completed test results, actual screenshots, export ZIP and authentication-dependent evidence stay in a **private working copy**.
 
-**Checkpoint F16-12:** Links and privacy pass; any remaining runtime demonstration, accessibility remediation, security-role verification and deployment validation are explicitly assigned follow-up statuses, not hidden.
+Conduct these final checks without changing earlier solution components:
 
-### Finish Part 16 — Data Center Operations 360
+1. **One Build Guide:** Verify Parts 00–16 appear in order within the same §Build-Guide.md§.
+2. **Public artifact links:** Open Case Study, Architecture, Evidence Matrix, Demo Walkthrough, Presentation Storyboard, all synthetic data links and the final template.
+3. **Privacy:** Search every public text and image for tenant/account identifiers, private file hashes, signed-in names, machine paths, connection IDs or internal production material.
+4. **App history:** Confirm saved and published versions of the six app experiences actually viewed; do not assume a Studio edit was published.
+5. **Flow state:** Verify the current **five separate flows** and their historical actions; do not turn anything On, trigger an email or resolve duplicate names by deleting records.
+6. **Data and analytics:** Keep actual Dataverse work-order counts distinct from the original CSV; keep 50,000 monitoring readings in the CSV/Power BI source, not Dataverse.
+7. **Quality and readiness:** Report unresolved accessibility, capacity concurrency, role testing, connection dependencies, safe negative testing and target-environment import.
+8. **Evidence truth:** Record **Pass, Fail, Not Run or Blocked** for each private final check. A previously passed Part 15 test is not automatically a new Part 16 Pass.
 
-You now have an **end-to-end fictional Power Platform project portfolio**: connected Dataverse registers, three Canvas and three model-driven application experiences, guarded solution flows, a 50,000-row synthetic Power BI Desktop learning model, engineering/ALM evidence, a reproducible public case study, architecture diagrams, an evidence index and a final presentation storyboard. These artifacts show *design, construction, testing boundaries and professional communication* without pretending to operate a real facility or ship a production deployment.
+In the previous reference review, nine final checks were reported as **Pass**, two (**privacy captures and Power BI Desktop**) remained **Not Run**, and one (**final presentation/recording evidence**) was **Blocked**. Those are a **separate maker-reported example**, not statuses for anyone else's template and not proof that all twelve final tests passed.
 
-Use the [project case study](./portfolio/Case-Study.md) as the portfolio landing explanation, the [architecture document](./portfolio/Architecture.md) as the technical view, and the [demo walkthrough](./portfolio/Demo-Walkthrough.md) to perform a verified, privacy-safe final demonstration.
+**Checkpoint F16-12:** The public documentation is complete and privacy-safe, the existing solution is unchanged, and any unexecuted runtime verification remains explicitly open.
+
+### Finish Part 16 — Complete project documentation and evidence-led portfolio
+
+The **Data Center Operations 360** learning portfolio has a cumulative guide through Part 16, connected fictional Dataverse records, three Canvas apps, three model-driven apps, guarded cloud-flow examples, a reproducible Power BI Desktop source model, a public architecture diagram, case study, evidence index, demonstration route and slide storyboard.
+
+**Documentation complete** does not mean **all live demonstration tests complete**. In the reported final audit, the remaining work concerned a privacy-reviewed capture session, a fresh Power BI Desktop check and final recorded presentation approval. Quality remediation, role separation, server-safe rack reservation behavior and target-environment import also remain outside the verified enterprise scope.
+
+Use the [Case Study](./portfolio/Case-Study.md) as the portfolio landing page, the [Architecture](./portfolio/Architecture.md) for design discussions and the [Demo Walkthrough](./portfolio/Demo-Walkthrough.md) for a truthful authorized recording.
 
 **Microsoft Learn references:**
 
 - [Power Platform solutions and ALM](https://learn.microsoft.com/en-us/power-platform/alm/overview-alm)
-- [Design your model-driven app](https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/design-custom-business-apps-using-app-designer)
-- [Power Apps Monitor](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/monitor-overview)
-- [Build Power BI Desktop reports](https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-view)
-- [Power BI Desktop project format](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview)
+- [Design a model-driven app](https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/design-custom-business-apps-using-app-designer)
+- [Monitor Power Apps Canvas Apps](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/monitor-overview)
+- [Power BI Desktop report view](https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-view)
+- [Power BI Desktop projects](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview)
 
-*Educational records are fictional. Nothing in this project authorizes physical equipment operation, real facility maintenance, identity impersonation, unapproved notifications or unsafe production deployment.*
-
+*This is an original fictional educational implementation. Do not use its content as authorization for real data-center operations, unapproved notifications, security administration or production deployment.*
 
 ## Microsoft Learn references
 - [Define alternate keys in Dataverse](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-reference-records)
