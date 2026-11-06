@@ -1,42 +1,42 @@
-# DC360 — Portfolio Evidence Matrix
+# Data Center Operations 360 — Evidence Matrix
 
-[Project home](../README.md) · [Case study](./Case-Study.md) · [Demonstration](./Demo-Walkthrough.md)
+[Project Case Study](./Case-Study.md) · [Architecture](./Architecture.md) · [Demonstration](./Demo-Walkthrough.md) · [Complete Build Guide](../Build-Guide.md)
 
-This is a **public, privacy-safe evidence index**. It deliberately distinguishes published reproducible sources from reported implementation observations. It is **not** a mirror of a private test log.
+This public index separates **published teaching material**, **inspected files**, **prior maker-reported tenant observations** and **tests not yet completed**. It is not a public copy of a private test report.
 
-| Evidence ID | Claim / demonstration | Public source link | Evidence class | Safe portfolio wording |
+| ID | Portfolio claim | Public support | Evidence category | Accurate wording |
 | --- | --- | --- | --- | --- |
-| EV-01 | Reproducible step-by-step system design | [Build Guide](../Build-Guide.md) | Published learning source | “Documented through Parts 00–16” |
-| EV-02 | Fictional organization and linked equipment | [Source datasets](../data/README.md) | Published synthetic data | “1 campus, 2 halls, 100 equipment assets, 24 sensors” |
-| EV-03 | Incident and maintenance baseline | [Incidents](../data/incidents.csv), [Work orders](../data/work-orders.csv) | Published synthetic data | “200 starting incident rows and 500 starting work-order CSV rows” |
-| EV-04 | 50,000 reading analytics source | [Monitoring data](../data/monitoring/README.md) | Published synthetic data | “50,000 samples over 24 sensor codes” |
-| EV-05 | Reproducible Power BI model source | [PBIP source README](../powerbi/README.md) | Sanitized source artifact | “Seven model tables, six active relationships, twenty measures, five report pages in the reference source” |
-| EV-06 | Operational apps and relationships | [Parts 06–12](../Build-Guide.md) | Implementation instructions + maker-supplied completion history | “Three Canvas and three model-driven app experiences were developed; confirm current published state when demonstrating” |
-| EV-07 | Rules-based insight workflow | [Part 14](../Build-Guide.md#part-14--build-rules-based-intelligent-operations-and-reviewed-knowledge) | Learning source + prior maker test report | “Demonstrated repeat-run deduplication for one synthetic insight; not atomic under concurrency” |
-| EV-08 | Engineering test framework | [Public UAT template](../quality/Part-15-UAT-Matrix.csv) | Unexecuted learner template | “18 reusable UAT checks; private results are deliberately not uploaded” |
-| EV-09 | Solution export and ALM review | [Part 15](../Build-Guide.md#part-15--engineer-test-and-prepare-the-solution-for-release) | Documented process + private package evidence | “An unmanaged source export was verified privately; no target import claim” |
-| EV-10 | Portfolio end-to-end walkthrough | [Demo walkthrough](./Demo-Walkthrough.md) | Published demonstration instructions | “Execute only approved, reproducible read-only demonstrations” |
-| EV-11 | Architecture | [Architecture](./Architecture.md) | Published design artifact | “Shows actual source boundaries and documented trade-offs” |
-| EV-12 | Final presentation | [Presentation storyboard](./Presentation-Storyboard.md) | Published presentation content | “Evidence-led deck; live screenshots and runtime tests must be verified separately” |
+| EV-01 | Full learning project | [Parts 00–16](../Build-Guide.md) | Public instructional source | “One cumulative 17-part build-along guide is published” |
+| EV-02 | Fixed fictional organization and scale | [Practice data library](../data/README.md) | Published fictional CSVs | “One campus, two halls, 100 Assets, 24 Sensors” |
+| EV-03 | Incident/maintenance baseline | [Incidents](../data/incidents.csv), [Work Orders](../data/work-orders.csv) | Published original datasets | “200 source Incidents, 500 starting Work Orders” |
+| EV-04 | Monitoring experiment | [Monitoring CSVs](../data/monitoring/README.md) | Published fictional data | “50,000 readings from 24 sensor codes” |
+| EV-05 | Power BI model | [Sanitized PBIP source](../powerbi/README.md) | Inspectable public source + earlier reported Desktop test | “7 tables, 6 relationships, 20 measures and 5 pages in the source; no current-session Desktop retest” |
+| EV-06 | Three Canvas and three model-driven apps | [Parts 06–12](../Build-Guide.md) and [Part 16](../Build-Guide.md#part-16--present-and-verify-the-complete-data-center-operations-360-project) | Maker-reported published Play walkthrough | “Six app experiences were exercised read-only, with specific limitations disclosed” |
+| EV-07 | Corrected capacity-planning explanation | [Part 12](../Build-Guide.md#part-12--plan-data-hall-rack-capacity-and-power-headroom) | Design source + maker-reported Detail screen | “Rack 013 Hold is confirmed in Dataverse but not visible on Detail; zero reservations may appear blank” |
+| EV-08 | Historical flow diagnostics | [Part 14](../Build-Guide.md#part-14--build-rules-based-intelligent-operations-and-reviewed-knowledge) | Maker-reported historical run inspection | “Five flow records; historical 4 + 0 + 2 + 6 + 2 successful runs; duplicate creation skipped in DC14” |
+| EV-09 | Public QA starting point | [Part 15 UAT template](../quality/Part-15-UAT-Matrix.csv) | Unexecuted 18-case learner template | “Each learner starts at Not Run; actual tenant outcomes remain private” |
+| EV-10 | Verified development-source export procedure | [Part 15](../Build-Guide.md#part-15--engineer-test-and-prepare-the-solution-for-release) | Documented procedure + private, inspected package | “An unmanaged source export was verified; no target import/restore shown” |
+| EV-11 | Architecture diagram | [Architecture](./Architecture.md) | Published technical documentation | “Connectors belong to Power Automate; no unverified Teams ref or live BI pipeline” |
+| EV-12 | Final end-to-end walkthrough | [Demo](./Demo-Walkthrough.md), [Part 16](../Build-Guide.md#part-16--present-and-verify-the-complete-data-center-operations-360-project) | Public route + maker-reported app Play | “Real app routes were reported, but no public-safe capture/recording has yet been established” |
+| EV-13 | Final verification evidence | [Part 16 verification template](../quality/Part-16-Final-Verification.csv) | Unexecuted public template; private maker report | “Nine final checks reported Pass, two Not Run, one Blocked; raw results not published” |
+| EV-14 | Final presentation content | [Storyboard](./Presentation-Storyboard.md) | Published presentation source; private editable draft | “Twelve-slide draft exists; recorded/published demonstration evidence still pending” |
 
-## Evidence labels for reviewers
+## How to interpret the categories
 
-- **Published source**: a GitHub file exists and its contents can be inspected. It is not proof a live cloud component runs.
-- **Prior maker-reported implementation**: a saved implementation report contains observed tenant results; a fresh reviewer has not independently rerun those actions.
-- **Artifact-inspected**: the content/metadata of an uploaded or published file was inspected directly. This does not prove its successful use in a different environment.
-- **Not retested / open**: the relevant live action, import, role test or regression did not occur in the final review.
-- **Sanitized screenshot pending**: no image should be invented or inserted as if captured from a real app.
+**Public synthetic source** can be checked without tenant access. **Private artifact inspected** means an existing file's structure/hash or references were examined; it does not prove an external import. **Maker-reported Play result** describes an authorized actual app session, not a fresh independent audit. **Not Run** and **Blocked** remain incomplete even when other tests pass. **Design-only** materials (such as an architecture diagram or storyboard) are never authentic app screenshots.
 
-## Known limitations to disclose
+## Key limitations requiring clear disclosure
 
-The previous Part 15 private report recorded **13 Pass, five Not Run and zero Fail** for the eighteen UAT cases; the five not-run cases concern Play-mode navigation, a possibly write-capable capacity validation test and repeat Power BI Desktop checks. A prior solution checker reported **148 Medium findings**, including **143 Capacity Planner accessibility issues**. Two DC08 flow records share a display name. One extra training Work Order can yield **501 current Dataverse rows vs 500 source CSV rows**. Non-admin security testing, a target-environment import and server-side capacity concurrency remain unverified. These are **reported findings**, not evidence that the public GitHub assets automatically passed all validation.
+The source CSV has **500** maintenance work orders, while the earlier learning-tenant practice contained **501** because of one additional retained training row. The latest reported walkthrough observed **335 Active Work Orders** in a filtered view; these are three different valid contexts.
 
-## Safely adding demonstration evidence
+Two distinct cloud flows share the display name **DC08 Incident Status Notice**; the later flow has **zero history**, not an unreported successful run. The second DC14 run skipped duplicate record insertion, but its Cancelled branch was not exercised and concurrency safety was not demonstrated.
 
-1. Capture screenshots only from an authorized demonstration account/session.
-2. Crop or redact browser chrome, tenant GUIDs, usernames, real connection records, environment-variable values, addresses and any identifiable account information.
-3. Compare every caption and metric with the exact selected filter context.
-4. Add a descriptive filename, date, scope and whether it was a saved app, published app, Power BI Desktop model or static mockup.
-5. Publish only after an independent privacy review. Keep raw originals outside GitHub.
+The reported Capacity Planner Rack Detail did **not** display Rack 013 Hold, and zero reserved values appeared blank. The source Dataverse row remained Hold. Its overlap precheck can be write-capable, and server-side atomic reservation conflict protection is not implemented.
 
-**No screenshots, private archive, account-specific hashes or private testing documents are required to follow the learner guide.**
+The earlier engineering review documented **143 accessibility errors** and restricted role-sharing; a target solution import and non-admin role-separated testing remain unverified. Power BI Desktop was **not opened in the latest Part 16 session**, so the earlier Desktop validation does not become a new check.
+
+## Rules for adding genuine media evidence
+
+Capture only in an authorized, controlled and privacy-reviewed session. Crop user profiles, account IDs, environment URLs, developer-environment banners, private flow connections and confidential records. Use actual *published* app versions where the caption says published; include date and precise filter context. Do not synthesize or edit a conceptual diagram into a deceptive “screenshot.”
+
+Keep the original unmanaged solution export, private hash, tenant-specific UAT files, internal narration workbooks and production instructions **outside public GitHub**.
