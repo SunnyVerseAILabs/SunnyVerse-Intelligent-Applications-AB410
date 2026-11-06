@@ -1,57 +1,46 @@
-# DC360 — End-to-End Portfolio Demonstration
+# Data Center Operations 360 — Safe End-to-End Demo Walkthrough
 
-[Build Guide](../Build-Guide.md#part-16--present-and-verify-the-complete-data-center-operations-360-project) · [Case study](./Case-Study.md) · [Evidence](./Evidence-Matrix.md)
+[Project Case Study](./Case-Study.md) · [Architecture](./Architecture.md) · [Build Guide](../Build-Guide.md) · [Evidence Matrix](./Evidence-Matrix.md)
 
-This is a **read-only, evidence-led demonstration route** through the fictional SunnyVerse Renewable Group environment. It is appropriate for a short portfolio walkthrough or interview. It is not a physical-facility operating procedure. Only demonstrate an action as “live” if you actually performed it in the authorized environment during that session.
+This walkthrough is the **scriptable route for an authorized read-only educational demonstration**. A written route is **not a screen recording**, and prior maker observations are not automatically new runtime results. The demo uses the original fictional SunnyVerse Renewable Group records and does not authorize live equipment actions.
 
-## Preflight — before any screen recording
+## Preflight
 
-- Open the correct authorized **existing** solution; confirm currently published app versions from actual metadata.
-- Use fictional source records. Hide tenant addresses, environment identifiers, signed-in profile menus, URLs, connection references, test-recipient values and private local paths.
-- Do **not** run Off flows, send messages, change approvals, create incident/work-order rows or submit capacity requests just for the recording.
-- Keep the **original unmanaged solution ZIP**, its checksum and private implementation reports outside GitHub/video capture.
-- Clear Canvas app and Power BI visual filters before claiming baseline counts.
-- If a page cannot be opened, label it **Not demonstrated**, keep the script moving and disclose the limitation.
+Verify your authorized Power Apps environment, actual six app published versions, and the current On/Off state of all five cloud-flow records. Open only existing fictional records. Hide account profile, tenant/environment addresses, connection references, browser paths, real recipients and any institution-specific information. The Power Apps **developer environment banner** may need safe cropping in a final capture; never hide warnings to manufacture success.
 
-## Suggested twelve-scene walkthrough (12–18 minutes)
+Do **not** press a capacity button that can submit a record, start any previously Off flow, send mail/Teams, change an approval or create a new Work Order. Keep the private unmanaged solution package and completed UAT file out of any recording frame.
 
-| Scene | Screen / source | Safe action | Evidence / story point | Explicit boundary |
+## Twelve demo scenes
+
+| Scene | Screen or artifact | Read-only action | Valid evidence statement | Caveat |
 | --- | --- | --- | --- | --- |
-| 1 | GitHub project README and Build Guide | Show published learning structure | Reproducible, cumulative source-first engineering | Publishing a guide ≠ deployed app |
-| 2 | Architecture diagram | Follow data/trust boundaries | Dataverse operations separate from CSV/Power BI learning telemetry | No live sensor integration |
-| 3 | Power Apps solution Overview | Inspect component types and publisher | Shared solution structure and consistent naming | Hide tenant metadata |
-| 4 | Data Hall → Asset → Sensor | Open saved fictional parent/child records | Real Dataverse Lookups | No GUID copying into text substitutes |
-| 5 | DC Operations Command Center | Open published Home, read existing counts and recent incidents | Incident/alarm operational overview | Counts must be confirmed on the exact version |
-| 6 | DC FieldOps | Read existing inspection or assignment screens | Mobile field-engineering workflow | No new evidence, uploads or status writes |
-| 7 | DC Asset & Maintenance Manager | Open existing Asset/Work Order records | Record lifecycle and operational context | 500 source CSV rows vs an extra practice record |
-| 8 | DC Change & Risk Manager | Read saved change/MOP/risk review record | Workflow governance and audit boundaries | Mock approvals are not real permit signatures |
-| 9 | DC Supporting Operations Hub | Inspect inventory/handover and intelligence sections | Supplier/inventory coordination and evidence-linked insights | Reorder flag is manually maintained |
-| 10 | DC Capacity Planner | Read two Hall Baselines and existing rack/allocations | 42U rack model, planned headroom, holds and requests | Client-side validation is not a server lock |
-| 11 | Power BI Desktop report | Reopen local PBIX if available; clear selections and show five pages | 50,000 samples, 24 sensors, 7 tables, 6 relationships, 20 measures | Not Power BI Service / not real-time |
-| 12 | Engineering checklist and case study | Summarize private QA statuses in privacy-safe terms | Transparent release gates and development-source export | Enterprise deployment/import not verified |
+| 01 | GitHub project README / Build Guide | Open the published 17-part cumulative guide | The educational source is reproducible | GitHub pages do not grant app access |
+| 02 | [Architecture](./Architecture.md) | Walk the Dataverse/app/flow boundary and CSV-to-Power-BI path | Flow-owned connectors and separate analytics | No Teams connection reference in reference solution |
+| 03 | Existing Power Apps solution | Inspect current solution/app metadata | Six documented app experiences and five flow records | Profile and tenant metadata must be hidden |
+| 04 | Data Hall → Asset → Sensor | Open existing parent/child Lookups | Relational records use true Dataverse Lookups | User profile rows are not Entra identities |
+| 05 | **DC Operations Command Center** | Home → Incidents → Search for **INC-0001** → read-only details | Prior Play showed **200 incidents / 120 alarms / 100 assets** | Search must really be run in shown version |
+| 06 | **DC FieldOps** | Home → Incidents list → open existing record | Prior Play showed **200 incidents and 2 inspections** | No new inspection or attachment |
+| 07 | **DC Asset & Maintenance Manager** / **Change & Risk Manager** | Open saved Work Order/Asset relationship and changes | Active Work Orders view previously showed **335**, with the original 500-row CSV and 501 tenant practice total distinct | Approved Choice ≠ authenticated safety permit |
+| 08 | **DC Supporting Operations Hub** | Shift; Inventory; Intelligence; Approved Knowledge and Review Queue | Three retained nav groups; KNO-0001 Approved and KNO-0002 Reviewed in different views | Reorder flag manually maintained |
+| 09 | **DC Capacity Planner** | Two Hall Baselines → twenty Rack Plans → Rack 013 Detail; compare source record | Modeled headroom **443 / 495 kW**; Rack 013 **Hold in Dataverse** | Hold is **not shown** on Detail; reserved U/kW can be blank rather than zero |
+| 10 | **Power Automate** historical Run history | Inspect distinct flows and DC14 second run | Five flows, **4 + 0 + 2 + 6 + 2** historical success distribution; duplicate Add row skipped | No new flow runs or proven Cancelled path |
+| 11 | **Power BI Desktop** | If available, reopen PBIX, refresh, clear slicers and review all five pages | Source supports **50,000 synthetic readings**, **290 High / 193 Low / 49,517 Normal** | Fresh final-session Desktop check was **Not Run** in the reported rehearsal |
+| 12 | [Case Study](./Case-Study.md) / [Evidence](./Evidence-Matrix.md) / storyboard | Present the stated findings and open gates | Documentation is complete with limits honestly described | Final privacy-approved recording/presentation evidence remains **Blocked** until captured |
 
-**Suggested timing:** 1 minute foundation, 2 minutes architecture and data, 6–8 minutes app walkthrough, 2–3 minutes analytics, 2–3 minutes QA/tradeoffs. This is a guide, not a recorded video: video files should be created only after actual captures and review.
+Suggested length: **12–18 minutes** for a deliberately paced educational portfolio tour, depending on actual app responsiveness and local Power BI access. This is a suggested route—not an observed recording duration.
 
-## Metrics you may cite **only in their correct context**
+## Three source counts that must not be mixed
 
-| Metric | Grounded interpretation |
-| --- | --- |
-| 1 campus / 2 halls | Fixed fictional development landscape |
-| 100 assets / 24 sensors | Source register and CSV dimension counts |
-| 120 alarms / 200 incidents | Original fictional dataset counts |
-| 500 source Work Orders | Original CSV baseline; one extra training row may exist in tenant |
-| 20 Rack Plans | Dataverse capacity-planning demonstration |
-| 50,000 readings | Static synthetic CSV/Power BI Import dataset |
-| 290 High / 193 Low / 49,517 Normal | Fictional threshold flags, **not** actual Alarm events |
-| 13 Pass / 5 Not Run | Maker-reported Part 15 private UAT, not a public rerun |
-| 143 accessibility findings | Previously reported Canvas capacity-app checker result; needs remediation |
+**Work Orders:** 500 starting CSV rows, 501 after one additional practice row in the reported tenant, and 335 in a filtered Active Work Orders view. **Analytics:** 50,000 CSV/Power BI sample readings, not 50,000 Dataverse rows. **Capacity:** 20 Rack Plans, with a planning Hold state confirmed through Dataverse even when the Canvas detail does not display it.
 
-## Demonstration quality gates
+## Quality and evidence boundaries
 
-Use [the public Part 16 verification checklist](../quality/Part-16-Final-Verification.csv) to check every scene. That public CSV starts **Not Run**; record real tenant-specific execution outcomes only in a private copy. A screenshot taken in Studio while a component is unsaved is not evidence of the **published app**. A successful flow history item is not proof that an email was sent in this session. An unmanaged export is not an import/restore test.
+The maker reported six apps saved/published and working Play navigation in the final session. It also disclosed the Rack Detail display gaps, **143 outstanding accessibility findings**, lack of target import and no authorized role-separated validation. An earlier UAT review reported **13 Pass / 5 Not Run** after export. The *separate Part 16* final verification reported **9 Pass, 2 Not Run and 1 Blocked**. Do not cite either as “all tests passed.”
 
-## Suggested closing explanation
+If no safe capture is available, use the public source documents while stating the actual app screen **was not recorded**. Do not generate fictitious interface images or use static drawings with labels implying they came from the current tenant.
 
-“This is a fictional, end-to-end Power Platform portfolio. The major value is a coherent relational data model, multiple purposeful applications, controlled workflows, synthetic operational analytics and transparent engineering evidence. Remaining work—accessibility remediation, least-privilege testing, concurrency-safe capacity booking and target-environment validation—is identified rather than concealed.”
+## Closing narration example
 
-Do not publish recorded material with exposed user identity, institution context or tenant details.
+“This is a fictional Power Platform portfolio that demonstrates Dataverse relationships, six application experiences, guarded workflows, planning and reporting, and the discipline of documenting actual quality results. It is appropriate as a bounded learning demonstration. Accessibility remediation, least-privilege access testing, race-safe capacity reservations and a verified target-environment import are not represented as complete.”
+
+The public [Part 16 verification template](../quality/Part-16-Final-Verification.csv) remains **Not Run** for future learners. Keep your executed copy and original media files private until separately reviewed and approved.
