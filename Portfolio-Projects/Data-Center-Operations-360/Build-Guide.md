@@ -2,7 +2,7 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–12 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations, Capacity Management and Rack Planning
+**Published:** Parts 00–13 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations, Capacity Management and Rack Planning, Monitoring and Operational Intelligence
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
@@ -2930,6 +2930,358 @@ Before marking Part 12 complete, verify all four primary names are Business requ
 - [Power Fx error handling](https://learn.microsoft.com/en-us/power-apps/guidance/coding-guidelines/error-handling)
 
 *All facilities, personnel, system loads, power budgets and requests are fictional; no live operational action is authorized.*
+
+
+## Part 13 — Build Monitoring and Operational Intelligence with Power BI
+
+Part 12 separated planned rack capacity from real equipment load. We will now build a **Power BI Desktop analytical report** from original fictional operating data. This is a reporting layer, not a new Power App, an automated facility monitoring system, or an approval workflow. You will combine **50,000 synthetic readings** with the existing **24 DC Sensor records**, 100 Assets, two Data Halls and the previously published Alarm, Incident and Work Order files.
+
+The work uses **Power BI Desktop Import mode** and the published CSV files. This route does not require creating 50,000 Dataverse rows, configuring a premium SQL connection or obtaining an on-premises gateway. Optional publication to Power BI Service depends on the permissions and licenses in your own environment. No new Dataverse table, cloud flow, physical-device connection or automatic data refresh is required here.
+
+| Dataset / source | Expected rows | What it represents |
+| --- | ---: | --- |
+| `data/monitoring/monitoring-readings-01.csv` through `-10.csv` | **50,000 total** | Fictional sampled measurement fact; ten nonoverlapping batches |
+| `data/sensors.csv` | **24** | Existing sensor inventory with metric, unit, acceptable range and Asset primary name |
+| `data/assets.csv` | **100** | Existing equipment identity, category, status and Data Hall primary name |
+| `data/data-halls.csv` | **2** | Existing Hall names and design IT capacities |
+| `data/alarms.csv` | **120** | Alarm events and their own original statuses |
+| `data/incidents.csv` | **200** | Historical incidents, priorities and lifecycle states |
+| `data/work-orders.csv` | **500** | Maintenance backlog and completion states |
+
+**Important distinction:** Threshold flags are generated examples, not genuine equipment alarms. A Reading row is not automatically an Alarm, an Incident or a Work Order. Samples for different metric types and units must not be averaged or summed together as though they measure the same quantity. The Part 12 capacity baseline is a separate manual planning model; these readings do not update or validate it.
+
+### S13.01 — Verify the existing operations data and Power BI Desktop
+
+Open the existing **SunnyVerse Data Center Operations 360** solution in your authorized Power Apps environment and inspect, without changing, these parent records: the Pacific Resilience Campus; Data Hall 01 and 02; the 100 DC Assets; 24 DC Sensors; 120 DC Alarms; 200 DC Incidents; and 500 DC Work Orders. The reference data can already be studied through the published CSVs even if a learner's tenant does not contain every earlier record. Confirm the four Part 12 planning tables remain intact; **do not recreate them**.
+
+On your own development computer, open **Power BI Desktop**. Create a blank report using **Home → New**, when offered, and save it as `DC360-Operations-Intelligence.pbix` in a local training folder. Desktop is sufficient for this lesson. If Power BI Desktop is not installed or your computer is managed, use the institution-approved install/access route; do not bypass device or tenant policy. Never place private account identifiers or institutional data in the public repository.
+
+Before import, create a local folder such as `DC360-Learning/monitoring` and place **only the ten published `monitoring-readings-*.csv` files** there. Keep the other six dimension and operation CSVs in a separate `DC360-Learning/reference` folder. Do not put the entire GitHub repository into the monitoring folder, because the Folder connector would otherwise combine unrelated CSV schemas.
+
+**Checkpoint 1 — Prepared:** One existing solution, a locally saved blank PBIX, and ten monitoring batches in a dedicated folder. Do not claim that Power BI Service sharing or refresh is available yet.
+
+### S13.02 — Understand the 50,000-row synthetic measurement contract
+
+Download the ten files from the [monitoring folder](./data/monitoring/) or regenerate the identical practice dataset using [the generator](./data/monitoring/generate_monitoring.py) and the existing `sensors.csv`. **Do one or the other**, not both in the same import directory. Each file has exactly 5,000 data rows plus one header and exactly the same five headers:
+
+```csv
+Reading ID,Recorded At UTC,Sensor Code,Reading Value,Threshold State
+```
+
+| Exact header | Power Query type | Meaning / validation |
+| --- | --- | --- |
+| Reading ID | Text | Unique `RDG-000001` through `RDG-050000`; no duplicates |
+| Recorded At UTC | Date/Time | Explicit UTC-labelled fictional instant, `2026-10-01 00:00:00` through `2026-10-22 16:45:00` |
+| Sensor Code | Text | References one of the **existing 24** `DC-SEN-001`–`DC-SEN-024` business sensor codes |
+| Reading Value | Decimal number | Numeric synthetic reading, interpreted only with the related Sensor's Metric Type and Unit |
+| Threshold State | Text | `Normal`, `High` or `Low`, derived from the Sensor's acceptable minimum/maximum |
+
+The generator emits **15-minute educational snapshots**, even though the sensor inventory's `Sample Interval Seconds` column is 60. The monitoring files are a *downsampled illustration*, not proof that live 60-second sampling occurred. Each recorded instant contains at most 24 sensor values. Sensor 001–008 have 2,084 examples each and the remaining sensors have 2,083; there are **2,084 distinct timestamps**. The earliest reading, `RDG-000001`, is a deliberately high example for Sensor 001. No asset name, tenant GUID or user identity is embedded in a fact row.
+
+The fixed complete dataset contains **49,517 Normal**, **290 High** and **193 Low** flags, a total of **483 out-of-range samples**. These are expected totals for the unfiltered example, not operational alarm counts. The generator uses the saved `Minimum Acceptable` and `Maximum Acceptable` thresholds from `sensors.csv`. Do not turn the 483 readings into 483 Dataverse Alarm rows.
+
+**Checkpoint 2 — Dataset contract:** Ten identical headers, no blank Sensor Codes, and total row count 50,000 before any report filtering.
+
+### S13.03 — Import and combine the ten readings files
+
+In Power BI Desktop choose **Home → Get data → More → File → Folder → Connect** (or **Get data → Folder**). Choose the local `DC360-Learning/monitoring` folder containing only ten reading CSVs. Select **Combine & Transform Data**, inspect the sample file preview, and choose the CSV data table. The Folder connector builds a sample-file transformation and combines files with matching columns. Open **Transform data** if the preview is already open.
+
+In **Power Query Editor**, rename the final combined table/query **Fact Monitoring Readings**. Ensure that *Use First Row as Headers* is applied once, not once again after already promoted headers. Remove unnecessary generated `Source.Name` or `Extension` columns only after using them to confirm that all ten files participated. Do not accidentally remove Reading ID, Sensor Code or Threshold State.
+
+Select each column and confirm its icon/type: `Reading ID` Text, `Recorded At UTC` Date/Time, `Sensor Code` Text, `Reading Value` Decimal Number, and `Threshold State` Text. Change **Using Locale** only if your computer interprets the unambiguous `yyyy-MM-dd HH:mm:ss` dates incorrectly. These values represent UTC as written; if you later combine them with local timestamps, perform an explicit, documented time-zone conversion rather than silently changing their meaning.
+
+Select **Transform → Count Rows** on a *duplicated reference/query* or use the bottom row count preview carefully, then discard the temporary count query after recording the result. The final Fact query must remain a table of all readings. Select **Close & Apply** and wait for model load.
+
+| Check | Correct result |
+| --- | --- |
+| Combined files | Ten `monitoring-readings-01.csv` through `-10.csv` |
+| Data rows | **50,000** |
+| Unique Reading ID | **50,000** |
+| Distinct Sensor Code | **24** |
+| High / Low / Normal | **290 / 193 / 49,517** |
+| First / last Reading ID | `RDG-000001` / `RDG-050000` |
+| Date range | 2026-10-01 to 2026-10-22, UTC-labelled |
+
+If you get **5,000 rows**, inspect the Combine Files step and its directory source instead of reimporting more copies. If a query reports a missing `Column1` field after promoting headers, inspect and remove/rebuild the stale automatically generated Changed Type step, then set the exact types again. If duplicates appear, check for duplicate downloaded batches or repeated import queries; do not quietly deduplicate and call the source correct.
+
+**Checkpoint 3 — Readings fact:** The data model loads 50,000 unique readings. No Dataverse or SQL table was modified.
+
+### S13.04 — Load the operational reference dimensions
+
+Choose **Home → Get data → Text/CSV** four times to import the separately downloaded `sensors.csv`, `assets.csv`, `data-halls.csv` and (if not already present) the ten-reading query from S13.03. Use **Transform Data** for each dimension and rename the first three queries exactly:
+
+| Power BI query | Source | Primary business key | Type checks |
+| --- | --- | --- | --- |
+| **Dim Sensor** | `sensors.csv` | `Sensor Code` (24 distinct) | Sensor Code and Asset Text; `Minimum Acceptable` / `Maximum Acceptable` Decimal; `Sample Interval Seconds` Whole Number; `Enabled` explicit Boolean or consistent Text |
+| **Dim Asset** | `assets.csv` | `Asset Name` (100 distinct) | Asset Name, Asset Code, Asset Category, Operational Status, Data Hall Text; `Rated Power kW` Decimal; `Install Date` Date |
+| **Dim Data Hall** | `data-halls.csv` | `Hall Name` (2 distinct) | Hall Name, Hall Code, Campus, Criticality Text; `Design IT Capacity kW` Decimal; `Active` Boolean or consistent Text |
+
+When setting the `Enabled` and `Active` Yes/No values, make sure every source value resolves correctly, or keep them as Text until an explicit Yes/No conversion is validated. For Choice columns imported as CSV labels, retain the readable labels; Power BI data models do not need Dataverse's generated Choice integer values.
+
+**Use the exact fields from the already published files.** For example, `Dim Sensor[Asset]` contains an **Asset Name** such as `UPS 001`, not the `Asset Code`. Similarly, `Dim Asset[Data Hall]` contains `Data Hall 01`, not the Hall GUID or Hall Code. A relationship built on different naming conventions without mapping will create blank/unmatched records.
+
+Inspect the three source-table keys for duplicates and missing values. Do not duplicate `DC Sensor` or `DC Asset` in Dataverse; these are analytical copies of published fictional data.
+
+### S13.05 — Import Alarm, Incident and Work Order history separately
+
+Choose **Get data → Text/CSV** for the existing `alarms.csv`, `incidents.csv` and `work-orders.csv`. Rename the queries exactly **Fact Alarm**, **Fact Incident**, and **Fact Work Order**. Keep the business primary names and codes, and convert status/priority/type fields to Text.
+
+| Fact | Date columns (Date/Time) | Asset reference | Expected rows / original status labels |
+| --- | --- | --- | --- |
+| **Fact Alarm** | `Detected At` | `Source Asset` | 120; New, Acknowledged, Cleared, Suppressed |
+| **Fact Incident** | `Reported At` | `Source Asset` | 200; New, Assigned, In Progress, Resolved, Closed |
+| **Fact Work Order** | `Requested On`, `Due On`, optional `Completed On` | `Asset` | 500; Planned, Assigned, In Progress, On Hold, Completed, Cancelled |
+
+Keep optional blank dates as **null**, not the current date or zero. Choose valid date/time conversions for the `...Z` source timestamps. Inspect any optional `Related Alarm`, `Related Incident`, `Related Inspection` or engineer names but **do not** pretend they are authenticated user identities or a verified causal join. Relationship creation is a separate step; importing a Text column never creates a Dataverse Lookup.
+
+Check representative records against the existing CSV file values: `ALM-0001`, `INC-0001` and `WO-0001`. The files are synthetic historical snapshots, not a continuous live stream and not automatically refreshed from the Power Apps tenant.
+
+**Checkpoint 5 — All seven data tables:** 50,000 readings + 24 sensors + 100 assets + 2 halls + 120 alarms + 200 incidents + 500 work orders, without duplicate load queries.
+
+### S13.06 — Build an unambiguous star-like relationship model
+
+Open **Model view**, confirm all seven imported tables are present, and use **Manage relationships → New** (or drag the business keys on the model canvas). Create these relationships with **One-to-many (1:*)** from the dimension side and **Single** cross-filter direction:
+
+| One side (unique) | Many side (repeats) | Expected filter path |
+| --- | --- | --- |
+| `Dim Data Hall[Hall Name]` | `Dim Asset[Data Hall]` | Hall filters Assets |
+| `Dim Asset[Asset Name]` | `Dim Sensor[Asset]` | Asset filters Sensors |
+| `Dim Sensor[Sensor Code]` | `Fact Monitoring Readings[Sensor Code]` | Sensor filters Readings |
+| `Dim Asset[Asset Name]` | `Fact Alarm[Source Asset]` | Asset filters Alarms |
+| `Dim Asset[Asset Name]` | `Fact Incident[Source Asset]` | Asset filters Incidents |
+| `Dim Asset[Asset Name]` | `Fact Work Order[Asset]` | Asset filters Work Orders |
+
+Set the relationship to **Active** where it does not introduce an ambiguous path. Do **not** also create a direct Hall-to-Readings relationship, or a Sensor-to-Alarm relationship that creates a second active route through Asset. Do not relate two fact tables directly by their row numbers. A cross-filter that appears to connect tables is not evidence of a real event-causation relationship.
+
+In **Data view** inspect Dim Sensor's 24 distinct Sensor Codes, Dim Asset's 100 Asset Names and Dim Data Hall's two Hall Names. In **Model view** confirm each is on the unique **1** side of its relationship. If Power BI offers a many-to-many relationship because a key is duplicated, investigate the duplicate in the source rather than accepting many-to-many to silence the warning. Do not enable Both-direction filters as a general workaround.
+
+**Checkpoint 6 — Semantic model:** Six intended active, single-direction relationships and no ambiguous loops. Filtering one hall should restrict its Assets, Sensors and Reading rows.
+
+### S13.07 — Create explicit Power BI DAX measures and validate units
+
+In **Report view**, select the **Fact Monitoring Readings** table, then choose **Modeling → New measure**. Create each measure individually. The formula editor may use commas or semicolons as argument separators depending on your locale; do not change the underlying measure semantics. Use these exact measure names and formulas in the report:
+
+```dax
+Monitoring Rows = COUNTROWS('Fact Monitoring Readings')
+
+Monitored Sensors = DISTINCTCOUNT('Fact Monitoring Readings'[Sensor Code])
+
+Normal Rows =
+CALCULATE([Monitoring Rows], 'Fact Monitoring Readings'[Threshold State] = "Normal")
+
+High Rows =
+CALCULATE([Monitoring Rows], 'Fact Monitoring Readings'[Threshold State] = "High")
+
+Low Rows =
+CALCULATE([Monitoring Rows], 'Fact Monitoring Readings'[Threshold State] = "Low")
+
+Out of Range Rows = [High Rows] + [Low Rows]
+
+Out of Range Rate =
+DIVIDE([Out of Range Rows], [Monitoring Rows], 0)
+
+Sensor Key Mismatches =
+COUNTROWS(
+    EXCEPT(
+        VALUES('Fact Monitoring Readings'[Sensor Code]),
+        VALUES('Dim Sensor'[Sensor Code])
+    )
+)
+
+Average Reading (Selected Metric) =
+IF(
+    HASONEVALUE('Dim Sensor'[Metric Type]) &&
+    HASONEVALUE('Dim Sensor'[Unit]),
+    AVERAGE('Fact Monitoring Readings'[Reading Value]),
+    BLANK()
+)
+
+Peak Reading (Selected Metric) =
+IF(
+    HASONEVALUE('Dim Sensor'[Metric Type]) &&
+    HASONEVALUE('Dim Sensor'[Unit]),
+    MAX('Fact Monitoring Readings'[Reading Value]),
+    BLANK()
+)
+```
+
+Set **Out of Range Rate** format to **Percentage**, two decimals. Put the Average and Peak measures on pages with **Metric Type and Unit filters**. A blended average across kW, degrees Celsius and volts is dimensionally meaningless, so these measures deliberately show Blank unless one metric type and unit are selected. Even among matching units, average only when metric meaning agrees—Output Power and Electrical Power are not automatically the same operational KPI.
+
+Create one explicit source-to-flag quality measure. The related Sensor thresholds apply to each reading through the active Sensor relationship:
+
+```dax
+Threshold Flag Mismatches =
+SUMX(
+    'Fact Monitoring Readings',
+    VAR v = 'Fact Monitoring Readings'[Reading Value]
+    VAR lowLimit = RELATED('Dim Sensor'[Minimum Acceptable])
+    VAR highLimit = RELATED('Dim Sensor'[Maximum Acceptable])
+    VAR expectedState =
+        SWITCH(
+            TRUE(),
+            v < lowLimit, "Low",
+            v > highLimit, "High",
+            "Normal"
+        )
+    RETURN IF(expectedState <> 'Fact Monitoring Readings'[Threshold State], 1, 0)
+)
+```
+
+For the operational snapshots, create measures on their respective fact tables:
+
+```dax
+Alarm Rows = COUNTROWS('Fact Alarm')
+
+Actionable Alarms =
+CALCULATE(
+    [Alarm Rows],
+    'Fact Alarm'[Alarm Status] IN {"New", "Acknowledged"}
+)
+
+Critical Alarms =
+CALCULATE(
+    [Alarm Rows],
+    'Fact Alarm'[Alarm Severity] = "Critical"
+)
+
+Incident Rows = COUNTROWS('Fact Incident')
+
+Active Incidents =
+CALCULATE(
+    [Incident Rows],
+    'Fact Incident'[Incident Status] IN {"New", "Assigned", "In Progress"}
+)
+
+P1 Incidents =
+CALCULATE(
+    [Incident Rows],
+    'Fact Incident'[Priority] = "P1 Critical"
+)
+
+Work Order Rows = COUNTROWS('Fact Work Order')
+
+Open Work Orders =
+CALCULATE(
+    [Work Order Rows],
+    'Fact Work Order'[Work Order Status] IN
+        {"Planned", "Assigned", "In Progress", "On Hold"}
+)
+
+Completed Work Orders =
+CALCULATE(
+    [Work Order Rows],
+    'Fact Work Order'[Work Order Status] = "Completed"
+)
+```
+
+Expected unfiltered checks: Monitoring Rows **50,000**, Monitored Sensors **24**, High **290**, Low **193**, Normal **49,517**, Out of Range **483**, Sensor Key Mismatches **0**, Threshold Flag Mismatches **0**, Alarm Rows **120**, Actionable Alarms **60**, Critical Alarms **30**, Incident Rows **200**, Active Incidents **120**, P1 Incidents **50**, Work Order Rows **500**, Open Work Orders **334**, Completed Work Orders **83**. Measures react to filter context, so verify these totals with **all slicers cleared**.
+
+**Checkpoint 7 — DAX:** Every measure saves without syntax errors. Out-of-range readings and formal alarm counts remain distinct.
+
+### S13.08 — Create the Executive Operations Overview report page
+
+In **Report view**, rename the first blank page **Executive Overview**. Use a restrained navy/teal theme with neutral backgrounds; use amber/red only for attention. Keep text labels readable without relying on color.
+
+Create these visuals through **Visualizations**, add the exact fields/measures and format them:
+
+| Visual type | Title / field mapping | Expected unfiltered interpretation |
+| --- | --- | --- |
+| Card | **Monitoring Samples** → `[Monitoring Rows]` | 50,000 fictional readings |
+| Card | **Monitored Sensors** → `[Monitored Sensors]` | 24 sensor codes represented |
+| Card | **Out-of-Range Samples** → `[Out of Range Rows]` | 483 flagged readings, not 483 alarms |
+| Card | **Out-of-Range Rate** → `[Out of Range Rate]` | Approximately 0.97% of samples |
+| Card | **Actionable Alarms** → `[Actionable Alarms]` | 60 historical alarms with New/Acknowledged status |
+| Card | **Active Incidents** → `[Active Incidents]` | 120 historical incidents with New/Assigned/In Progress status |
+| Card | **Open Work Orders** → `[Open Work Orders]` | 334 planned/assigned/in-progress/on-hold work orders |
+| Clustered column chart | Axis `Dim Sensor[Metric Type]`, values `[Out of Range Rows]` | Compare *counts*, not average mixed-unit values |
+| Slicer | `Dim Data Hall[Hall Name]` | Restrict all connected fact tables by Hall through the Asset dimension |
+| Slicer | `Dim Sensor[Unit]` | Make the measurement domain visible |
+
+Use an explanatory Text box such as: **“Synthetic historical snapshots; threshold exceptions do not create Dataverse alarms, and planned headroom is not measured usage.”** Do not imply the report tracks currently running equipment. Clear all slicers for the initial evidence screenshot.
+
+### S13.09 — Add the Monitoring and Environmental Trends page
+
+Add a new page using the **+** control or **Insert → New page** and rename it **Monitoring & Trends**. Build the following:
+
+| Visual | Field / configuration | Important validation |
+| --- | --- | --- |
+| Slicer | `Dim Sensor[Metric Type]` and `Dim Sensor[Unit]` | Select exactly one meaningful metric/unit context before reading averages |
+| Slicer | `Dim Sensor[Sensor Name]` | One sensor makes trend interpretation straightforward |
+| Line chart | X `Fact Monitoring Readings[Recorded At UTC]`, Y `[Average Reading (Selected Metric)]` | Use continuous timestamp or a suitable aggregation; remove unhelpful auto date hierarchy if needed |
+| Card | `[Peak Reading (Selected Metric)]` | Must use a selected metric and unit |
+| Stacked column chart | Axis `Dim Sensor[Sensor Code]`, Legend `Fact Monitoring Readings[Threshold State]`, Y `[Monitoring Rows]` | Shows high/normal/low counts, not severity of alarms |
+| Table | Reading ID, timestamp, Sensor Code, Reading Value, Threshold State plus related Metric Type/Unit | Filter to High or Low for an inspectable anomaly list |
+
+Add threshold reference labels using related `Dim Sensor[Minimum Acceptable]` and `Maximum Acceptable` fields when a single sensor is selected. If using a constant line, make sure the current sensor threshold is actually scalar; do not display a threshold borrowed from the first sensor when multiple distinct thresholds are selected.
+
+Drill into **DC-SEN-001** and confirm `RDG-000001` is a High example with value **560.00 kW** against a fictional maximum of 500.00 kW. A high sample is synthetic data, not a power-safety event. Verify that selecting Data Hall 01/02 changes the filtered sensor/readings population appropriately.
+
+### S13.10 — Create the Alarm, Incident and Maintenance Operations pages
+
+Add three report pages named **Alarm Operations**, **Incident Operations** and **Maintenance Operations**.
+
+**Alarm Operations:** Add cards for `[Alarm Rows]`, `[Actionable Alarms]` and `[Critical Alarms]`. Add a stacked bar by `Fact Alarm[Alarm Severity]` and `Fact Alarm[Alarm Status]`. Include a table with Alarm Code, Detected At, Source Asset, Alarm Severity, Alarm Status, and Alarm Details. Filter by Hall using the Dim Data Hall hierarchy through Asset. The fixed dataset has 30 each of Critical/High/Medium/Low severities and 30 each of New/Acknowledged/Cleared/Suppressed statuses; these are illustrative distributions.
+
+**Incident Operations:** Add cards for `[Incident Rows]`, `[Active Incidents]` and `[P1 Incidents]`. Add a clustered bar for Incident Status and a table of Incident Code, Priority, Incident Category, Source Asset, Reported At and Assigned Engineer. Do not claim the fictional Assigned Engineer label is a genuine Entra identity. `Related Alarm` is a source text reference, not an automatically verified process transition.
+
+**Maintenance Operations:** Add cards for `[Work Order Rows]`, `[Open Work Orders]` and `[Completed Work Orders]`. Add a bar by Work Order Status and a table with Work Order Code, Work Order Type, Asset, Due On, Work Order Status and Assigned Engineer. Use the `Due On` source date field only after verifying its converted type. A work order marked Completed in a teaching file is not a physical equipment maintenance certificate.
+
+For every page, select an Asset or Hall filter and compare counts with the actual matching source rows. Use only source-supported categories and definitions. If a visual displays a blank category, check its relationship and key values rather than discarding records.
+
+### S13.11 — Perform data-quality, reconciliation and negative tests
+
+Perform the following checks in the final loaded model before publishing or capturing portfolio screenshots:
+
+| Test | Procedure | Expected |
+| --- | --- | --- |
+| Complete ingestion | Reset all slicers; use Monitoring Rows card | **50,000** |
+| Unique readings | Group by Reading ID or use Power Query Remove Duplicates on a temporary reference | **50,000 distinct IDs** |
+| Sensor matches | Sensor Key Mismatches measure | **0** |
+| Value-to-threshold flags | Threshold Flag Mismatches measure | **0** |
+| Outcome categories | High, Low, Normal card values | 290, 193, 49,517 |
+| Reading dates | Earliest and latest Recorded At UTC | 2026-10-01 00:00:00 and 2026-10-22 16:45:00 |
+| Hall hierarchy | Filter Hall 01, then Hall 02 | Sensor and fact rows change through the valid Asset links |
+| Mixed units | Clear Metric Type and Unit slicers | Average Reading measure shows **Blank**, not a meaningless cross-unit value |
+| Source counts | Clear slicers; inspect Alarm, Incident, Work Order cards | 120, 200, 500 |
+| Operational subsets | Clear slicers; inspect Active Incidents / Open Work Orders | 120 / 334 |
+| Duplicate batch | Temporarily add a second copy of batch 01 in a **test folder** | Detect 55,000 rows; restore original folder; never publish test result |
+| Missing sensor | In a **temporary copied** file, replace one Sensor Code with `BAD-SENSOR` | Sensor Key Mismatches > 0; restore original source |
+| Threshold inconsistency | In a **temporary copied** row, change Normal to High without changing the value | Threshold Flag Mismatches > 0; restore original source |
+
+**Do not modify the checked-in source CSVs** for negative tests. Use separate local test copies, refresh a temporary report copy, then restore the clean inputs. Do not delete or recreate existing Dataverse rows to simulate telemetry failures. If a model visual contradicts a known row count, inspect file folder scope, Power Query Applied Steps, type conversions, relationship direction and filter context before saying the report is complete.
+
+### S13.12 — Save, verify, and optionally publish the Power BI report
+
+Save the completed report as **`DC360-Operations-Intelligence.pbix`** in the authorized local working folder. Reopen it to verify that the seven queries, six relationships, DAX measures and five report pages survived. Select **Refresh** in Desktop and confirm row counts and measures match the unfiltered baseline. Document any performance warnings, invalid transforms, disabled relationships or source-path dependencies as actual findings.
+
+Power BI Desktop can build and save this report **without publishing**. If your institution permits publication, check the signed-in Power BI account, workspace and actual sharing license first. Publishing to a personal workspace does **not** automatically authorize organization-wide distribution, embedding, anonymous public sharing or scheduled refresh. If publishing is blocked, keep the validated local PBIX and explain the limitation rather than fabricating an online report. Do not publish reports containing tenant-specific secrets, real facility telemetry, private university data or credentials.
+
+| Final verification | Expected |
+| --- | --- |
+| Data model | Seven queries, six single-direction relationships |
+| Measurements | 50,000 unique readings from 24 existing sensors |
+| Additional facts | 120 alarms, 200 incidents, 500 work orders |
+| DAX | All measures evaluate, mismatch measures return zero |
+| Report pages | Executive Overview; Monitoring & Trends; Alarm Operations; Incident Operations; Maintenance Operations |
+| Source provenance | CSV Import mode; no live device connection or unsupported premium Dataverse/SQL dependency |
+| Security | No real identities, tenant URLs, credentials or physical operations data in the public report |
+| Persistence | Saved PBIX reopens, refreshes and retains visual interactions |
+| Publication | Optional and separately verified; a local file alone is **not** a published Power BI service report |
+
+### Finish Part 13
+
+You now have a reproducible **Monitoring & Operational Intelligence** Power BI Desktop model with an auditable 50,000-row synthetic measurement source, meaningful Sensor-to-Asset-to-Hall relationships, and separate operational views for alarms, incidents and work orders. The report does not claim real-time observability, automated alarm generation, or live capacity measurement. If your Power BI Service access is restricted, the local PBIX remains a complete learning deliverable once its queries and visuals pass validation.
+
+**Microsoft Learn references:**
+
+- [Combine files (binaries) in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-combine-binaries)
+- [Combine CSV files in Power Query](https://learn.microsoft.com/en-us/power-query/combine-files-csv)
+- [Model relationships in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/transform-model/desktop-relationships-understand)
+- [Use Report view in Power BI Desktop](https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-view)
+- [Power BI licensing and sharing](https://learn.microsoft.com/en-us/power-bi/fundamentals/end-user-license)
+
+*This chapter contains fictional data only. Nothing in it authorizes real facility operation, monitoring, dispatch or electrical work.*
+
 
 ## Microsoft Learn references
 - [Define alternate keys in Dataverse](https://learn.microsoft.com/en-us/power-apps/maker/data-platform/define-alternate-keys-reference-records)
