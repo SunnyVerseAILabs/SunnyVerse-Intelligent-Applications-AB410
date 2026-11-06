@@ -2,7 +2,7 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–15 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations, Capacity Management and Rack Planning, Monitoring and Operational Intelligence, Intelligent Operations and Knowledge Review, Engineering Validation and Release Readiness
+**Published:** Parts 00–16 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals, Supporting Operations, Capacity Management and Rack Planning, Monitoring and Operational Intelligence, Intelligent Operations and Knowledge Review, Engineering Validation and Release Readiness, Final Project and Portfolio Demonstration
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
@@ -3855,6 +3855,188 @@ You have evaluated an existing Power Platform solution with component inventory,
 - [Solution layers](https://learn.microsoft.com/en-us/power-platform/alm/solution-layers-alm)
 
 *The exercise uses fictitious data. It does not authorize changes to live data centers, real users, security administration, institutional policies or external deployments.*
+
+
+
+## Part 16 — Present and Verify the Complete Data Center Operations 360 Project
+
+The earlier lessons developed a fictional data-center operations learning solution through Dataverse, Power Apps, Power Automate and a local Power BI model. The final chapter is an **evidence-led end-to-end portfolio demonstration**: verify the original solution, assemble its public architecture/case study, rehearse a safe tour, and prepare an accurate final presentation. **Do not add a new table, app, flow, environment, SQL connection, data center integration or unapproved service just to make the portfolio look larger.**
+
+Our fictional business is **SunnyVerse Renewable Group**; the educational project is published by **SunnyVerse AI Labs**. GitHub contains source instructions and synthetic datasets, not the authenticated Power Platform application. Any final recording must use the **actual published app** (where available), sanitize private metadata and state which checks were verified. This chapter does not imply enterprise deployment, real-time telemetry, physical equipment control or a Power BI Service publication.
+
+**Final public resources:** [Portfolio Case Study](./portfolio/Case-Study.md) · [Architecture](./portfolio/Architecture.md) · [Demonstration Walkthrough](./portfolio/Demo-Walkthrough.md) · [Evidence Matrix](./portfolio/Evidence-Matrix.md) · [Presentation Storyboard](./portfolio/Presentation-Storyboard.md) · [Final Verification Template](./quality/Part-16-Final-Verification.csv).
+
+### S16.01 — Freeze a truthful current solution baseline
+
+From your **authorized** Power Apps environment, open **Solutions → SunnyVerse Data Center Operations 360 → Overview**; do not create or import another solution. Verify the actual unique name, publisher, saved prefix, version, environment access and most recent published versions before recording anything. The development-source package inspected during Part 15 was an **unmanaged version 1.0.0.0** export, but a successful export alone is **not** proof that a target environment can import it or that the tenant has not changed since then.
+
+| Component group | Reference design and previous reported inventory | What to inspect in the current environment |
+| --- | --- | --- |
+| Canvas | **DC Operations Command Center**, **DC FieldOps**, **DC Capacity Planner** | Published/edited version; Play access; formula/checker status |
+| Model-driven | **DC Asset & Maintenance Manager**, **DC Change & Risk Manager**, **DC Supporting Operations Hub** | Main forms, views, app access, published navigation |
+| Dataverse | **24 organization-owned tables** previously reported | Schema keys and sample relationship records; exact current component counts |
+| Cloud flows | **Five** distinct flow records previously reported, including two separately identified **DC08 Incident Status Notice** flows | Unique flow identities, actual On/Off state and historical run evidence |
+| Connection metadata | Two Dataverse, one Outlook, one Approvals connection references; one notification variable previously reported | Type and healthy permitted owner status, without revealing values |
+| Analytics | Local Power BI Desktop report + sanitized GitHub PBIP source | Reopen/refresh results and page availability; **not** Power BI Service status |
+
+Use the solution object list and app version information rather than assuming everything is published because an editor saved successfully. Do **not** turn On any Off flow, change an approval recipient, publish an app, create a new user, edit a role or perform a deployment during this read-only baseline.
+
+**Checkpoint F16-01:** Current published evidence or an explicit **Not Verified** label exists for each of the six app experiences. Record this privately; publish no tenant GUIDs.
+
+### S16.02 — Reconcile the final fictional datasets and business links
+
+Open the [public synthetic data library](./data/README.md), then inspect the same records in Dataverse through saved forms or read-only queries. Keep the difference between the **original CSV baseline** and the current learning tenant visible.
+
+| Data family | Published starting data / reference | Required relationship or caveat |
+| --- | --- | --- |
+| Campus / Halls | **1 / 2** | Data Hall holds real Lookup to Campus |
+| Departments / Employees | **6 / 20** | Employee-to-Department and manager hierarchy are fictional business records |
+| Assets / Sensors | **100 / 24** | Asset belongs to Hall; Sensor points to existing Asset |
+| Alarms / Incidents | **120 / 200** | Saved source Lookups and status/priority fields |
+| Work orders | **500 rows in** [work-orders.csv](./data/work-orders.csv) | Additional training row may make actual Dataverse count **501**; do not delete it automatically |
+| Supporting operations | **2 Vendors / 3 Spare Parts / 3 Balances / 2 Handovers** in the practice scenario | Real spare/department/hall relationships; manually maintained reorder flags |
+| Capacity | **2 Baselines / 20 Rack Plans / 3 Allocations / 2 Requests** | Capacity requests do not automatically consume rack capacity |
+| Reviewed insights | **3 Rules / 2 Knowledge Articles / 3 Insights** | Insight's Rule/Incident/Work Order/Inventory Balance links must resolve |
+| Monitoring CSVs | **50,000 readings across 24 Sensor Codes** | Used in Power BI Desktop Import, not inserted as Dataverse readings |
+
+Inspect real **many-to-one** Lookups by following a child record to its parent. Check **INS-INC-0001-P1 → INC-0001 / RUL-0001** and **INS-BAL-0002-REORDER → BAL-0002 / RUL-0003**, if those records still exist. Some tables have Active alternate keys and others only currently unique codes; do not represent a duplicate-free sample as universally enforced key uniqueness.
+
+**Checkpoint F16-02:** Count differences and any broken links are documented. Original synthetic source records are left intact.
+
+### S16.03 — Prepare a privacy-safe demonstration session
+
+Use an authorized learning user and save a **private working copy** of the [Part 16 Final Verification Template](./quality/Part-16-Final-Verification.csv), initially twelve **Not Run** cases. Record **Pass / Fail / Blocked / Not Run**, actual observation and a sanitized evidence reference after each step. The GitHub template itself remains blank for learners.
+
+Before capturing screenshots or recording video, hide personal profile menus, environment IDs, browser URL bars containing private paths, institutional details, connection references, actual recipients, Power Automate authentication errors with identifiers and original export details. Prefer content cropping over unreliable automated blur. Use test-only fictional data; never open user credentials or real notifications in the recording.
+
+If a tab shows unsaved changes, compare the saved/published app metadata **before** choosing Save. Do not publish a modified app to improve the recording. Separate **read-only demonstration** from any later approved write-capable test.
+
+**Checkpoint F16-03:** The evidence capture frame is free of private identifiers, and the chosen published-app version is identified.
+
+### S16.04 — Review the reference architecture and its actual boundaries
+
+Open the public [Architecture document](./portfolio/Architecture.md) and inspect its Mermaid diagram and [decision table](./portfolio/Architecture.md#architecture-decision-record-public-safe). Follow one fictional source record through this conceptual sequence:
+
+**Data Hall → Asset → Sensor / Alarm → Incident → Work Order**, with separate model-driven governance, inventory, shift and capacity registers. The three Canvas apps give focused interfaces; the three model-driven apps provide relational record management. Power Automate flows act through configured connection references with real authenticated access. A rules-first Insight stores links back to its originating records.
+
+The **Power BI Desktop source is a separate CSV Import analytical model** with seven model tables, six relationships, twenty measures and five report pages. Do not draw a streaming or bidirectional real-time connector from Dataverse to that report. The 50,000 synthetic readings are not Dataverse rows and a High reading flag is not a saved DC Alarm event. The manually maintained rack headroom model is not measured electrical load.
+
+**Checkpoint F16-04:** Each diagram line is supported by an implemented relationship, a published source file, or an explicitly labelled *conceptual* learning boundary.
+
+### S16.05 — Demonstrate the three existing Canvas application experiences
+
+Use the **published Play version** of each app if your account has access; check version/publish state rather than assuming the Studio preview is live.
+
+| App | Safe navigation | What to show and verify | Do not do |
+| --- | --- | --- | --- |
+| **DC Operations Command Center** | Home → incident/alarm browse → existing details → Home | Read fictional KPIs and recent incident rows; baseline source is 200 incidents, 120 alarms, 100 assets | Submit a new incident, send a notice or imply a search was tested if not actually used |
+| **DC FieldOps** | Home → existing assigned work/inspection → details | Mobile Canvas form and source-linked record reading | Create evidence, make an inspection upload, claim authenticated fictional staff identity |
+| **DC Capacity Planner** | `scrCapacityHome` → `scrRackBrowse` → `scrRackDetail` → request/allocation **read-only** screens | Two Hall Baselines, 20 rack plans, 42U plan structure, held rack flags and existing reservation totals | Click a possible write-capable overlap validation path without authorization |
+
+Remember that the Capacity Planner has prior reported **143 accessibility findings** and a **client-side overlap check** that is **not server-atomic**. The script must not call it an enterprise reservation engine. If Command Center/FieldOps Play-mode navigation is not accessible, mark the relevant final verification as Not Run—not as a retrospective Pass.
+
+**Checkpoint F16-05:** All demonstrated screens actually loaded; every unavailable navigation or performance outcome is labelled.
+
+### S16.06 — Demonstrate the three model-driven applications and real records
+
+Open the **published**, currently authorized versions of **DC Asset & Maintenance Manager**, **DC Change & Risk Manager** and **DC Supporting Operations Hub**. Use saved Main forms and system views; do not create, delete or change approval states merely to generate a capture.
+
+In Asset & Maintenance Manager, show an existing Asset with a Work Order and its source Lookup. In Change & Risk Manager, open an existing fictional change/MOP review and explain that a mock approval state is not an authenticated safety signature. In Supporting Operations Hub, show all three navigation groups: **Shift Operations**, **Inventory & Partners**, and **Intelligence & Knowledge**. Open **DC All Operational Insights** (three source-linked findings), **DC All Intelligence Rules** (three rule definitions), **DC Approved Knowledge** (the Approved article) and the knowledge review view for the additional Reviewed article, if those records remain available.
+
+When a view defaults to Approved, it is correct for it to omit a Reviewed item. Do not claim missing data unless checking the appropriate other view.
+
+**Checkpoint F16-06:** Three existing model-driven apps are exercised without modifying their records, and the same source identities appear through saved Lookups.
+
+### S16.07 — Explain automation using historic evidence, not new side effects
+
+In [Power Automate](https://make.powerautomate.com), open the original solution → **Cloud flows** and show only safe **details and historical Run history**. Inspect distinct internal flow identities rather than combining two entries just because both are titled **DC08 Incident Status Notice**. Do not turn Off flows On, trigger an outgoing notification, edit DC10 approvals, change connection owners or rerun DC14 without approval.
+
+The previous engineering review reported 14 historical **Succeeded** runs: six associated with DC08, six with DC10, and two with DC14. In the **second DC14 run**, the “Add a new row” action was **Skipped** when the Insight Code already existed. This illustrates repeat-run deduplication for that case; it does **not** exercise an unobserved Cancelled termination branch or prove race-free concurrency under simultaneous flow runs.
+
+Explain the architecture of connected flows in plain language: **trigger → source lookup → conditions → authorization/connection boundary → record or notification → run-history evidence**. Identify whether the source flow is On/Off **at recording time**; historical action success is not permission to reactivate it.
+
+**Checkpoint F16-07:** Historical success, skipped, Off and Not Run states are quoted exactly; no additional flow activity is introduced.
+
+### S16.08 — Reopen the local Power BI analytics model and validate the report
+
+Use your locally authorized **Power BI Desktop**, if accessible, to open the saved `DC360-Operations-Intelligence.pbix` or the [path-sanitized PBIP learning source](./powerbi/README.md). For the source archive, restore the ten monitoring CSVs in a dedicated folder and the six reference files in their own directory, correct neutral local paths, then **Refresh**. Do not claim a new Desktop test if the application cannot be operated in the current session.
+
+| Model component | Baseline to confirm after clearing all slicers and chart selections |
+| --- | --- |
+| Model | **7 loaded tables; 6 active single-direction relationships; 20 measures; 5 report pages** |
+| Monitoring | **50,000 readings; 24 sensor codes** |
+| Flagged samples | **290 High; 193 Low; 49,517 Normal; 483 out of range** |
+| Operational sources | **120 alarms; 200 incidents; 500 source work orders** |
+| Quality measures | **0 Sensor Code mismatches; 0 flag-vs-threshold mismatches** |
+
+Show **Executive Overview**, **Monitoring & Trends**, **Alarm Operations**, **Incident Operations**, and **Maintenance Operations**. Selecting only `Unit = kW` does not necessarily isolate one metric because Output Power and Electrical Power both use kW; the defended Avg/Peak measure appropriately blanks when different metric types remain in scope. Clearing chart cross-highlighting matters before quoting peak values.
+
+If Desktop access is absent, use public source-file evidence and label the **current-session runtime test Not Run**. A previously successful Part 13 report is useful historical evidence, but cannot become a fresh Part 16 test by wording alone. Publishing to Power BI Service is separate, and **not required**.
+
+**Checkpoint F16-08:** Model facts actually rechecked in Desktop or explicitly marked Not Run.
+
+### S16.09 — Present engineering, security, release and deployment limits accurately
+
+Open [Part 15](./Build-Guide.md#part-15--engineer-test-and-prepare-the-solution-for-release) and review its engineering evidence pattern. The previous maker report recorded **13 Pass, 5 Not Run, 0 Fail** in a **private** 18-case UAT result. The remaining cases were Command Center Play search/navigation, FieldOps Play navigation, potentially write-capable capacity overlap testing and a repeat Power BI Desktop model/card verification. These values must never be presented as new Part 16 results.
+
+The same report recorded **148 Medium solution-checker findings**, including **143 accessibility findings** in the Capacity Planner; two DC08 flows with matching display names; non-admin role isolation untested; some tables without enforced alternate keys; and absent target-environment import validation. An unmanaged source archive was exported and privately hash-verified, but **no authorized target import** was performed. The export is **not** a database backup, a tested recovery procedure, a production release or evidence that all dependencies were found in a target system.
+
+Classify each gate as **Pass / Conditional / Blocked / Not Tested** with evidence. In this state, an educational portfolio demonstration may be **conditionally ready**, while an enterprise production deployment is **not verified ready**.
+
+**Checkpoint F16-09:** None of the known limitations is erased from the case study or final presentation.
+
+### S16.10 — Finish the public GitHub case study and evidence index
+
+Open [Case Study](./portfolio/Case-Study.md), [Evidence Matrix](./portfolio/Evidence-Matrix.md), [Architecture](./portfolio/Architecture.md) and [Demo Walkthrough](./portfolio/Demo-Walkthrough.md). Verify that the links are valid and every numerical claim belongs to a matching source or prior reported implementation outcome.
+
+A good public claim uses precise verbs: **“published source,” “documented,” “verified from saved file,” “reported by maker,” “reopened in Desktop,” “not tested.”** A bad claim turns an educational design into “production deployed,” “real-time facility monitoring,” “fully security audited” or “all tests passed.”
+
+Screenshots are optional. If you supply one, crop/redact its signed-in user, browser URL and tenant information; label its capture date, app name, published version and whether it shows a training record. Do not invent or render an application screenshot to make a missing test look successful. Never upload the original unmanaged solution ZIP, its private checksum, tenant-specific UAT report, connection metadata or non-sanitized screen recordings.
+
+**Checkpoint F16-10:** The case study can be read by a hiring reviewer without hidden links, an account login, confidential artifacts or unverifiable claims.
+
+### S16.11 — Assemble the final portfolio presentation and recording sequence
+
+Open the [12-slide presentation storyboard](./portfolio/Presentation-Storyboard.md). It uses the same verified learning sequence: problem → synthetic scale → architecture → Dataverse model → six apps → workflows → capacity → Power BI → quality → ALM → outcomes. Create slides or a local presentation from the approved content. Keep labels short, graphics source-supported and screenshots real and redacted.
+
+For an actual demonstration video, use the [twelve-scene walkthrough](./portfolio/Demo-Walkthrough.md) as your route (suggested **12–18 minutes**, depending on actual app load times). Record only permitted read-only states; save raw screen captures privately and inspect every frame for exposed account details before creating a public video. A storyboard and slide deck **are not a recorded or verified live demo**. If any scene is inaccessible, keep the recording accurate by displaying the published case-study source and saying the live scene was not demonstrated.
+
+Conclude with the concrete engineering outcomes and open release gates, rather than making a fabricated performance claim. The final portfolio presentation may be published only after its source and privacy check.
+
+**Checkpoint F16-11:** Each slide and demonstration scene maps to a concrete GitHub source, actual permitted app capture or explicitly labelled conceptual diagram.
+
+### S16.12 — Conduct final portfolio quality assurance and close the core build
+
+Use the [Part 16 verification CSV](./quality/Part-16-Final-Verification.csv) as a fresh learner **template**. It starts with 12 **Not Run** tests; record the real results in a **private copy**. Check the following without changing previous functionality:
+
+- The single cumulative Build Guide contains Parts 00–16 in order and its linked files exist.
+- All synthetic datasets remain intact; no unnecessary Dataverse copy of the 50,000 monitoring rows was created.
+- The six application experiences are named accurately; Cloud flows are reported as **five actual flow records** (including duplicate DC08 display names), not as unverified original planning targets.
+- Architecture, case study, evidence index, demo walkthrough and slide storyboard agree on the data boundaries.
+- Any public image or video has been independently privacy reviewed and does not expose tenant/user details.
+- The actual published-app versions, new flow runs, role tests, Desktop refresh and import outcomes are **never assumed** from previous instructions.
+- The project includes an honest learning-demo readiness verdict and a separate enterprise-deployment limitations list.
+- The original source solution, private hash and private test evidence remain outside public GitHub.
+
+A project can close its **core educational documentation** with some runtime verification still outstanding. Report exactly what has been completed: source-first guide and synthetic data published; demonstrated capabilities supported by prior reports and inspectable source; unresolved gates documented. Do not replace a missing result with a celebratory assumption.
+
+**Checkpoint F16-12:** Links and privacy pass; any remaining runtime demonstration, accessibility remediation, security-role verification and deployment validation are explicitly assigned follow-up statuses, not hidden.
+
+### Finish Part 16 — Data Center Operations 360
+
+You now have an **end-to-end fictional Power Platform project portfolio**: connected Dataverse registers, three Canvas and three model-driven application experiences, guarded solution flows, a 50,000-row synthetic Power BI Desktop learning model, engineering/ALM evidence, a reproducible public case study, architecture diagrams, an evidence index and a final presentation storyboard. These artifacts show *design, construction, testing boundaries and professional communication* without pretending to operate a real facility or ship a production deployment.
+
+Use the [project case study](./portfolio/Case-Study.md) as the portfolio landing explanation, the [architecture document](./portfolio/Architecture.md) as the technical view, and the [demo walkthrough](./portfolio/Demo-Walkthrough.md) to perform a verified, privacy-safe final demonstration.
+
+**Microsoft Learn references:**
+
+- [Power Platform solutions and ALM](https://learn.microsoft.com/en-us/power-platform/alm/overview-alm)
+- [Design your model-driven app](https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/design-custom-business-apps-using-app-designer)
+- [Power Apps Monitor](https://learn.microsoft.com/en-us/power-apps/maker/canvas-apps/monitor-overview)
+- [Build Power BI Desktop reports](https://learn.microsoft.com/en-us/power-bi/create-reports/desktop-report-view)
+- [Power BI Desktop project format](https://learn.microsoft.com/en-us/power-bi/developer/projects/projects-overview)
+
+*Educational records are fictional. Nothing in this project authorizes physical equipment operation, real facility maintenance, identity impersonation, unapproved notifications or unsafe production deployment.*
 
 
 ## Microsoft Learn references
