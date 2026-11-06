@@ -3725,7 +3725,7 @@ Use saved Dataverse views or supported read-only Dataverse queries and the alrea
 | Intelligence | 3 Rules, 2 Knowledge Articles, 3 Insights | Required Rule Lookup, source links, Active alternate keys |
 | Monitoring report | 50,000 imported CSV readings (24 sensors) | Local Power BI Desktop model refresh or sanitized source verification |
 
-Inspect several actual **alternate-key statuses** under table **Schema → Keys**. Reopen sample Lookup links, including **INC-0001 → INS-INC-0001-P1** and **BAL-0002 → INS-BAL-0002-REORDER**. Count unique business codes rather than using a visual's row count as proof. Do not automatically repair mismatches by deleting records. For Capacity, note that the baseline Hall planning figures and simulated monitoring samples are distinct models; no measured rack power is reconciled to design headroom.
+Inspect several actual **alternate-key statuses** under table **Schema → Keys**. Reopen sample Lookup links, including **INS-INC-0001-P1 → INC-0001 / RUL-0001** and **INS-BAL-0002-REORDER → BAL-0002 / RUL-0003**, where each arrow represents an Insight Lookup pointing to its existing source or Rule. Count unique business codes rather than using a visual's row count as proof. Do not automatically repair mismatches by deleting records. For Capacity, note that the baseline Hall planning figures and simulated monitoring samples are distinct models; no measured rack power is reconciled to design headroom.
 
 **Checkpoint 7 — Data integrity:** Record exact present counts, unique keys and sampled Lookup outcomes. Any extra/missing records are investigated without overwriting prior practice data.
 
