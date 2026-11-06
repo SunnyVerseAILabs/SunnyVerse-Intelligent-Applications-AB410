@@ -2179,7 +2179,7 @@ You have a linked **Change Request**, **Risk Register** and **MOP Step** model, 
 
 ## Part 11 — Run Supporting Operations: Vendors, Spares, Inventory and Shift Handover
 
-An operations team must know more than which incidents and maintenance work orders are open. It also needs to know **who supplies replacement parts**, **which spares are available at each data hall**, and **what information the next shift needs to receive**. This lesson creates a connected Supporting Operations register in Dataverse and a model-driven app to work with it.
+Part 10 linked maintenance work to change reviews, risks and approval decisions. The next operational responsibility is continuity between shifts: teams must know **which fictional suppliers support a part**, **what spare quantities are recorded in each data hall**, and **which open work must carry into the next shift**. Here you will build the Supporting Operations registers in the existing solution and make them usable through a model-driven app. Reuse the assets, halls, employees, incidents, work orders and changes you have already created.
 
 We will create four tables—**DC Vendor**, **DC Spare Part**, **DC Inventory Balance**, and **DC Shift Handover**—then configure their Lookup relationships, forms and views. The practice records are entered through the app. **No CSV import, new cloud flow, live inventory feed, or message to a real supplier** is required.
 
@@ -2199,7 +2199,7 @@ Open [Power Apps](https://make.powerapps.com), choose the authorized environment
 
 | Existing table | Check in its Data view | Used later for |
 | --- | --- | --- |
-| DC Data Hall | `Data Hall 01` and `Data Hall 02` | Inventory location and shift coverage |
+| DC Data Hall | `Data Hall 01` and `Data Hall 02` | Inventory location and shift coverage; the existing primary-name display column is **Hall Name** (in the validated practice environment, schema `svrg_hallname`, not `datahallname`) |
 | DC Asset | `UPS 001` and `Cooling Unit 002` | Spare compatibility and equipment context |
 | DC Employee Profile | Fictional engineers such as `Noah Morales` and `Sana Kim` | Outgoing/incoming handover references |
 | DC Work Order | Valid `WO-0001` and `WO-0002` | Open-work context |
@@ -2208,7 +2208,7 @@ Open [Power Apps](https://make.powerapps.com), choose the authorized environment
 
 When a parent lookup displays only an identifier or an empty main form, inspect the existing table's published Main form and selected app components rather than creating duplicate parent tables. Use the real Dataverse lookup picker when linking records.
 
-For all four new tables below, use **Standard** and **Organization ownership**, create a readable **primary name**, and confirm its **Business required** setting **after saving**. A creation dialog may not retain optional advanced settings. The publisher target prefix remains **`svrg`**. For each business-code column, create an alternate key and wait for its status **Active** before creating duplicate-prone test data.
+For each of the four new tables, select **Standard** and **Organization ownership** at creation. Enter the stated primary-name label; **after the table is created, reopen Schema → Columns → the primary-name column and explicitly set Required = Business required, then save and reopen it again to verify persistence**. In the practice build, this setting reverted for all four primary names when initially created, so do not treat the creation dialog as proof. Confirm the `svrg` publisher prefix in saved metadata. Create the code alternate key only after its column is fully saved, and wait for the key status **Active** before adding records. A just-created key can fail temporarily; inspect and retry only after confirming the column and key are not already present.
 
 **Checkpoint 1 — Existing data.** Both data halls, sample Assets and the existing Employee, Incident, Work Order and Change records can be opened. No new table has been created just to replace an existing reference.
 
@@ -2242,7 +2242,7 @@ Create the table. Reopen **Vendor Name** and confirm **Business required**; upda
 
 For Choice columns use **Data type → Choice** and turn off **Sync with global choice** if shown, so the options remain local. Save each column, inspect its actual schema name, and do not create duplicates if a previous save appeared to hang.
 
-Under **Schema → Keys → New key** create **DC Vendor Code Key** using just **Vendor Code**. Save and refresh until **Active**; Pending can last minutes. Do not fabricate option integers: verify actual saved Choice values if later using an API.
+After confirming **Vendor Code** was saved, open **Schema → Keys → New key**, name it **DC Vendor Code Key**, select only **Vendor Code**, then save. If the editor returns **HTTP 400** immediately after column creation, refresh the table and inspect both Columns and Keys; verify Vendor Code exists and a key was not already created, then retry once the column metadata is available. In the validated practice run the retry succeeded and the key took several minutes to become **Active**. Check the actual key status before entering supplier records. For the local Choice columns, use their labels in forms; if using an API, read the numeric option values from saved metadata rather than guessing them.
 
 **Checkpoint 2 — Vendors.** DC Vendor has one primary name, eight additional business columns, two local Choices and an Active Vendor Code key.
 
@@ -2286,14 +2286,14 @@ A single spare may have different quantities in Data Hall 01 and Data Hall 02. C
 | Balance Name / `svrg_BalanceName` | Human-readable part and hall label | Primary Text / Business required | Created with table |
 | Balance Code / `svrg_BalanceCode` | Unique location-specific inventory record | Text / Business required | Max 24; Searchable Yes |
 | Quantity On Hand / `svrg_QuantityOnHand` | Physical quantity represented in synthetic data | Whole Number / Business required | Min 0; max 100,000 |
-| Quantity Reserved / `svrg_QuantityReserved` | Quantity committed to open fictional work | Whole Number / Business required | Min 0; max 100,000; default 0 if available |
+| Quantity Reserved / `svrg_QuantityReserved` | Quantity committed to open fictional work | Whole Number / Business required | Min 0; max 100,000; **no column default in the verified designer; enter 0 explicitly when nothing is reserved** |
 | Reorder Required / `svrg_ReorderRequired` | Manual flag for a low-availability balance | Yes/No / Optional | Default No |
 | Last Counted On / `svrg_LastCountedOn` | When the simulated stock count was recorded | Date and Time / Optional | User local behavior |
 | Count Notes / `svrg_CountNotes` | Fictional discrepancy or follow-up explanation | Multiline Text / Optional | Max 2,000 |
 
 Create **DC Balance Code Key** on Balance Code, wait for Active, and verify **Balance Name** is Business required. **Spare Part** and **Data Hall** are added as required Lookups in S11.06.
 
-For every balance, calculate **Available = Quantity On Hand − Quantity Reserved** and compare it to the selected Spare Part's **Reorder Point**. Set **Reorder Required = Yes** when Available is at or below that point; otherwise No. In this exercise the flag is **manual**: changing a quantity does not automatically recalculate it. Enforce **0 ≤ Reserved ≤ On Hand** during data entry; the separate column-level minimum does not enforce this cross-field rule.
+For every balance, manually calculate **Available = Quantity On Hand − Quantity Reserved**. Compare Available with the related Spare Part's **Reorder Point** and enter **Reorder Required = Yes** when Available is at or below that threshold; otherwise choose No. Enter **Quantity Reserved = 0** explicitly where applicable. Before saving, manually check **0 ≤ Quantity Reserved ≤ Quantity On Hand**. This is a **human validation checkpoint**, not an enforced Dataverse cross-field rule: the numeric column minimums cannot compare two fields, and neither the available amount nor the reorder flag recalculates automatically. Reopen each balance and repeat the check if someone edits the quantities.
 
 **Checkpoint 4 — Balance design.** The Inventory Balance table exists with a working unique code, numeric nonnegative fields and the manual low-stock flag. No quantities are stored on the part catalog itself.
 
@@ -2342,7 +2342,9 @@ For every relationship set **Delete = Restrict**, with **Assign / Share / Unshar
 
 ### S11.07 — Create the Main forms and operational system views
 
-Create one new **Main form** on each of the four tables using **Forms → New form → Main form**, then save and publish. Use a **one-column section** for multiline notes and two-column sections for short identifiers, statuses and lookups. These are model-driven forms; they use built-in field controls, not Canvas Text/Fill/OnSelect formulas.
+Before building the Supporting Operations forms, inspect **DC Asset → Forms** for a published form named **DC Asset — Maintenance Context**. If none is present, use **Forms → New form → Main form**, name it exactly, and include the existing **Asset Name, Asset Code, Asset Category, Criticality, Operational Status, Data Hall, Manufacturer, Model Number, Serial Number, Rated Power kW and Install Date** fields. Save and publish; do not create a second Asset table or recreate any of its columns. Likewise inspect **DC Data Hall → Forms**. If the only usable form shows Hall Name alone, create and publish **DC Data Hall — Identity Main** with the existing **Hall Name, Hall Code, Campus, Criticality, Design IT Capacity kW and Active** fields. Confirm its primary name uses the **Hall Name** column; select it by display name even where the saved schema shows `svrg_hallname`.
+
+Next create one named **Main form** on each of the four new tables with **Forms → New form → Main form**, then save and publish. Use one-column sections for multiline notes and two-column sections for short identifiers, statuses and lookups. All **Business required** fields, including lookup fields, must appear. These are model-driven forms using built-in field controls, not Canvas Text/Fill/OnSelect formulas.
 
 | New Main form | Sections and exact fields |
 | --- | --- |
@@ -2366,9 +2368,11 @@ Create these **eight views** under **Views → New view**, choose the listed col
 | DC Shift Handover | **DC Shift Handovers** | Handover Code, Handover Name, Handover At, Shift Group, Handover Status, Data Hall | None; sort Handover At descending |
 | DC Shift Handover | **DC Handover Pending Review** | Handover Code, Handover At, Handover Status, Data Hall, Incoming Employee | Handover Status = Draft OR Ready for Review |
 
-The **DC Reorder Review** view filters a **manual Boolean**, not a calculated comparison between Quantity On Hand and a related Spare Part's threshold. Always check the values before changing the flag; the view by itself does not guarantee correct inventory. OR status filters must use an **OR group**, not AND.
+For **DC Inventory by Hall**, sort by the **Data Hall** Lookup's **display value**, then Balance Code where the designer permits a secondary sort; this is a display-name sort, not a GUID sort. For **DC Active Vendors**, set two conditions joined with **AND**: Active = Yes and Vendor Status = Approved. Use the **Approved** label in the view designer; stored Choice numeric values are metadata-dependent and should only be read from that environment for API operations. For **DC Handover Pending Review**, put Draft and Ready for Review in one **OR** group, not AND.
 
-**Checkpoint 7 — Forms and views.** Four named Main forms show all required fields, and eight published views show the intended queues without blank auto-generated forms.
+The **DC Reorder Review** view filters a **manually saved Boolean**, not a calculated comparison between Quantity On Hand and a related Spare Part's threshold. Recalculate and check the manual value after quantity edits. The view itself does not guarantee inventory correctness.
+
+**Checkpoint 7 — Forms and views.** All four new named Main forms show required fields, the Asset and Data Hall context forms are readable, and eight published views show the intended queues. Verify the two-context-form names and use their actual saved components rather than blank auto-generated forms.
 
 ### S11.08 — Assemble DC Supporting Operations Hub
 
@@ -2386,16 +2390,16 @@ Under **Add page → Dataverse table**, add the **existing** tables and arrange 
 | Navigation group | Table page | Use in this app |
 | --- | --- | --- |
 | **Shift Operations** | DC Shift Handovers | DC Shift Handover — Main; both handover views |
-| **Shift Operations** | DC Incidents | Existing appropriate form/views |
+| **Shift Operations** | DC Incidents | Select a published existing Incident Main form and an existing Incident view explicitly under **In this app**; do not leave both unselected |
 | **Shift Operations** | DC Work Orders | DC Work Order — Maintenance Main; four work-order views |
 | **Shift Operations** | DC Change Requests | DC Change Request — Review Main; existing change views |
 | **Inventory & Partners** | DC Inventory Balances | DC Inventory Balance — Stock Main; both inventory views |
 | **Inventory & Partners** | DC Spare Parts | DC Spare Part — Catalog Main; both spare views |
 | **Inventory & Partners** | DC Vendors | DC Vendor — Support Main; both vendor views |
-| **Inventory & Partners** | DC Assets | DC Asset — Maintenance Context; existing asset views |
-| **Inventory & Partners** | DC Data Halls | Existing appropriate Main form/views |
+| **Inventory & Partners** | DC Assets | Published **DC Asset — Maintenance Context** form; existing Asset view |
+| **Inventory & Partners** | DC Data Halls | Published **DC Data Hall — Identity Main** form; existing Data Hall view |
 
-In the app designer select the intended forms and views under **In this app** to avoid exposing blank or unrelated defaults. If the Asset or Data Hall existing Main form is empty, add a focused form showing its existing identity fields instead of recreating the table. Model-driven apps inherit supported theme settings; unlike the Canvas apps, these pages do not use `ColorValue` or Comic Sans formulas.
+Under each table page, inspect **Forms → In this app** and **Views → In this app**, using **Add** to select its published forms and views as shown. In particular, explicitly select an existing Incident form and view: when Incidents was added without a selected form or view, app validation showed **“Entity doesn't reference a form or view”**. That warning can allow access to broader defaults, so correct the app selection rather than describing the warning as a successful validation. If no appropriate Incident form or view exists, inspect its published components and add a focused existing-entity form or view; do not recreate the Incident table. Check and publish the Asset Maintenance Context and Data Hall Identity forms created in S11.07. Model-driven apps inherit supported theme settings; unlike the Canvas apps, these pages do not use `ColorValue` formulas.
 
 Choose **Save → Publish → Play**. Open Vendor, Spare, Balance and Handover pages and confirm each shows its expected form.
 
@@ -2403,7 +2407,7 @@ Choose **Save → Publish → Play**. Open Vendor, Spare, Balance and Handover p
 
 ### S11.09 — Create and verify a small connected practice set
 
-Use the model-driven app's **New** command on each table. Enter the sample records in this order so Lookup pickers can find the parents. These names are fictional external partners and are not subsidiaries of SunnyVerse Renewable Group.
+Use the model-driven app's **New** command on each table, following the parent-first sequence below. Start by creating **VEN-0001** through **DC Vendor — Support Main** to verify that the complete form saves. For bulk entry in an authorized development environment, advanced learners may use a supported Dataverse Web API client, but must bind **real Lookup references**, not text or invented GUID values; then reopen and read back **every saved row in the model-driven app**. The learner path remains the app form. Do not import unrelated CSV files or create duplicate sample records. All named partners are fictional external suppliers, not SunnyVerse Renewable Group subsidiaries.
 
 **A. Vendor records**
 
@@ -2412,7 +2416,7 @@ Use the model-driven app's **New** command on each table. Enter the sample recor
 | `VEN-0001` | Data Center Partner A — Cooling Systems Support | Cooling Systems | Approved | Yes |
 | `VEN-0002` | Wind Partner B — Electrical Services | Electrical Services | Approved | Yes |
 
-Set Contact Role to **Service Desk**, Support Window to **Training business hours**, and if you add Contact Email, use a **nonworking address under example.com** (for example `support@example.com`). Do not send email to a fictional vendor.
+Set Contact Role to **Service Desk**, Support Window to **Training business hours**, and use only a **nonworking address under example.com** if you populate Contact Email (for example `support@example.com`). **VEN-0002 retains the fictional name Wind Partner B — Electrical Services** so it matches the established exercise records; in this example the partner supplies a cross-sector electrical service. Do not treat the partner as an internal SunnyVerse team or send it real email.
 
 **B. Spare catalog records**
 
@@ -2467,9 +2471,9 @@ On **BAL-0002**, temporarily change **Quantity On Hand** to 5, leave Reserved 0,
 | Tables | Exactly one new Vendor, Spare Part, Inventory Balance and Shift Handover table |
 | Schema | Intended `svrg` prefixes, required primary names and code keys Active |
 | Relationships | 2 Spare Part + 2 Inventory Balance + 6 Handover = **10** new Lookup columns |
-| Forms | Four complete named Main forms with required Lookup fields |
+| Forms | Four complete named new Main forms, plus the published **DC Asset — Maintenance Context** and **DC Data Hall — Identity Main** context forms where previously absent |
 | Views | Eight published operational views and correct filter grouping |
-| App | One published **DC Supporting Operations Hub** |
+| App | One published **DC Supporting Operations Hub** with explicitly selected forms/views, including Incidents, and no unresolved form/view selection warning |
 | Data | 2 fictional vendors, 3 spare parts, 3 balances, 2 handovers |
 | Inventory | Reorder flags match the manually verified available quantities and part thresholds |
 | Handovers | Incoming/outgoing personnel and related work context resolve; no real identity verification implied |
