@@ -53,7 +53,7 @@ Organization-owned Dataverse tables, application sharing permissions, Choice met
 
 ## Observed interface and workflow limitations
 
-During the latest maker-reported final walkthrough, **Rack 013 was confirmed Hold in its Dataverse record** but the Capacity Planner's Rack Detail did not show that status. **Reserved U and reserved kW displayed blank instead of 0**. Those are **display defects** to address separately; do not infer that the underlying planning rows were missing, and do not edit their values merely to create a clearer screenshot.
+During the latest maker-reported final walkthrough, **Rack 013 was confirmed Hold in Dataverse and on the filtered Rack Browse list**, but the Capacity Planner's Rack Detail did not show that status. **Reserved U and reserved kW displayed blank instead of 0**. Those are **display defects** to address separately; do not infer that the underlying planning rows were missing, and do not edit their values merely to create a clearer screenshot.
 
 There are **five distinct solution flow records**. Two share the display name **DC08 Incident Status Notice**, but the newer record has **no recorded historical executions**. The fourteen previously reported successful runs break down as **4 older incident notice + 2 inspection follow-up + 6 change approval + 2 insight demonstration**. The second insight run skipped duplicate insertion. None of this establishes reliable concurrent writes, exercised cancelled paths or a safe reason to enable an Off flow.
 
@@ -64,6 +64,6 @@ There are **five distinct solution flow records**. Two share the display name **
 - **143 reported accessibility findings** in Capacity Planner require remediation; a zero-Formula-error checker result does not erase them.
 - The unmanaged v1.0.0.0 solution export and its private hash do **not** prove import success, target dependency availability, data restore or enterprise deployment.
 - Visuals in a developer environment may contain a banner, account details or environment information. Only actual redacted captures from authorized published app versions should be shared.
-- The last Part 16 review did **not reopen Power BI Desktop** or capture a publishable video. Earlier Power BI checks and source files are separate evidence.
+- A later Part 16 check **opened Power BI Desktop**, but Refresh **failed with a Dim Sensor cyclic-reference error**, blocking six queries. The loaded model retained the expected values, which do not establish a successful refresh. Seven privately redacted read-only Play captures were reported, but no approved final recording has been published.
 
 The architecture is a transparent model of the learner's documented build, with real limitations visible. See [the final case study](./Case-Study.md) for the concise presentation and [the verification checklist](../quality/Part-16-Final-Verification.csv) to repeat the checks in a new authorized environment.
