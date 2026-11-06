@@ -3917,39 +3917,57 @@ Use only the **published Play version** when labelling an image as a published a
 
 **Checkpoint F16-03:** The capture is genuinely privacy-reviewed **or** its absence is explicitly recorded. Nothing private was published.
 
-### S16.04 — Review the reference architecture and its actual boundaries
+### S16.04 — Explain the architecture with the correct connector boundaries
 
-Open the public [Architecture document](./portfolio/Architecture.md) and inspect its Mermaid diagram and [decision table](./portfolio/Architecture.md#architecture-decision-record-public-safe). Follow one fictional source record through this conceptual sequence:
+Open the [public architecture document](./portfolio/Architecture.md), render its Mermaid diagram, and trace a fictional record from a **Data Hall → Asset → Sensor / Alarm → Incident → Work Order**, then into supporting capacity, governance and review apps. Each **many-to-one** Dataverse relationship is backed by an actual child Lookup—do not draw it as a plain-text code field.
 
-**Data Hall → Asset → Sensor / Alarm → Incident → Work Order**, with separate model-driven governance, inventory, shift and capacity registers. The three Canvas apps give focused interfaces; the three model-driven apps provide relational record management. Power Automate flows act through configured connection references with real authenticated access. A rules-first Insight stores links back to its originating records.
+The diagram is intentionally separated into two valid paths:
 
-The **Power BI Desktop source is a separate CSV Import analytical model** with seven model tables, six relationships, twenty measures and five report pages. Do not draw a streaming or bidirectional real-time connector from Dataverse to that report. The 50,000 synthetic readings are not Dataverse rows and a High reading flag is not a saved DC Alarm event. The manually maintained rack headroom model is not measured electrical load.
+| Path | Components | What the diagram does **not** imply |
+| --- | --- | --- |
+| Operational | **Canvas / model-driven apps → Dataverse**, plus **Power Automate flows → Dataverse** | A Canvas validation is an atomic booking lock; fictional employee records authenticate an identity |
+| Connector | **Power Automate flow → configured connection references → authorized Microsoft service** | Dataverse directly invokes Outlook or Approvals without a flow |
+| Analytics | **Published synthetic CSVs → Power BI Desktop Import → report pages** | Dataverse streams 50,000 monitoring readings in real time, or a High threshold flag creates a saved Alarm |
 
-**Checkpoint F16-04:** Each diagram line is supported by an implemented relationship, a published source file, or an explicitly labelled *conceptual* learning boundary.
+The reference solution has **two Dataverse**, **one Outlook** and **one Approvals** connection references. **No Teams connection reference was found** in that solution. A separate training test involving Teams is not evidence of a Teams dependency in the finished solution. Do not add a Teams node or claim Teams messaging for this architecture.
 
-### S16.05 — Demonstrate the three existing Canvas application experiences
+The Mermaid source uses **quoted multiline labels with `<br/>`** so labels render without raw, unescaped line breaks. The connector link originates at **Power Automate**, not Dataverse. If the diagram does not render, inspect the source and fix the diagram before using it in a portfolio capture.
 
-Use the **published Play version** of each app if your account has access; check version/publish state rather than assuming the Studio preview is live.
+Explain the decision to keep operational records in Dataverse and the **50,000 synthetic readings** in CSV + Power BI. Rack budget/headroom remains a **planning calculation**, not measured electrical consumption. The Power BI model has seven loaded tables and five report pages, but it is not published to Power BI Service solely because PBIP source appears on GitHub.
 
-| App | Safe navigation | What to show and verify | Do not do |
-| --- | --- | --- | --- |
-| **DC Operations Command Center** | Home → incident/alarm browse → existing details → Home | Read fictional KPIs and recent incident rows; baseline source is 200 incidents, 120 alarms, 100 assets | Submit a new incident, send a notice or imply a search was tested if not actually used |
-| **DC FieldOps** | Home → existing assigned work/inspection → details | Mobile Canvas form and source-linked record reading | Create evidence, make an inspection upload, claim authenticated fictional staff identity |
-| **DC Capacity Planner** | `scrCapacityHome` → `scrRackBrowse` → `scrRackDetail` → request/allocation **read-only** screens | Two Hall Baselines, 20 rack plans, 42U plan structure, held rack flags and existing reservation totals | Click a possible write-capable overlap validation path without authorization |
+**Checkpoint F16-04:** The diagram renders, uses the real connection ownership, and honestly separates operational transactions from the local analytical model.
 
-Remember that the Capacity Planner has prior reported **143 accessibility findings** and a **client-side overlap check** that is **not server-atomic**. The script must not call it an enterprise reservation engine. If Command Center/FieldOps Play-mode navigation is not accessible, mark the relevant final verification as Not Run—not as a retrospective Pass.
+### S16.05 — Demonstrate the three published Canvas apps without writing data
 
-**Checkpoint F16-05:** All demonstrated screens actually loaded; every unavailable navigation or performance outcome is labelled.
+Open each app via its current authorized **published Play** entrypoint, and record only interactions you actually observe.
 
-### S16.06 — Demonstrate the three model-driven applications and real records
+| App | Safe read-only route | What to check |
+| --- | --- | --- |
+| **DC Operations Command Center** | Home → Incidents → Search `INC-0001` → open read-only details | The published Home should reflect the saved fictional counts: **200 incidents / 120 alarms / 100 assets**. Show the actual search result, not only a Studio screenshot |
+| **DC FieldOps** | Home → Incidents list → any existing saved inspection/record you can safely open | In the previous report, Home showed **200 incidents and two inspections**; only claim further navigation actually exercised |
+| **DC Capacity Planner** | `scrCapacityHome` → `scrRackBrowse` → `scrRackDetail` | Two hall baselines (illustrative headroom **443 / 495 kW**), 20 rack plans and saved Rack 013 detail |
 
-Open the **published**, currently authorized versions of **DC Asset & Maintenance Manager**, **DC Change & Risk Manager** and **DC Supporting Operations Hub**. Use saved Main forms and system views; do not create, delete or change approval states merely to generate a capture.
+**Known Rack Detail display gap:** A previous published Play walkthrough showed that **Rack 013's Hold status was not visible on the detail screen**, although the saved Dataverse Rack Plan record was **Hold**. **Reserved U and reserved kW were blank instead of 0** when no reservation was recorded. Verify the actual saved **DC Rack Plan → Planning Status** and existing Allocations before interpreting this display. Do not say the UI now displays Hold or zeros unless a later authorized app change and Play test proves that.
 
-In Asset & Maintenance Manager, show an existing Asset with a Work Order and its source Lookup. In Change & Risk Manager, open an existing fictional change/MOP review and explain that a mock approval state is not an authenticated safety signature. In Supporting Operations Hub, show all three navigation groups: **Shift Operations**, **Inventory & Partners**, and **Intelligence & Knowledge**. Open **DC All Operational Insights** (three source-linked findings), **DC All Intelligence Rules** (three rule definitions), **DC Approved Knowledge** (the Approved article) and the knowledge review view for the additional Reviewed article, if those records remain available.
+**Do not run a potentially writing overlap test for a video.** A capacity “validate/propose” button can be connected to `SubmitForm` and may create a row. Inspect its Power Fx first and ask for approval before any write-capable test. Also do not claim that the training overlap logic is server-side, concurrency-safe reservation enforcement.
 
-When a view defaults to Approved, it is correct for it to omit a Reviewed item. Do not claim missing data unless checking the appropriate other view.
+If Play shows a developer environment banner, include only privacy-reviewed captures. If the tested version does not load, mark the exact screen as **Not Run / Blocked** rather than substituting an invented screenshot.
 
-**Checkpoint F16-06:** Three existing model-driven apps are exercised without modifying their records, and the same source identities appear through saved Lookups.
+**Checkpoint F16-05:** Screens and searches shown were genuinely visited, Dataverse was used to confirm any missing Rack status/zero labels, and no data was submitted.
+
+### S16.06 — Demonstrate model-driven maintenance, change and intelligence experiences
+
+Use the **published Play versions** and actual saved Main forms/views for the three model-driven applications:
+
+**DC Asset & Maintenance Manager:** Open **Active Work Orders**, select an existing Work Order and inspect its related Asset Lookup. A previously reported Active Work Orders view contained **335 rows**. That is a filtered view count, not the 500-row original CSV baseline and not the additional learning-tenant count of 501.
+
+**DC Change & Risk Manager:** Open previously saved fictional change reviews, such as **CHG-0001 Approved** and **CHG-0002 Rejected** if they remain in those states. Show the actual Change/Risk/MOP relationship, not a fabricated authorization. A Choice status is not a legal electronic signature, physical work permit or authenticated real-world approval.
+
+**DC Supporting Operations Hub:** Check the three retained navigation groups: **Shift Operations**, **Inventory & Partners**, and **Intelligence & Knowledge**. Open a Shift Handover and an Inventory Balance, then display **DC All Operational Insights** (the three source-linked examples), **DC All Intelligence Rules** (three rules), and the two Knowledge views. **KNO-0001** appears in **DC Approved Knowledge** while **KNO-0002** is **Reviewed** and belongs in the **DC Knowledge Review Queue**. A view that filters to Approved is not evidence that the Reviewed record is missing.
+
+Reopen an Insight record and use its actual Rule and Incident, Work Order or Inventory Balance Lookup to reach the related source. Do not change Review Status, add stock, approve a change or trigger a notification merely to improve the demonstration.
+
+**Checkpoint F16-06:** All three model-driven app views and selected real Lookups are shown without changes to source rows or approvals.
 
 ### S16.07 — Explain automation using historic evidence, not new side effects
 
