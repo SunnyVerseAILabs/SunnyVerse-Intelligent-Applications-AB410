@@ -6,7 +6,7 @@ This walkthrough is the **scriptable route for an authorized read-only education
 
 ## Preflight
 
-Verify your authorized Power Apps environment, actual six app published versions, and the current On/Off state of all five cloud-flow records. Open only existing fictional records. Hide account profile, tenant/environment addresses, connection references, browser paths, real recipients and any institution-specific information. The Power Apps **developer environment banner** may need safe cropping in a final capture; never hide warnings to manufacture success.
+Verify your authorized Power Apps environment, actual six app published versions, and the current On/Off state of all five cloud-flow records. Open only existing fictional records. Hide account profile, tenant/environment addresses, connection references, browser paths, real recipients and any institution-specific information. The Power Apps **developer environment banner** may remain visible when it is non-sensitive and accurate; mask account initials and identifying headers, and never hide warnings to manufacture success.
 
 Do **not** press a capacity button that can submit a record, start any previously Off flow, send mail/Teams, change an approval or create a new Work Order. Keep the private unmanaged solution package and completed UAT file out of any recording frame.
 
@@ -22,9 +22,9 @@ Do **not** press a capacity button that can submit a record, start any previousl
 | 06 | **DC FieldOps** | Home → Incidents list → open existing record | Prior Play showed **200 incidents and 2 inspections** | No new inspection or attachment |
 | 07 | **DC Asset & Maintenance Manager** / **Change & Risk Manager** | Open saved Work Order/Asset relationship and changes | Active Work Orders view previously showed **335**, with the original 500-row CSV and 501 tenant practice total distinct | Approved Choice ≠ authenticated safety permit |
 | 08 | **DC Supporting Operations Hub** | Shift; Inventory; Intelligence; Approved Knowledge and Review Queue | Three retained nav groups; KNO-0001 Approved and KNO-0002 Reviewed in different views | Reorder flag manually maintained |
-| 09 | **DC Capacity Planner** | Two Hall Baselines → twenty Rack Plans → Rack 013 Detail; compare source record | Modeled headroom **443 / 495 kW**; Rack 013 **Hold in Dataverse** | Hold is **not shown** on Detail; reserved U/kW can be blank rather than zero |
+| 09 | **DC Capacity Planner** | Two Hall Baselines → twenty Rack Plans → Rack 013 Detail; compare source record | Modeled headroom **443 / 495 kW**; Rack 013 **Hold in Rack Browse and Dataverse** | Hold is **not shown** on Detail; reserved U/kW can be blank rather than zero |
 | 10 | **Power Automate** historical Run history | Inspect distinct flows and DC14 second run | Five flows, **4 + 0 + 2 + 6 + 2** historical success distribution; duplicate Add row skipped | No new flow runs or proven Cancelled path |
-| 11 | **Power BI Desktop** | If available, reopen PBIX, refresh, clear slicers and review all five pages | Source supports **50,000 synthetic readings**, **290 High / 193 Low / 49,517 Normal** | Fresh final-session Desktop check was **Not Run** in the reported rehearsal |
+| 11 | **Power BI Desktop** | If available, reopen PBIX, refresh, clear slicers and review all five pages | Source supports **50,000 synthetic readings**, **290 High / 193 Low / 49,517 Normal** | Desktop **Refresh failed** on Dim Sensor (cyclic reference); numbers shown were from **previously loaded data** |
 | 12 | [Case Study](./Case-Study.md) / [Evidence](./Evidence-Matrix.md) / storyboard | Present the stated findings and open gates | Documentation is complete with limits honestly described | Final privacy-approved recording/presentation evidence remains **Blocked** until captured |
 
 Suggested length: **12–18 minutes** for a deliberately paced educational portfolio tour, depending on actual app responsiveness and local Power BI access. This is a suggested route—not an observed recording duration.
@@ -35,9 +35,9 @@ Suggested length: **12–18 minutes** for a deliberately paced educational portf
 
 ## Quality and evidence boundaries
 
-The maker reported six apps saved/published and working Play navigation in the final session. It also disclosed the Rack Detail display gaps, **143 outstanding accessibility findings**, lack of target import and no authorized role-separated validation. An earlier UAT review reported **13 Pass / 5 Not Run** after export. The *separate Part 16* final verification reported **9 Pass, 2 Not Run and 1 Blocked**. Do not cite either as “all tests passed.”
+The maker reported six apps saved/published and working Play navigation in the final session. It also disclosed the Rack Detail display gaps, **143 outstanding accessibility findings**, lack of target import and no authorized role-separated validation. An earlier UAT review reported **13 Pass / 5 Not Run** after export. The *updated separate Part 16* verification reported **10 Pass, 1 Fail and 1 Blocked**. Do not cite either as “all tests passed.”
 
-If no safe capture is available, use the public source documents while stating the actual app screen **was not recorded**. Do not generate fictitious interface images or use static drawings with labels implying they came from the current tenant.
+Seven read-only published-Play captures were reported as privately redacted, but they have not been supplied for publication or assembled into a final recording. If the approved capture is unavailable, use public sources and state that the app screen **is not shown in a published video**. Do not generate fictitious interface images or use static drawings with labels implying they came from the current tenant.
 
 ## Closing narration example
 
