@@ -3286,7 +3286,7 @@ You now have a reproducible **Monitoring & Operational Intelligence** Power BI D
 
 ## Part 14 — Build Rules-Based Intelligent Operations and Reviewed Knowledge
 
-In Part 13, you learned to interpret fictional monitoring, incident and maintenance history in Power BI. Reporting shows patterns; an operations team also needs a controlled way to explain **why** a record deserves attention, show what evidence supports it, and preserve reviewed guidance for the next person. In this lesson you will build a small **rules-first intelligent-operations register** in the existing SunnyVerse Data Center Operations 360 solution.
+Part 13 supplied fictional monitoring and operations reporting. Reporting does not itself document why an individual record needs attention or who reviewed an explanation. Continue in **the same SunnyVerse Data Center Operations 360 solution** with three rules-first registers, real source Lookups, six published views, the existing Supporting Operations Hub and one guarded manual insight flow. The existing Incidents, Work Orders and Inventory records remain the evidence; do not duplicate or overwrite their source data.
 
 The core exercise does **not** need AI Builder, Copilot Studio, a new Power App, a Power BI Service workspace, SQL, real telemetry or a new license beyond what is already required for your authorized Dataverse/Power Automate learning environment. An optional, permission-gated AI-summary test comes last. Rule outcomes, fictional knowledge, and human review remain explicit even if AI features are unavailable.
 
@@ -3333,7 +3333,7 @@ From the existing solution choose **New → Table**, open advanced properties if
 | Table schema target | `svrg_DCIntelligenceRule` |
 | Primary name required level | **Business required** (verify again after creation) |
 
-Create the table. Open **Schema → Columns → New column**. Add one column at a time; select **Done** and save the table, then reopen each to verify the actual technical name and required level.
+Create the table, then reopen **Rule Name** under **Schema → Columns** and confirm **Required = Business required**. Some table-creation paths, including API-based creation, save a primary name as **Optional** despite the requested setting. Correct and verify it *after creation*; repeat for **Article Title** and **Insight Name** in S14.03–S14.04. Only then add the remaining columns, saving each and checking whether it exists before retrying a slow insert.
 
 | Exact display name / target schema | Description | Type / required | Format, options and other properties |
 | --- | --- | --- | --- |
@@ -3349,7 +3349,7 @@ Create the table. Open **Schema → Columns → New column**. Add one column at 
 
 Use **Local Choice**, not multi-select, for all three Choices; switch off synchronization with an existing Global Choice where offered. The option labels, not manually invented numeric IDs, are the learner's mapping source.
 
-Under **Schema → Keys → New key**, name the key **DC Rule Code Key**, select only **Rule Code**, save and inspect its status until **Active**. If key creation initially fails soon after a column save, refresh Schema → Columns and Keys, verify that neither the field nor key was already created, then retry only as appropriate. Do not add records relying on uniqueness before the key is active.
+Under **Schema → Keys → New key**, name the key **DC Rule Code Key**, select only **Rule Code**, save and inspect its status until **Active**. If **HTTP 400 / database error** appears immediately after creating Rule Code, refresh **Schema → Columns** and **Keys**. Confirm the column is saved and no matching key already exists before retrying; do not create a duplicate. A successful key can remain **Pending** for several minutes while indexing completes—inspect until **Active**. Repeat this Active-state verification on the Article Code and Insight Code keys before importing potentially duplicate codes.
 
 **Checkpoint 2 — Rule catalog:** One Organization-owned table, one primary name, eight additional business columns, three local Choices, and an Active alternate key.
 
@@ -3380,7 +3380,7 @@ Configure all of its business columns:
 | Active / `svrg_Active` | Whether article is current | Yes/No / Optional | Default Yes |
 | Owner Department / `svrg_OwnerDepartment` | Optional responsibility grouping | Lookup / Optional | **Existing DC Department**; create once in S14.05 |
 
-Create **DC Knowledge Article Code Key** on Article Code and wait until **Active**. The optional Owner Department column must be a real Dataverse Lookup from S14.05, not a department-name Text duplicate. **Approved** is a fictional editorial Choice, not an Entra-authenticated electronic signature.
+Reopen **Article Title** and confirm **Business required** after the table exists; correct Optional if necessary. Create **DC Knowledge Article Code Key** on Article Code and inspect until **Active** without creating another key while it is Pending. The optional Owner Department column must be a real Dataverse Lookup from S14.05, not a department-name Text duplicate. **Approved** is a fictional editorial Choice, not an Entra-authenticated electronic signature.
 
 **Checkpoint 3 — Knowledge table:** One primary name, eight other regular business columns, a future Department Lookup and an Active code key. Guidance contains no real operational instructions.
 
@@ -3408,7 +3408,7 @@ Create **DC Operational Insight** / **DC Operational Insights**, Standard / **Or
 | Related Inventory Balance / `svrg_RelatedInventoryBalance` | Parent evidence link | Lookup / Optional | Existing **DC Inventory Balance**; create in S14.05 |
 | Related Article / `svrg_RelatedArticle` | Optional reviewed knowledge reference | Lookup / Optional | Existing **DC Operations Knowledge Article**; create in S14.05 |
 
-Add **DC Insight Code Key** using only **Insight Code**, then wait for Active. A rule may flag multiple records, but each Insight Code is unique to an intended source + rule combination. The app alone does not enforce cross-field consistency between Source Area, Source Record Code and optional source Lookups; validate them before saving.
+Reopen **Insight Name** and verify **Business required**. Add **DC Insight Code Key** using only **Insight Code** and wait until **Active**, inspecting the saved key and its actual metadata rather than assuming a submitted request finished. A rule may flag multiple records, but each Insight Code is unique to an intended source + rule combination. The app alone does not enforce cross-field consistency between Source Area, Source Record Code and optional source Lookups; validate them before saving.
 
 **Checkpoint 4 — Insight table:** One primary name, 11 regular business fields, five planned Lookups, three local Choices, one Active code key.
 
@@ -3425,7 +3425,7 @@ Create the three new tables first. Then go to **current table → Schema → Rel
 | DC Operational Insight | **Related Inventory Balance** / `svrg_RelatedInventoryBalance` | DC Inventory Balance | Optional |
 | DC Operational Insight | **Related Article** / `svrg_RelatedArticle` | DC Operations Knowledge Article | Optional |
 
-Use **Delete = Restrict** when available; set Assign, Share, Unshare, Reparent and Merge to **No cascade** where supported. Organization-owned parent tables may hide certain cascade settings; inspect the actual saved relationship metadata instead of guessing. Verify the Lookup appears once under **Columns**, has the correct related table and required level, and opens an existing parent record from the picker.
+Use **Delete = Restrict** for all six new relationships, and **No cascade** for other available relationship behaviors. Reopen each saved relationship to inspect the real target table and cascade settings; inapplicable controls may be hidden by organization ownership. Organization-owned parent tables may hide certain cascade settings; inspect the actual saved relationship metadata instead of guessing. Verify the Lookup appears once under **Columns**, has the correct related table and required level, and opens an existing parent record from the picker.
 
 **Checkpoint 5 — Six real Lookups:** One Knowledge Article→Department relationship and five Insight relationships. Nothing from earlier lessons is duplicated.
 
@@ -3441,7 +3441,7 @@ For each new table open **Forms → New form → Main form**. Add one two-column
 
 Check that every Business required field appears. Required Lookups cannot be hidden from the only form needed for creating records. Save and **Publish** all three.
 
-Create these six public/system views using **Views → New view → Save → Publish**:
+Create these six public/system views using **Views → New view → Save → Publish**. Adding a table to a model-driven app may also bring in generated **default views**. This is not missing data or an error: keep them when useful, but deliberately choose the named views to show learners the appropriate filters. Confirm the exact six business views below are saved and published:
 
 | Table | View name | Columns | Filter / sort |
 | --- | --- | --- | --- |
@@ -3468,13 +3468,13 @@ Use **Add page → Dataverse table** to add the three existing new tables. Group
 | **Intelligence & Knowledge** | DC Intelligence Rules | DC Intelligence Rule — Rule Main; Enabled/All Rules views |
 | **Intelligence & Knowledge** | DC Operations Knowledge Articles | DC Operations Knowledge Article — Knowledge Main; Approved/Review views |
 
-Under **In this app**, select the intended forms and views. Confirm the old groups and records still open. **Save** the edited app but obtain the appropriate approval before **Publish** if the current working session requires publication consent. After authorized publication, **Play** and open all three new pages. Do not create another standalone Power App.
+Under **In this app**, select the intended forms and six named views; inspect additional defaults and leave them only if useful. Confirm the original **Shift Operations** and **Inventory & Partners** groups still work, then **Save**. Obtain authorization before **Publish**. After publishing, inspect the *published version* and open it through **Play**, not just the designer preview. If a published timestamp advanced but the live version is uncertain, inspect version history rather than declaring success prematurely. **DC Approved Knowledge** legitimately shows only KNO-0001; KNO-0002 has status **Reviewed** and appears in its applicable review view. Open both **DC All Operational Insights** (three New rows after S14.11) and **DC All Intelligence Rules** (three enabled rules). Do not create another standalone Power App.
 
 **Checkpoint 7 — Reused app:** One existing Supporting Operations Hub now exposes the new intelligence and knowledge pages; no earlier form, Canvas app or flow was replaced.
 
 ### S14.08 — Enter three fictional rules and two reviewed-source knowledge records
 
-Use the Main forms in the published app, and create rules first so the later Insight Rule Lookups can resolve them. All values are training-only.
+Create the three Rules before Insights so the source Rule Lookups are valid. The normal learner route is the published **Main forms**. In an authorized development environment, you may alternatively use a supported **Dataverse Web API** client, resolving real saved Choice values and binding existing Lookup GUIDs; then **reopen and inspect every saved row in the app**. Do not confuse a successful API response with verified application forms or duplicate the sample records. All values are fictional.
 
 | Rule Code | Rule Name | Source Area | Rule Type | Match Value | Default Severity | Enabled |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -3530,13 +3530,19 @@ Create the following Dataverse actions, naming each action distinctly in the des
 
 The **Rule** row documents the criteria, but the flow's Condition explicitly evaluates the two source fields. Do not use `Match Value` as a run-time interpreter or assume the text automatically drives arbitrary decisions. The alternate key on Insight Code is a second uniqueness control, while the List rows check makes repeated runs idempotent in this **single-user demonstration**. Parallel writers can still race unless a server-side uniqueness/upsert design is implemented.
 
+**Connection-reference check:** Open the solution flow's Dataverse connection reference. A reference without a currently authenticated user/connection can prevent enabling the flow even when the action definitions are correct. Inspect existing authorized Dataverse references, choose a **signed-in working reference** permitted for this solution, save, and test without editing DC08 or DC10. Do not store credentials or create an unapproved service principal.
+
+**Choice comparison:** For this training flow, comparisons using formatted Choice labels such as **P1 Critical** and **New** are readable, but they depend on those labels remaining unchanged and may be sensitive to localization. Verify source metadata before running. For a hardened future implementation, use the saved numeric Choice values after inspecting metadata, not guessed integers. Keep the actual flow condition and catalog text consistent.
+
+**Terminate behavior:** When adding a **Terminate** action to an expected no-match or already-exists branch, choose a status deliberately. **Cancelled** is acceptable for a deliberately aborted training path but may make the run appear Cancelled rather than Succeeded. For a clean expected no-op that should be reported as success, use **Succeeded** and document the branch as skipped; use **Failed** only for an actual error. Verify the run's final status in history, not just the absence of a new Insight.
+
 **Save** the flow and inspect any connector or licensing error. Do not enable unattended recurrence or an automatic trigger for this lesson. Ask for the required approval before activating any automation beyond the documented manual test.
 
 ### S14.11 — Test idempotency, human review and restoration
 
 Run **DC14_Incident_Insight_Demo** manually once. Open its Run history and verify that the Incident and Rule rows were found, both Choice conditions matched, Existing Insight returned zero rows and **Add a new row** succeeded. Open DC Operational Insight → All Insights and confirm exactly one new incident-based record with Insight Code `INS-INC-0001-P1`. Reopen it and verify its **Rule** and **Related Incident** Lookups.
 
-Run the exact flow a second time without changing INC-0001. Verify that **Existing Insight** now finds the same code and **Add a new row is skipped**. There should still be only one Incident Insight and **three total** Insights. Inspect the Active alternate key for duplicate prevention. Do **not** delete the baseline insight to force another creation test.
+Run the exact flow a second time without changing INC-0001. Inspect the **Terminate** status or successful no-op branch, and record both the flow run status and the absence of a second Insight. An expected skipped creation can be represented by **Cancelled** or **Succeeded** depending on the documented branch, but do not label a Cancelled run Succeeded.  Verify that **Existing Insight** now finds the same code and **Add a new row is skipped**. There should still be only one Incident Insight and **three total** Insights. Inspect the Active alternate key for duplicate prevention. Do **not** delete the baseline insight to force another creation test.
 
 **Human review test:** Open `INS-INC-0001-P1`, set Review Status = Under Review, save/reopen; then set Review Status = Reviewed and set Reviewed At to the simulated exercise time, save/reopen. Restore Review Status = **New**, clear Reviewed At and Review Notes that were only entered for this test. The restoration should return **DC Open Operational Insights** to the original three New records. This is a training review flag—not a real approver identity or security audit.
 
@@ -3563,7 +3569,7 @@ Run the exact flow a second time without changing INC-0001. Verify that **Existi
 
 If the optional feature is unavailable, a **manual evidence-based summary** in the Insight form is the fully supported baseline. Do not deploy a Copilot Studio agent, connect enterprise knowledge or enable an autonomous workflow just to complete this exercise. Those are distinct architectural choices requiring permissions and governance.
 
-**Final validations:** Open every new form/view; inspect all three new tables and their schema prefixes, primary Required levels, three Active alternate keys and six real Lookups. Confirm the Supporting Operations Hub still opens its earlier pages, the manual flow's two executions are visible and the second run created no duplicate. Check the records, their related evidence, and that no temporary review changes remained. Publish the three Main forms and six views; publish the updated model-driven app only with authorization. Do not treat a Save button or flow Run succeeded notification as sufficient proof: reopen the target rows.
+**Final validations:** In the published Hub, verify that **DC Approved Knowledge** shows **only KNO-0001** and that Reviewed **KNO-0002** appears in the appropriate review view. Confirm **DC All Operational Insights** shows all three New records, the Rules view shows all three enabled rules, and earlier Shift Handover and Inventory Balance pages still open with HAN-0001/HAN-0002 and BAL-0002's manual reorder flag. Open every new form/view; inspect all three new tables and their schema prefixes, primary Required levels, three Active alternate keys and six real Lookups. Confirm the Supporting Operations Hub still opens its earlier pages, the manual flow's two executions are visible and the second run created no duplicate. Check the records, their related evidence, and that no temporary review changes remained. Publish the three Main forms and six views; publish the updated model-driven app only with authorization. Do not treat a Save button or flow Run succeeded notification as sufficient proof: reopen the target rows.
 
 ### Finish Part 14
 
