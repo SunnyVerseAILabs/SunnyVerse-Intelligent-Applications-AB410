@@ -1,0 +1,13 @@
+Test ID,Section,Demonstration or artifact,Expected evidence,Execution constraint,Status,Actual evidence,Blocking issue
+F16-01,S16.01,Published versions,Actual saved and published app versions inspected,Read-only,Not Run,,
+F16-02,S16.02,Source datasets,Parent keys and 500 source work orders reconciled with tenant count,Read-only,Not Run,,
+F16-03,S16.03,Privacy checks,No exposed tenant/user/connection/private path in capture,Read-only,Not Run,,
+F16-04,S16.04,Architecture review,Dataverse vs CSV/Power BI split stated accurately,Documentation,Not Run,,
+F16-05,S16.05,Canvas walkthrough,All three apps inspected without unintended writes,Read-only,Not Run,,
+F16-06,S16.06,Model-driven walkthrough,All three model-driven apps inspected,Read-only,Not Run,,
+F16-07,S16.07,Flow evidence,Historical runs and duplicate-name caveat accurately described,Read-only,Not Run,,
+F16-08,S16.08,Power BI Desktop,Unfiltered source counts and five pages rechecked,Local-only,Not Run,,
+F16-09,S16.09,Release gates,No deployment/import or least-privilege test claimed without proof,Documentation,Not Run,,
+F16-10,S16.10,Public case study,All claims linked to public or clearly classified evidence,Documentation,Not Run,,
+F16-11,S16.11,Presentation,Slides and narration match confirmed evidence,Documentation,Not Run,,
+F16-12,S16.12,Final public QA,Links work and private content excluded from GitHub,Documentation,Not Run,,
