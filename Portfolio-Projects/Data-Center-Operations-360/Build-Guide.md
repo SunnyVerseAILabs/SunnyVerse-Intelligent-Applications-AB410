@@ -2,13 +2,13 @@
 
 **SunnyVerse AI Labs | Independent Power Platform learning project**  
 **Fictional organization:** SunnyVerse Renewable Group  
-**Published:** Parts 00–09 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager
+**Published:** Parts 00–10 — Solution Foundation, Department Master, Campus and Data Halls, Employee Directory, Asset and Sensor Registry, Alarm and Incident Management, Operations Command Center, Field Engineer Mobile App, Incident and Inspection Automation, Asset and Maintenance Manager, Change Risk and Procedure Approvals
 
 [Project home](./README.md) · [Practice data](./data/README.md)
 
 Welcome to Data Center Operations 360. In this project, you will build a fictional data center operations solution using Microsoft Power Platform. The work is completed in an environment where you have permission to develop, and all practice records are fictional.
 
-Part 00 prepares the solution. Parts 01–04 build reference data, Part 05 adds alarms and incidents, Part 06 creates the command center, Part 07 adds FieldOps, Part 08 configures notification flows, and Part 09 adds maintenance work orders and a model-driven app. Follow the lessons in order in an authorized learning environment.
+Part 00 prepares the solution. Parts 01–04 build reference data, Part 05 adds alarms and incidents, Part 06 creates the command center, Part 07 adds FieldOps, Part 08 configures notification flows, Part 09 adds maintenance operations, and Part 10 adds change requests, risk reviews and procedure approvals. Follow the lessons in order in an authorized learning environment.
 
 Follow the activities in order. The menu labels in your environment may differ slightly; choose the equivalent command and inspect the actual settings before saving.
 
@@ -1852,7 +1852,323 @@ You now have a **Dataverse Work Order register** and **DC Asset & Maintenance Ma
 
 
 
+---
+
+## Part 10 — Build Change, Risk and Maintenance Procedure Approvals
+
+A maintenance work order describes *what* needs to be done. A planned operational change also needs a clear impact assessment, a method of procedure (MOP), a rollback strategy and an explicit review decision. In this lesson, we'll create three related Dataverse tables, assemble **DC Change & Risk Manager** as a model-driven app, and test one approval flow with original fictional records.
+
+The approval is **training-only**. A saved Approved value is not a physical maintenance permit, electrical switching authorization, live risk acceptance or permission to work on actual infrastructure. Use only your authorized Power Platform environment and a real account you control for the approval test.
+
+| New component | What it records |
+| --- | --- |
+| `DC Change Request` | Change identity, timing, scope, work-order context, MOP readiness and approval state |
+| `DC Risk Register` | Likelihood, impact, mitigation, risk owner and related change |
+| `DC MOP Step` | Ordered procedure steps and expected verification |
+| `DC Change & Risk Manager` | Model-driven app with forms, views and linked records |
+| `DC10 Change Approval` | One controlled approval flow, with an authorized real test approver |
+
+All references to Assets, Work Orders and Employee Profiles use existing records. There is **no CSV import** in this lesson; the small sample set is entered and checked through the forms.
+
+### S10.01 — Create the DC Change Request table
+
+Open [Power Apps](https://make.powerapps.com), choose the authorized environment, then **Solutions → SunnyVerse Data Center Operations 360 → New → Table**. Use the current table designer's advanced properties to enter:
+
+| Table property | Value |
+| --- | --- |
+| Display / plural | **DC Change Request** / **DC Change Requests** |
+| Description | `Fictional operational changes with review, rollback and approval fields.` |
+| Type / ownership | Standard / **Organization** |
+| Primary name | **Change Name** |
+| Primary-name description | `Readable training change title.` |
+| Table target schema | `svrg_DCChangeRequest` |
+| Primary-name target schema | `svrg_ChangeName` |
+| Notes and attachments | **On** if supported, for optional staged evidence |
+| Activity / routing | Keep default Off unless required by the authorized environment |
+
+Create the table, then **reopen** its properties to verify Notes really remained On. Open **Columns → Change Name** and verify **Business required**; correct it if the creation dialog saved it as Optional. Leave the generated GUID unchanged.
+
+Add the following columns through **Schema → Columns → New column**. For each Choice, use **Choice, single select, local to this column**. If you see **Sync with global choice**, switch it **Off**. Enter the labels in the stated order and inspect the saved option values before using them in a flow.
+
+| Display name / target schema | Description | Data type / required | Format, options and other properties |
+| --- | --- | --- | --- |
+| Change Name / `svrg_ChangeName` | Readable change title | Primary Text / Business required | Created with table; max 200 |
+| Change Code / `svrg_ChangeCode` | Unique training change identifier | Text / Business required | Max 24, Searchable Yes, no default |
+| Change Type / `svrg_ChangeType` | Class of change | Local Choice / Business required | Maintenance, Standard, Emergency; no default |
+| Change Status / `svrg_ChangeStatus` | Review and execution lifecycle | Local Choice / Business required | Draft, Submitted, Under Review, Approved, Rejected, Scheduled, Implemented, Cancelled; no default |
+| Business Impact / `svrg_BusinessImpact` | Anticipated effect of the fictional change | Local Choice / Business required | Low, Moderate, High, Critical; no default |
+| Reason for Change / `svrg_ReasonForChange` | Why the change is proposed | Multiline Text / Business required | Max 2,000 characters |
+| Planned Start / `svrg_PlannedStart` | Proposed start of fictional window | Date and Time / Business required | User local behavior |
+| Planned End / `svrg_PlannedEnd` | Proposed end of fictional window | Date and Time / Business required | User local behavior |
+| MOP Summary / `svrg_MOPSummary` | Overview of documented procedure | Multiline Text / Business required | Max 2,000 |
+| Backout Plan / `svrg_BackoutPlan` | How the team would reverse the fictional change | Multiline Text / Business required | Max 2,000 |
+| Verification Plan / `svrg_VerificationPlan` | How to establish success during the simulation | Multiline Text / Business required | Max 2,000 |
+| Safety Review Required / `svrg_SafetyReviewRequired` | Flags need for separate human safety review | Yes/No / Optional | Default No |
+| MOP Reviewed / `svrg_MOPReviewed` | Human confirms documentation is ready for approval | Yes/No / Optional | Default No |
+| Approval Requested / `svrg_ApprovalRequested` | One-time submission gate for the training flow | Yes/No / Optional | Default No |
+| Approval Decision Note / `svrg_ApprovalDecisionNote` | Text from the decision process or summary | Multiline Text / Optional | Max 2,000; no default |
+| Decision On / `svrg_DecisionOn` | Date and time decision recorded | Date and Time / Optional | User local; no default |
+
+After **Change Code** is saved, open **Schema → Keys → New key**, choose just **Change Code** and name the key **DC Change Code Key**. Wait for its state to move from Pending to **Active**. This prevents repeated sample-code insertion when the key is active.
+
+**Checkpoint 1 — Change schema.** There is one DC Change Request table, one required primary name, 15 additional business columns, three local Choices, and an Active Change Code alternate key. Generated hidden Choice-label metadata columns are not extra fields to recreate.
+
+### S10.02 — Create the DC Risk Register table
+
+In the same solution create a second Standard / Organization-owned table:
+
+| Table property | Value |
+| --- | --- |
+| Display / plural | **DC Risk Register** / **DC Risk Registers** |
+| Primary name | **Risk Name**, Business required |
+| Primary description | `Readable title of a fictional operational risk.` |
+| Table schema target | `svrg_DCRiskRegister` |
+| Primary schema target | `svrg_RiskName` |
+| Notes | Optional; not needed for this lesson |
+
+Reopen its primary column and verify the Business required level. Add the following columns:
+
+| Display name / target schema | Description | Type / required | Properties |
+| --- | --- | --- | --- |
+| Risk Name / `svrg_RiskName` | Readable risk description | Primary Text / Business required | Created with table |
+| Risk Code / `svrg_RiskCode` | Unique risk identifier | Text / Business required | Max 24; Searchable Yes |
+| Risk Category / `svrg_RiskCategory` | Domain at risk | Local Choice / Business required | Electrical, Mechanical & Cooling, IT Infrastructure, Facilities, Safety, Other |
+| Likelihood / `svrg_Likelihood` | Qualitative frequency of a simulated event | Local Choice / Business required | Rare, Unlikely, Possible, Likely, Almost Certain |
+| Impact / `svrg_Impact` | Potential fictional consequence | Local Choice / Business required | Minor, Moderate, Major, Critical |
+| Risk Score / `svrg_RiskScore` | Numerical likelihood × impact for training | Whole Number / Business required | Minimum 1; maximum 20; no default |
+| Risk Response / `svrg_RiskResponse` | How this risk is to be handled | Local Choice / Business required | Mitigate, Avoid, Accept, Transfer |
+| Risk Status / `svrg_RiskStatus` | Current risk tracking state | Local Choice / Business required | Open, Mitigating, Closed |
+| Risk Description / `svrg_RiskDescription` | What might occur | Multiline Text / Business required | Max 2,000 |
+| Mitigation Plan / `svrg_MitigationPlan` | Proposed action to reduce the fictional risk | Multiline Text / Business required | Max 2,000 |
+| Review Date / `svrg_ReviewDate` | Next review date | Date Only / Optional | Date-only behavior |
+| Safety Related / `svrg_SafetyRelated` | Marks risk requiring human safety attention | Yes/No / Optional | Default No |
+
+Use **independent local Choices**, not new Global Choices. To calculate the training Risk Score, assign **Likelihood** ranks 1–5 in listed order and **Impact** ranks 1–4 in listed order, then enter the product manually: for example, Unlikely (2) × Major (3) = **6**. The form does not automatically enforce the calculation; verify it when entering records. Create **DC Risk Code Key** with **Risk Code** as the only field and wait until it becomes Active.
+
+**Checkpoint 2 — Risk schema.** One DC Risk Register table has the stated fields, choices and Active Risk Code key. The score is clearly labeled as a training assessment, not a real safety rating.
+
+### S10.03 — Create the DC MOP Step table
+
+Create a third Standard / Organization-owned table, **DC MOP Step** (plural **DC MOP Steps**), with primary name **Step Name**, Business required, description `Readable label for a fictional maintenance procedure step.`, and target schema `svrg_DCMOPStep`. Reopen the saved primary column and correct its requirement if necessary.
+
+| Display name / target schema | Description | Type / required | Properties |
+| --- | --- | --- | --- |
+| Step Name / `svrg_StepName` | Readable instruction label | Primary Text / Business required | Created with table |
+| Step Number / `svrg_StepNumber` | Order within the parent MOP | Whole Number / Business required | 1–1,000; no default |
+| Step Instruction / `svrg_StepInstruction` | Fictional action or review step | Multiline Text / Business required | Max 2,000 |
+| Expected Verification / `svrg_ExpectedVerification` | What indicates a successful simulation | Multiline Text / Business required | Max 2,000 |
+| Step Status / `svrg_StepStatus` | Tracking state of the procedure step | Local Choice / Business required | Not Started, Passed, Failed, Skipped; default Not Started |
+| Execution Notes / `svrg_ExecutionNotes` | Notes about the simulated step | Multiline Text / Optional | Max 2,000 |
+| Performed On / `svrg_PerformedOn` | When a simulated result was recorded | Date and Time / Optional | User local |
+
+Do not enter actual switching instructions or real operational credentials. Each MOP Step will be related to a Change Request, and **MOP Reviewed** on the parent change indicates the *written procedure was checked for completeness*, not that the steps were executed or permission was granted.
+
+### S10.04 — Connect the Change, Risk and MOP relationships
+
+On each source table use **Schema → Relationships → New relationship → Many-to-one**. Save the relationship and then inspect the resulting Lookup field under Columns. Lookups point to previously created tables; do not recreate those parent tables or use text in place of a relationship.
+
+| Current table | Lookup / target schema | Related table | Required |
+| --- | --- | --- | --- |
+| DC Change Request | **Asset** / `svrg_Asset` | DC Asset | Business required |
+| DC Change Request | **Related Work Order** / `svrg_RelatedWorkOrder` | DC Work Order | Optional |
+| DC Change Request | **Requested By** / `svrg_RequestedBy` | DC Employee Profile | Optional |
+| DC Risk Register | **Related Change** / `svrg_RelatedChange` | DC Change Request | Optional |
+| DC Risk Register | **Asset** / `svrg_Asset` | DC Asset | Optional |
+| DC Risk Register | **Risk Owner** / `svrg_RiskOwner` | DC Employee Profile | Optional |
+| DC MOP Step | **Related Change** / `svrg_RelatedChange` | DC Change Request | Business required |
+
+For each relationship choose **Delete = Restrict** and **Assign / Share / Unshare / Reparent / Merge = No cascade** where those actions can be configured. If an operation is unavailable in your table's relationship type, retain the supported default and document it in your own implementation notes. Always confirm Lookup target, required level and deletion behavior **after saving**.
+
+**Checkpoint 3 — Relationships.** DC Change Request has three lookups, DC Risk Register has three, and DC MOP Step has one required parent-change lookup. Existing Assets, Work Orders and Employee Profiles remain unchanged.
+
+### S10.05 — Create readable forms and operational views
+
+For each new table open **Forms → New form → Main form** and publish a form with the following sections. Choose existing Dataverse field controls, not Canvas buttons or Power Fx properties.
+
+| Form name | Sections and fields |
+| --- | --- |
+| **DC Change Request — Review Main** | **Identity:** Change Name, Change Code, Change Type, Change Status, Business Impact. **Context & Timing:** Asset, Related Work Order, Requested By, Planned Start, Planned End. **Procedure Readiness:** Reason for Change, MOP Summary, Backout Plan, Verification Plan, Safety Review Required, MOP Reviewed. **Approval Outcome:** Approval Requested, Approval Decision Note, Decision On |
+| **DC Risk Register — Assessment Main** | **Risk Identity:** Risk Name, Risk Code, Risk Category, Risk Status. **Assessment:** Likelihood, Impact, Risk Score, Safety Related. **Mitigation & Context:** Risk Description, Mitigation Plan, Review Date, Related Change, Asset, Risk Owner |
+| **DC MOP Step — Procedure Main** | **Step:** Step Name, Step Number, Related Change, Step Status. **Instructions:** Step Instruction, Expected Verification. **Execution Evidence:** Execution Notes, Performed On |
+
+Use two-column sections for compact fields and **one-column** sections for long multiline instructions. The default generated **Information** forms may remain; choose only the intended main forms in the new app.
+
+Create the following public/system views through **Views → New view → Add view columns → Edit filters → Save and publish**:
+
+| Table | View | Selected columns | Filter |
+| --- | --- | --- | --- |
+| DC Change Request | **DC All Changes** | Change Code, Change Name, Change Status, Change Type, Business Impact, Asset, Planned Start | None |
+| DC Change Request | **DC Changes Awaiting Review** | Change Code, Change Name, Change Status, MOP Reviewed, Asset, Planned Start | Change Status is Submitted OR Under Review |
+| DC Change Request | **DC Approved Changes** | Change Code, Change Name, Change Status, Asset, Planned Start | Change Status is Approved OR Scheduled |
+| DC Risk Register | **DC Open Risks** | Risk Code, Risk Name, Risk Category, Risk Score, Risk Status, Related Change | Risk Status not Closed |
+| DC Risk Register | **DC All Risks** | Risk Code, Risk Name, Likelihood, Impact, Risk Score, Risk Status | None |
+| DC MOP Step | **DC Procedure Steps** | Related Change, Step Number, Step Name, Step Status | None; sort by Related Change then Step Number ascending if supported |
+
+Use the view filter builder's **OR groups** exactly where shown; do not accidentally combine two statuses with AND. Views display records within a user's security rights and do not themselves authorize changes.
+
+**Checkpoint 4 — Forms and views.** Three published Main forms and six published views display the specified fields without duplicate system Status cards or missing lookups.
+
+### S10.06 — Build DC Change & Risk Manager
+
+Within the solution choose **New → App → Model-driven app** and name it **DC Change & Risk Manager**. Description: `Review fictional changes, assess risks, and track written maintenance procedure steps.`
+
+In **App designer → Add page → Dataverse table**, add these existing tables and arrange them in two navigation groups:
+
+| Navigation group | Table page | Form / views in this app |
+| --- | --- | --- |
+| **Change Control** | DC Change Requests | **DC Change Request — Review Main**; All Changes, Awaiting Review, Approved Changes |
+| **Change Control** | DC MOP Steps | **DC MOP Step — Procedure Main**; Procedure Steps |
+| **Risk & Context** | DC Risk Registers | **DC Risk Register — Assessment Main**; Open Risks, All Risks |
+| **Risk & Context** | DC Work Orders | Existing Maintenance Main and suitable work-order views |
+| **Risk & Context** | DC Assets | Existing **DC Asset — Maintenance Context** form, if published in Part 09 |
+
+Select the named forms and views **In this app** rather than exposing every default Information form. Leave the existing Work Order and Asset definitions unchanged. Configure readable navigation labels; use model-driven app formatting rather than trying Canvas `ColorValue` formulas or custom CSS. **Save → Publish → Play** and verify opening Change, Risk and MOP pages.
+
+**Checkpoint 5 — App navigation.** The new model-driven app opens and each related table has a meaningful published form and view.
+
+### S10.07 — Enter two fictional changes, one risk and five MOP steps
+
+In **DC Change & Risk Manager → DC Change Requests → New**, create the following *fictional, paper-only* records. Use existing Lookup pickers for Asset, Related Work Order and Requested By. Enter a future, permitted training date/time window in your local date-time picker; **do not schedule any actual facility work**.
+
+| Field | Change A | Change B |
+| --- | --- | --- |
+| Change Name | `UPS 001 Maintenance Simulation` | `UPS 002 Backout Review Simulation` |
+| Change Code | `CHG-0001` | `CHG-0002` |
+| Change Type | Maintenance | Standard |
+| Change Status | Draft | Draft |
+| Business Impact | Low | Moderate |
+| Asset | UPS 001 | UPS 002 |
+| Related Work Order | WO-0001 | WO-0002 |
+| Requested By | Select an existing fictional employee | Select an existing fictional employee |
+| Planned Start / End | Future training window / later end | Different future training window / later end |
+| Reason for Change | `Verify a fictional maintenance procedure against simulated equipment context.` | `Practice review of an alternative rollback scenario.` |
+| MOP Summary | `Review numbered paper-simulation steps before approval.` | `Review the written verification and rollback sequence.` |
+| Backout Plan | `Stop the simulation and restore the recorded baseline state.` | `Return the training record to its initial fictional state.` |
+| Verification Plan | `Compare pre- and post-simulation values in training notes.` | `Confirm the simulated rollback checklist is complete.` |
+| MOP Reviewed | No (until steps are reviewed) | No (until steps are reviewed) |
+| Approval Requested | No | No |
+| Safety Review Required | No | No |
+
+In **DC MOP Steps**, create these records with actual **Related Change** Lookup values:
+
+| Related Change | Step Number | Step Name | Step Instruction | Expected Verification |
+| --- | ---: | --- | --- | --- |
+| CHG-0001 | 10 | Review synthetic asset context | Open the fictional UPS 001 training record | Correct Asset and Work Order displayed |
+| CHG-0001 | 20 | Record simulated baseline | Note fictional prechange values in a training note | Baseline note saved |
+| CHG-0001 | 30 | Review written rollback | Confirm the paper backout procedure is documented | Backout text present |
+| CHG-0001 | 40 | Confirm readiness | Review all prior written steps | Review notes complete |
+| CHG-0002 | 10 | Review alternate change | Compare the second change's simulated rollback plan | Supporting text is complete |
+
+Leave all Step Status values **Not Started**; pre-approval review does **not** mean simulated execution has occurred.
+
+Create one risk using **DC Risk Registers → New**:
+
+| Field | Enter |
+| --- | --- |
+| Risk Name / Code | `Simulated UPS Maintenance Interruption` / `RSK-0001` |
+| Risk Category | Electrical |
+| Likelihood / Impact | Unlikely (2) / Major (3) |
+| Risk Score | **6** (= 2 × 3) |
+| Risk Response / Status | Mitigate / Open |
+| Risk Description | `Fictional interruption could affect training continuity if the simulation is mishandled.` |
+| Mitigation Plan | `Require written verification and rollback review before training approval.` |
+| Related Change / Asset | CHG-0001 / UPS 001 |
+| Risk Owner | An existing fictional employee |
+| Safety Related | No |
+
+Reopen each record and validate its actual Lookups. Once the written MOP steps and the procedure/backout/verification text have been reviewed for each change, set **MOP Reviewed = Yes** on CHG-0001 and CHG-0002. This confirms **document readiness only**. Do not change Change Status to Submitted until the approval flow has been configured and approved for testing.
+
+**Checkpoint 6 — Practice data.** Two Changes, five MOP Steps and one Risk exist with valid related records, the two Changes remain **Draft**, and their MOP Reviewed flags are **Yes** after documented review.
+
+### S10.08 — Create a gated Change Approval cloud flow
+
+Open [Power Automate](https://make.powerautomate.com) → **Solutions → SunnyVerse Data Center Operations 360**. Before building a new flow, verify the existing **DC Automation Test Recipient** Text environment variable from the notification lesson points to a real test mailbox that you own and are authorized to use. This will be the **sole Approver**. The fictional Requested By and Risk Owner names are not real Microsoft 365 accounts and must not receive approvals.
+
+Choose **New → Automation → Cloud flow → Automated** and name it **DC10 Change Approval**. Select **Microsoft Dataverse → When a row is added, modified or deleted**:
+
+| Trigger property | Value |
+| --- | --- |
+| Change type | **Modified** |
+| Table name | **DC Change Requests** |
+| Scope | **Organization** |
+| Select columns | `svrg_changestatus` (verify the actual logical name) |
+| Filter rows | Leave empty |
+
+**Guard the approval trigger.** Add **Control → Condition** immediately after the trigger. The **If yes** branch proceeds only when Change Status is **Submitted**, MOP Reviewed is **true**, and Approval Requested is **false**. Build the condition with three AND checks using the actual Dataverse dynamic fields. If you prefer the Expression editor, use the following pattern with the actual numeric option value of **Submitted**, obtained from **DC Change Request → Columns → Change Status → Choice options**:
+
+```text
+and(
+  equals(triggerBody()?['svrg_changestatus'], SUBMITTED_OPTION_VALUE),
+  equals(triggerBody()?['svrg_mopreviewed'], true),
+  equals(triggerBody()?['svrg_approvalrequested'], false)
+)
+```
+
+`SUBMITTED_OPTION_VALUE` is an instruction placeholder, **not an executable token**: replace it with the integer stored for Submitted in this environment. If the local Choice values were generated sequentially from 479120000 in the documented order, Submitted may be 479120001, but verify the saved value and do not assume it.
+
+In the **If yes** branch:
+
+1. Add **Microsoft Dataverse → Update a row** for **DC Change Requests**. Use the **current Change Request's Row ID** from the trigger (the real GUID). Set **Approval Requested = Yes** and **Change Status = Under Review**. This marks the submission as being handled, so a second Modified trigger caused by this update will fail the guard and stop. Leave all unrelated columns untouched.
+2. Add **Approvals → Start and wait for an approval** (not a deprecated action). Choose **Approve/Reject — First to respond** and set **Assigned to** to the **DC Automation Test Recipient** environment-variable value. **Title**: `[DC360 TRAINING] Review change ` + Change Code dynamic content. **Details**: Change Name, Asset's readable identifier if accessible, Business Impact, MOP Summary, Backout Plan and Verification Plan. Never include real secrets or sensitive infrastructure details.
+3. Add **Condition** on the approval action's **Outcome**, checking text **Approve** (use the actual output value; compare case exactly).
+4. **If approved**, use **Dataverse → Update a row** on the same Change Request Row ID, setting **Change Status = Approved**, **Approval Decision Note = "Approved during fictional training review"**, **Decision On = utcNow()**.
+5. **If rejected**, update **Change Status = Rejected**, **Approval Decision Note = "Rejected during fictional training review"**, **Decision On = utcNow()**.
+6. Leave the first guard condition's **If no** branch empty. It stops unready or already-handled changes without sending approvals.
+
+**Important execution behavior:** The Update a row step itself starts an additional Modified trigger because it changes Change Status. That second run should exit in the guard (Status is Under Review / Approval Requested = Yes). Save the flow and set trigger **Concurrency Control = On, Degree of Parallelism = 1** if that setting is available and supported; this reduces overlapping submissions in the training test but is **not transactional idempotency**. An enterprise solution requires stronger concurrency and audit design before processing multiple requests.
+
+If the Approvals connector needs authorization or initial provisioning, complete sign-in only through the authorized tenant flow; approvals may need administrator initialization and eligible licensing in a nondefault environment. Do not replace the approval with a fictional employee lookup. The **Start and wait** action can remain active until the approver responds; don't assume a pending run is failed. Verify the flow exists in the solution and its used Dataverse/Approvals connection references are associated with it. Leave the flow **Off** until the explicit controlled test.
+
+**Checkpoint 7 — Approval configured.** One **DC10 Change Approval** cloud flow has a Dataverse Modified trigger, a three-part readiness guard, a single approval action, separate Approved/Rejected updates, and a verified authorized real approver. It is **Off** before testing.
+
+### S10.09 — Test approval and rejection safely
+
+With the two sample Change records still in **Draft**, confirm that **CHG-0001** and **CHG-0002** both have **MOP Reviewed = Yes**, **Approval Requested = No** and valid MOP/rollback text. For this controlled test only, turn **DC10 Change Approval** **On**, then:
+
+| Test | Action | Expected result |
+| --- | --- | --- |
+| Approval | Open CHG-0001, set **Change Status = Submitted**, Save | Flow guard passes, Change becomes Under Review, one approval arrives at the authorized inbox |
+| Approver decision | In the actual **Approvals** request choose **Approve** | Run completes and CHG-0001 becomes **Approved** |
+| Rejection | Open CHG-0002, set Change Status = Submitted, Save | A separate approval is sent to the same test account |
+| Rejection decision | Choose **Reject** in that request | CHG-0002 becomes **Rejected** |
+| Retrigger check | Inspect the extra Modified runs caused by Under Review/Approved/Rejected updates | Guard's If no branches send no second approvals |
+| Stored record | Reopen both Change forms | Approval Requested remains Yes, Decision On and Decision Note are populated |
+| Risk / MOP | Reopen RSK-0001 and MOP Steps | Linked risk and procedure steps remain unchanged |
+| End of test | Turn **DC10 Change Approval Off** | No further automatic approval requests are sent |
+
+Use **Power Automate → Flow details → 28-day Run history** and the actual Approvals page/email. A run that is still waiting for the human response is not a completed success. If a run fails, inspect the specific action's error, connection reference, recipient and Choice value. If approval setup is blocked by tenant permissions, leave the flow Off and record the blocker; never claim it succeeded.
+
+**Checkpoint 8 — End-to-end approval.** A verified test approver approved one fictional change and rejected another, records reflect the correct outcomes, no second approvals were unintentionally generated, and the flow is **Off**.
+
+### S10.10 — Verify the solution and finish Part 10
+
+Open **Solutions → SunnyVerse Data Center Operations 360** and inspect the components:
+
+| Component | Check |
+| --- | --- |
+| Dataverse | One DC Change Request table, one DC Risk Register table, one DC MOP Step table |
+| Lookup relationships | Change → Asset / Work Order / Employee; Risk → Change / Asset / Employee; MOP Step → Change |
+| Uniqueness | Change Code and Risk Code alternate keys **Active** |
+| Forms | Three published main forms with readable multiline fields and correct lookups |
+| Views | Change approval queues, Risk views, Procedure Step view |
+| Model-driven app | One published **DC Change & Risk Manager** |
+| Sample records | Two Changes, one Risk, five MOP Steps, no invented parent records |
+| Approvals | One solution flow, used connection references, test recipient and observed run history |
+| Safe status | Approval flow **Off** after tests; existing notification flow states unchanged |
+| Access | Authorized Power Platform roles, not the fictional requested/assigned employee references |
+
+Check that model-driven app navigation opens Change and Risk forms and that MOP Steps show their correct parent Change. **Approved** means a fictional administrative decision was recorded, not that MOP steps executed. The sample change records may remain Approved/Rejected as evidence of the training workflow; do not reset them unless your own testing requires it.
+
+### Finish Part 10
+
+You have a linked **Change Request**, **Risk Register** and **MOP Step** model, plus **DC Change & Risk Manager** and one controlled approval process. This provides a reproducible training workflow for documenting change impact, procedure readiness, rollback, risk response and an explicit human decision while keeping operational control and real infrastructure entirely outside the application.
+
+
 ## Microsoft Learn references
+- [Create and test Power Automate approvals](https://learn.microsoft.com/en-us/power-automate/modern-approvals)
+- [Dataverse relationship cascading behavior](https://learn.microsoft.com/en-us/power-apps/developer/data-platform/configure-entity-relationship-cascading-behavior)
+- [Manage model-driven app forms and views](https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/create-add-remove-forms-views-dashboards)
+
 
 - [Build model-driven apps in Power Apps](https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/app-building-steps)
 - [Create or configure model-driven app forms](https://learn.microsoft.com/en-us/power-apps/maker/model-driven-apps/create-and-edit-forms)
