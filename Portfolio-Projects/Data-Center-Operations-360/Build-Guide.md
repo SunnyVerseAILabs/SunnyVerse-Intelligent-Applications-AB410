@@ -3907,15 +3907,27 @@ Inspect **Schema → Keys**. In the earlier verified training review, **16 of 24
 
 **Checkpoint F16-02:** The initial CSV counts, current tenant counts, extra practice record, real Lookups and key-coverage gap are reconciled without deleting or rewriting records.
 
-### S16.03 — Prepare a private verification log and a privacy-safe capture
+### S16.03 — Capture actual published app screens and protect the user's information
 
-Download [Part 16 Final Verification](./quality/Part-16-Final-Verification.csv). It is a **twelve-case public learner template** with every test initially **Not Run**. Make a **private working copy** and record for each case: **Pass, Fail, Blocked or Not Run**, actual behavior and a non-sensitive evidence reference. Do not upload your private completed CSV to GitHub.
+Download the public [Part 16 verification template](./quality/Part-16-Final-Verification.csv). It starts with **twelve Not Run cases** for each new learner. Save an **executed copy privately**, recording the precise date, app/version, result (**Pass / Fail / Blocked / Not Run**), and actual evidence. Do **not** replace the public template with your private completed matrix.
 
-Before recording or sharing images, remove or crop the browser address bar, signed-in identity, institutional context, environment identifiers, connection-owner data, real email addresses, private exports and local user paths. **Power Apps Play may show a “developer environment” banner**; crop it carefully only when the resulting image honestly communicates the screen. Never crop out an app error or warning to imply success.
+For capture evidence, first confirm all three Canvas apps' **saved and published versions still match**. Then open each **published Play** experience and record only fictional, read-only screens. Seven useful examples are:
 
-Use only the **published Play version** when labelling an image as a published app screenshot. A manually drawn architecture diagram or presentation mockup must not be passed off as an authentic app capture. If no actual redacted capture or screen recording has been made, mark the capture check **Not Run** and the recording/presentation-evidence check **Blocked**. An editable PowerPoint draft does not establish that a real capture exists.
+| Capture | Published app screen | What it demonstrates |
+| --- | --- | --- |
+| 01 | Command Center Home | The 200 incidents / 120 alarms / 100 assets training baseline |
+| 02 | Command Center search for `INC-0001` | A saved New / Unassigned incident found and inspected without creating a record |
+| 03 | FieldOps Home | 200 incidents and two fictional inspections |
+| 04 | FieldOps incident list | Mobile navigation to existing incident records |
+| 05 | Capacity Planner Home | Fictional Hall 01 / Hall 02 planning headroom of 443 / 495 kW |
+| 06 | Rack Browse filtered to `DC-RACK-013` | **Hold displayed in the rack list**; confirms the current list-level status |
+| 07 | Rack 013 Detail | **Hold not shown in Detail; Reserved U and Reserved kW blank instead of 0**, documenting an unresolved display defect |
 
-**Checkpoint F16-03:** The capture is genuinely privacy-reviewed **or** its absence is explicitly recorded. Nothing private was published.
+**Privacy process:** Keep unredacted originals in an authorized **private local folder**. Crop or mask the account initials, profile/Share header, tenant or institution identifiers and browser URL, then inspect the **exported redacted image pixels** before any external use. A “Developer environment” banner may remain visible if it contains no confidential identifier and the caption truthfully identifies a learning environment; do not remove warnings to manufacture a cleaner test. Never publish an original merely because a separate redacted copy exists.
+
+A later maker-reported Play session collected **seven such captures**, with the banner deliberately visible on some screens, while leaving the source records untouched. The user must still approve any external publication; screenshots in a private folder do **not** become public GitHub evidence automatically. If your own capture has not been reviewed, mark F16-03 Not Run rather than claiming privacy is complete.
+
+**Checkpoint F16-03:** Real published-app images, correct source labels and redacted copies have been verified **or** the test is explicitly Not Run. No write-capable control was pressed.
 
 ### S16.04 — Explain the architecture with the correct connector boundaries
 
@@ -3990,26 +4002,34 @@ A **connection reference belongs to a flow** and links it to an authorized Datav
 
 **Checkpoint F16-07:** Five flow records, **4 + 0 + 2 + 6 + 2 = 14** prior successful runs, skipped-action semantics, untested termination branch and unchanged states are recorded correctly.
 
-### S16.08 — Open Power BI Desktop and distinguish current tests from prior source evidence
+### S16.08 — Refresh Power BI Desktop and diagnose any cyclic-reference failure
 
-The Part 13 analytical design is available as a saved local **Power BI Desktop PBIX** and a [path-sanitized public PBIP source project](./powerbi/README.md). Reopen **Power BI Desktop** in an authorized local session, correct its own local CSV paths if needed, then run **Refresh** and inspect **all five pages**. A reviewed PBIP folder, Power Query source or CSV count does not prove that the Desktop report was reopened in this verification cycle.
+The Part 13 report has a saved local **PBIX** and a [privacy-sanitized public PBIP source](./powerbi/README.md). Use a local authorized copy of the report and its **ten monitoring CSV batches plus six reference CSV files**. In Power BI Desktop, clear slicers and visual selections, then choose **Refresh**. Record separately whether **the refresh itself succeeded** and whether **already-loaded model data** continues to display the correct numbers.
 
-For a true **Pass**, clear all slicers **and visual cross-highlighting** before checking the table, measure and card values:
-
-| Item | Required baseline |
+| Verified fact or test | Expected for a successful refreshed model |
 | --- | --- |
-| Data model | **7 loaded tables / 6 active single-direction relationships / 20 measures** |
-| Pages | **Executive Overview; Monitoring & Trends; Alarm Operations; Incident Operations; Maintenance Operations** |
-| Samples | **50,000 readings from 24 sensors** in ten 5,000-row files |
-| Threshold flags | **290 High / 193 Low / 49,517 Normal**, or 483 out-of-range samples |
-| Operational CSV facts | **120 Alarms / 200 Incidents / 500 starting Work Orders** |
-| Quality checks | Sensor-key and threshold-state mismatches both **0** |
+| Tables / relationships | **7 loaded model tables / 6 active relationships** |
+| Measures / report pages | **20 DAX measures / 5 pages** |
+| Readings | **50,000** across 24 sensor codes |
+| High / Low / Normal | **290 / 193 / 49,517** |
+| Operational CSV facts | **120 alarms / 200 incidents / 500 original work orders** |
+| Key and threshold mismatch measures | **0 / 0** |
+| **Refresh** | **Succeeds without any Power Query errors**; this is an independent release gate |
 
-Select **DC-SEN-001** and inspect the previously verified High example **RDG-000001 = 560.00 kW**, against its 500.00 kW maximum. Remove selections before reading Peak/Average again. When a Unit slicer selects **kW**, two distinct metric types can still be present, and the guarded measure may correctly return **Blank** rather than an invalid cross-metric average.
+**Important failure example:** In a subsequent maker-reported Part 16 review, Desktop **opened** and the loaded tables and measures returned all expected values, **but Refresh failed**, displaying *“6 queries are blocked”* and *“Dim Sensor: A cyclic reference was encountered during evaluation.”* That is **F16-08 = Fail**, not Pass or Not Run. Previously cached/loaded model values are not proof that source queries can refresh.
 
-**Important verification limit:** In the latest reported **Part 16** exercise, **Power BI Desktop was not opened**. That test was **Not Run**; its earlier Part 13 Desktop results and verified CSV/PBIP source remained valid *prior evidence* but were not freshly re-executed. If you cannot access Desktop now, **mark F16-08 = Not Run** and stop there; do not claim a current refresh or a Power BI Service deployment.
+**Safe troubleshooting — do not damage the working PBIX:**
 
-**Checkpoint F16-08:** A real current-session Desktop refresh and page review is evidenced—or is explicitly Not Run without fabricated screenshots.
+1. Save a **separate private troubleshooting copy** of the PBIX or PBIP before changing a query. Keep the original file unmodified. Do not type into the DAX editor when trying to edit Power Query M; check the current application's focus before pasting.
+2. Choose **Home → Transform data**. Select the **Dim Sensor** query and inspect the **Query Settings → Applied Steps** list. If hidden, use **View → Query Settings**. Click **Source**, then each subsequent step until the first failure. Record which step fails.
+3. Use **View → Advanced Editor** to inspect the complete **Power Query M** expression for that query. Look for a step that references its own query (for example, an unintended `#"Dim Sensor"` inside **Dim Sensor**) or a chain of helper queries that references back to it. Check that each step uses a previous step and the `in` clause returns the last intended step. Inspect related queries only when the dependency graph warrants it.
+4. Compare the live query with the source-controlled **Dim Sensor** import definition and the actual accessible **reference/sensors.csv**. A direct `File.Contents(...) → Csv.Document → Table.PromoteHeaders → Table.ReplaceValue → Table.TransformColumnTypes` pipeline should not require joining its own loaded table. **Do not assume the reported cyclic reference is caused by this specific step until inspection confirms it.**
+5. Correct only the demonstrably cyclic query/dependency in the **troubleshooting copy**. If the source path is invalid, repair the path separately; a file-not-found problem and a cyclic M dependency are not interchangeable diagnoses. Avoid renaming or rebuilding the loaded **Dim Sensor** table unnecessarily, because **DAX measures and model relationships depend on its identity**.
+6. Choose **Close & Apply**, then **Refresh** again. Inspect all **seven** queries and repeat the numeric/model/page checks above. Save the repaired copy **only after** it refreshes successfully and the report reopens with the correct seven-table model. Preserve the original as a rollback copy and request any approval required to replace it.
+
+If the error persists, record the exact failed step, current query dependencies and new error text in your **private diagnostic notes**. Do not publish machine paths, copied user clipboard material or the private PBIX to GitHub. Closing without saving is a valid safety choice; it **does not** fix the report.
+
+**Checkpoint F16-08:** **Pass** only after an actual clean Refresh and model/page validation. **Fail** if the refresh errors, even when all previously loaded dashboard values appear correct.
 
 ### S16.09 — Explain engineering readiness without converting prior results into new passes
 
@@ -4050,47 +4070,50 @@ When the Canvas screen hides the Hold status or displays a blank zero, disclose 
 
 **Checkpoint F16-10:** Every source link works, the case study communicates the actual learning architecture, and no private implementation evidence is published.
 
-### S16.11 — Assemble the final presentation and plan real demonstration captures
+### S16.11 — Assemble the private portfolio deck using verified screen captures
 
-Open the [12-slide storyboard](./portfolio/Presentation-Storyboard.md) and the [twelve-scene demo route](./portfolio/Demo-Walkthrough.md). Prepare an editable, visually consistent slide deck with short headings, one technical point per slide and citations to public sources. Diagrammatic architecture images must be marked as diagrams rather than screenshots.
+Open the [12-slide Presentation Storyboard](./portfolio/Presentation-Storyboard.md) and the [read-only demonstration route](./portfolio/Demo-Walkthrough.md). Build or reuse an editable **PowerPoint draft**. Keep its architecture diagrams and KPI summaries explicitly source-backed. A draft presentation may be supplied **separately from the local training project folder**; an inability to find it locally is not evidence that no draft exists. Download the supplied artifact to your authorized working folder before trying to edit it on your computer.
 
-| Slides | Topics | Supporting evidence |
+| Slide group | Source-supported content |
+| --- | --- |
+| 01–03 | Project scope, fictional operational problem and dataset scale |
+| 04–06 | Correct Dataverse / Power Automate / Power BI boundaries, six applications and **actual redacted Play captures** when available |
+| 07–09 | Five historical flows; Rack 013 status/display limitation; Power BI model with **refresh failure visibly disclosed** |
+| 10–12 | Distinct UAT cycles, accessibility/ALM limitations, conditional readiness and remaining work |
+
+Where actual candidate screenshots exist, insert **only the privacy-reviewed, redacted copies** and identify their source app and published-version context. Do not include any original that still shows account initials or tenant URLs. Cropping the developer-environment banner is **not mandatory** if it is harmless and accurate. The two Rack 013 images should make the distinction clear: **Rack list = Hold; Rack Detail = Hold omitted, reserved fields blank**.
+
+If Desktop refresh is still failing, describe the **previously loaded model** accurately and make its **current Refresh = Fail** evident on the analytics slide. Do not insert a dashboard screenshot as proof of fresh data or conceal that one of the six reference queries was blocked.
+
+A real presentation is considered **completed** only once the editable deck is available to the user, the selected screenshots have been incorporated and reviewed, and the intended demonstration/recording has been checked and approved. A sourced deck that has not been received or screened is a **private draft**, and the presentation gate remains **Blocked**.
+
+**Checkpoint F16-11:** Editable deck and genuine privacy-reviewed captures are assembled and approved **or** the step remains Blocked, with the missing action identified.
+
+### S16.12 — Perform final project QA without overwriting private results
+
+Check the single cumulative [Build Guide](./Build-Guide.md), [Case Study](./portfolio/Case-Study.md), [Architecture](./portfolio/Architecture.md), [Evidence Matrix](./portfolio/Evidence-Matrix.md), [Demo Walkthrough](./portfolio/Demo-Walkthrough.md), [Presentation Storyboard](./portfolio/Presentation-Storyboard.md) and [Part 16 learner UAT template](./quality/Part-16-Final-Verification.csv). Keep the GitHub template at **twelve Not Run** entries so new learners can execute it from scratch.
+
+In a **private working copy**, record the current twelve outcomes with their source and dates. A valid subsequent practice run can have:
+
+| Classification | Example result from an updated final review | Interpretation |
 | --- | --- | --- |
-| **01–03** | Project introduction, fictional operations challenge and fixed data scale | Case Study and CSV datasets |
-| **04–06** | Transactional vs analytical architecture; Dataverse relationships; the six app experiences | Architecture plus actual app screens where permitted |
-| **07–09** | Cloud-flow histories, capacity-planning constraints and Power BI Desktop model | Run histories, saved planning records and analytical source |
-| **10–12** | UAT/quality findings, ALM packaging boundaries and portfolio outcomes | Prior engineering evidence, public UAT template and privacy-reviewed results |
+| **Pass** | **10** | Includes actual privacy-reviewed captures from published Play screens |
+| **Fail** | **1 — F16-08** | Power BI opened and retained expected loaded data, but current Refresh failed with a cyclic dependency |
+| **Blocked** | **1 — F16-11** | Presentation was not received/assembled and final recording was not approved |
 
-A prebuilt **draft PowerPoint** may exist, but **a draft slide deck is not a recorded end-to-end demo**. The final real-app captures must be collected separately from published versions, with identity and environment details cropped or redacted. Watch for the **developer environment banner** in Power Apps Play. Do not replace a missing runtime screen with a fabricated screenshot or claim that an unrecorded flow has run.
+These are **reported outcomes from one learner's implementation**, not the initial statuses of the publicly downloadable template. The original **Part 15 post-export 13 Pass / 5 Not Run** result is a separate engineering exercise; do not merge the two denominators.
 
-If no actual redacted screenshots or recording have been captured, record **F16-03 Not Run** and **F16-11 Blocked**, even when the draft slides accurately reflect the published sources. If Power BI Desktop was not opened, keep that visual as a source-backed conceptual summary, not a current-session report capture.
+Final QA must also confirm that the existing solution still contains six apps and five distinct flows, source records are unchanged, **500 original work-order CSV rows are not confused with 501 learning-tenant records**, and the Power BI data are still separate synthetic CSVs. Keep the 143 unresolved Capacity Planner accessibility findings, lack of server-side conflict safety, non-admin role testing, and target import status in the portfolio limitations.
 
-**Checkpoint F16-11:** Slide claims remain grounded; the recording is approved and verified **or** explicitly pending without being described as finished.
+**Privacy:** Do not upload raw Play captures, user initials, local file paths, the private verification CSV, unreviewed presentation sources, private Power BI project/solution exports, credentials, or behind-the-scenes production documents to public GitHub. Only screened, non-identifying portfolio content is eligible for later approval.
 
-### S16.12 — Complete final public QA and preserve the existing solution
-
-Use [Part-16-Final-Verification.csv](./quality/Part-16-Final-Verification.csv) as a fresh **twelve-test learner template**. Every row in that GitHub file must remain **Not Run** so readers can perform their own checks. Your completed test results, actual screenshots, export ZIP and authentication-dependent evidence stay in a **private working copy**.
-
-Conduct these final checks without changing earlier solution components:
-
-1. **One Build Guide:** Verify Parts 00–16 appear in order within the same §Build-Guide.md§.
-2. **Public artifact links:** Open Case Study, Architecture, Evidence Matrix, Demo Walkthrough, Presentation Storyboard, all synthetic data links and the final template.
-3. **Privacy:** Search every public text and image for tenant/account identifiers, private file hashes, signed-in names, machine paths, connection IDs or internal production material.
-4. **App history:** Confirm saved and published versions of the six app experiences actually viewed; do not assume a Studio edit was published.
-5. **Flow state:** Verify the current **five separate flows** and their historical actions; do not turn anything On, trigger an email or resolve duplicate names by deleting records.
-6. **Data and analytics:** Keep actual Dataverse work-order counts distinct from the original CSV; keep 50,000 monitoring readings in the CSV/Power BI source, not Dataverse.
-7. **Quality and readiness:** Report unresolved accessibility, capacity concurrency, role testing, connection dependencies, safe negative testing and target-environment import.
-8. **Evidence truth:** Record **Pass, Fail, Not Run or Blocked** for each private final check. A previously passed Part 15 test is not automatically a new Part 16 Pass.
-
-In the previous reference review, nine final checks were reported as **Pass**, two (**privacy captures and Power BI Desktop**) remained **Not Run**, and one (**final presentation/recording evidence**) was **Blocked**. Those are a **separate maker-reported example**, not statuses for anyone else's template and not proof that all twelve final tests passed.
-
-**Checkpoint F16-12:** The public documentation is complete and privacy-safe, the existing solution is unchanged, and any unexecuted runtime verification remains explicitly open.
+**Checkpoint F16-12:** Public documents and links are accurate and safe; the private evidence shows **which tests passed, failed or were blocked**, without calling a cached model a successfully refreshed one.
 
 ### Finish Part 16 — Complete project documentation and evidence-led portfolio
 
 The **Data Center Operations 360** learning portfolio has a cumulative guide through Part 16, connected fictional Dataverse records, three Canvas apps, three model-driven apps, guarded cloud-flow examples, a reproducible Power BI Desktop source model, a public architecture diagram, case study, evidence index, demonstration route and slide storyboard.
 
-**Documentation complete** does not mean **all live demonstration tests complete**. In the reported final audit, the remaining work concerned a privacy-reviewed capture session, a fresh Power BI Desktop check and final recorded presentation approval. Quality remediation, role separation, server-safe rack reservation behavior and target-environment import also remain outside the verified enterprise scope.
+**Documentation complete** does not mean **all live demonstration tests complete**. In a later maker-reported validation, privacy-reviewed Play captures were collected successfully. Power BI Desktop then opened, but **Refresh failed with a Dim Sensor cyclic-reference error**, despite correct previously loaded values. The editable presentation and actual recorded demonstration remain subject to private assembly and approval. Quality remediation, role separation, server-safe rack reservation behavior and target-environment import also remain outside the verified enterprise scope.
 
 Use the [Case Study](./portfolio/Case-Study.md) as the portfolio landing page, the [Architecture](./portfolio/Architecture.md) for design discussions and the [Demo Walkthrough](./portfolio/Demo-Walkthrough.md) for a truthful authorized recording.
 
