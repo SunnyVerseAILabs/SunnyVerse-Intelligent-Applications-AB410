@@ -3860,58 +3860,62 @@ You have evaluated an existing Power Platform solution with component inventory,
 
 ## Part 16 — Present and Verify the Complete Data Center Operations 360 Project
 
-The earlier lessons developed a fictional data-center operations learning solution through Dataverse, Power Apps, Power Automate and a local Power BI model. The final chapter is an **evidence-led end-to-end portfolio demonstration**: verify the original solution, assemble its public architecture/case study, rehearse a safe tour, and prepare an accurate final presentation. **Do not add a new table, app, flow, environment, SQL connection, data center integration or unapproved service just to make the portfolio look larger.**
+Continue the fictional **SunnyVerse Renewable Group** learning project from Part 15. The final lesson is about **demonstrating and explaining the solution that already exists**: Dataverse records, three Canvas apps, three model-driven apps, controlled Power Automate examples, a separate Power BI Desktop analytical model, engineering evidence and a public case study.
 
-Our fictional business is **SunnyVerse Renewable Group**; the educational project is published by **SunnyVerse AI Labs**. GitHub contains source instructions and synthetic datasets, not the authenticated Power Platform application. Any final recording must use the **actual published app** (where available), sanitize private metadata and state which checks were verified. This chapter does not imply enterprise deployment, real-time telemetry, physical equipment control or a Power BI Service publication.
+This is an **independent SunnyVerse AI Labs educational portfolio**, not a production data-center management system. Do not create a new app, table, flow, security identity, environment or live equipment connection to complete the presentation. Report limitations accurately instead of making a feature appear more complete than it is.
 
-**Final public resources:** [Portfolio Case Study](./portfolio/Case-Study.md) · [Architecture](./portfolio/Architecture.md) · [Demonstration Walkthrough](./portfolio/Demo-Walkthrough.md) · [Evidence Matrix](./portfolio/Evidence-Matrix.md) · [Presentation Storyboard](./portfolio/Presentation-Storyboard.md) · [Final Verification Template](./quality/Part-16-Final-Verification.csv).
+**Public learner resources:** [Case Study](./portfolio/Case-Study.md) · [Architecture](./portfolio/Architecture.md) · [Evidence Matrix](./portfolio/Evidence-Matrix.md) · [Demo Walkthrough](./portfolio/Demo-Walkthrough.md) · [Presentation Storyboard](./portfolio/Presentation-Storyboard.md) · [Final Verification Template](./quality/Part-16-Final-Verification.csv).
 
-### S16.01 — Freeze a truthful current solution baseline
+**Evidence boundary:** Public GitHub contains reproducible instructions and fictional source files. Your working verification results, exported solution package, local paths, credentials, account/tenant information, unredacted captures and private production materials do **not** belong in that repository. A published learning guide is not proof a recorded walkthrough or a Power BI Desktop retest has been completed.
 
-From your **authorized** Power Apps environment, open **Solutions → SunnyVerse Data Center Operations 360 → Overview**; do not create or import another solution. Verify the actual unique name, publisher, saved prefix, version, environment access and most recent published versions before recording anything. The development-source package inspected during Part 15 was an **unmanaged version 1.0.0.0** export, but a successful export alone is **not** proof that a target environment can import it or that the tenant has not changed since then.
+### S16.01 — Confirm the original solution, app versions and flow identities
 
-| Component group | Reference design and previous reported inventory | What to inspect in the current environment |
+Open [Power Apps](https://make.powerapps.com) and select the **existing authorized environment**. Go to **Solutions → SunnyVerse Data Center Operations 360 → Overview**, then inspect its saved publisher, unique name, version and `svrg` prefix. The original learning source was unmanaged, version `1.0.0.0`, with unique name `SunnyVerseDataCenterOperations360`; verify the **current saved state**, not a remembered label.
+
+Under **Objects** or the current **Object type** filter, locate these **six existing apps**, then compare their saved/modified and **published** versions. Use **Play** for actual published-page verification—not Studio preview alone.
+
+| Canvas app | Model-driven app |
+| --- | --- |
+| **DC Operations Command Center** | **DC Asset & Maintenance Manager** |
+| **DC FieldOps** | **DC Change & Risk Manager** |
+| **DC Capacity Planner** | **DC Supporting Operations Hub** |
+
+In the latest reported learning walkthrough, all six apps had matching saved/published versions. Do not assume that remains true after another maker edits an app. If Studio offers to save despite no intended changes, discard the draft and recheck the version metadata before making any claim.
+
+Now inspect **Cloud flows** as separate records, using unique internal identities instead of display names. There are five flow records in the reference scenario: **two distinct DC08 Incident Status Notice flows**, **DC08 Inspection Follow-up Notice**, **DC10 Change Approval** and **DC14_Incident_Insight_Demo**. The **older** DC08 Incident Status Notice has **four historical successful runs**; the **later same-name** flow has **zero**. Do not delete the duplicate, switch its state or merge its history in this lesson. Four of the five were previously Off; DC14 was On—check actual present states.
+
+**Checkpoint F16-01:** One existing solution, six app publish states and five distinct cloud flow identities are documented privately. No component was changed or republished.
+
+### S16.02 — Reconcile the original synthetic data and Dataverse relationships
+
+Open the published [practice data library](./data/README.md) and inspect the existing Dataverse records through **saved views or read-only queries**. The original CSV starting scale is fixed, but a learner may have retained extra practice rows.
+
+| Source family | Fictional starting / practice records | Reconciliation |
 | --- | --- | --- |
-| Canvas | **DC Operations Command Center**, **DC FieldOps**, **DC Capacity Planner** | Published/edited version; Play access; formula/checker status |
-| Model-driven | **DC Asset & Maintenance Manager**, **DC Change & Risk Manager**, **DC Supporting Operations Hub** | Main forms, views, app access, published navigation |
-| Dataverse | **24 organization-owned tables** previously reported | Schema keys and sample relationship records; exact current component counts |
-| Cloud flows | **Five** distinct flow records previously reported, including two separately identified **DC08 Incident Status Notice** flows | Unique flow identities, actual On/Off state and historical run evidence |
-| Connection metadata | Two Dataverse, one Outlook, one Approvals connection references; one notification variable previously reported | Type and healthy permitted owner status, without revealing values |
-| Analytics | Local Power BI Desktop report + sanitized GitHub PBIP source | Reopen/refresh results and page availability; **not** Power BI Service status |
+| Campus / Data Halls / Departments | **1 / 2 / 6** | Actual Hall→Campus Lookups |
+| Employees / Assets / Sensors | **20 / 100 / 24** | Employee, Asset→Hall and Sensor→Asset Lookups |
+| Alarms / Incidents | **120 / 200** | Saved operational source records |
+| Work Orders | **500 CSV starting rows** | An additional **WO-TRAIN-01** may make the current Dataverse count **501**; keep it |
+| Vendors / Spare Parts / Inventory Balances / Handovers | **2 / 3 / 3 / 2** | True related Spare Part, Hall and Shift records |
+| Hall Baselines / Rack Plans / Allocations / Requests | **2 / 20 / 3 / 2** | Rack Holds, reserved units and related record Lookups |
+| Intelligence Rules / Knowledge Articles / Insights | **3 / 2 / 3** | Required Rule plus appropriate source Lookup |
+| Monitoring | **50,000 synthetic readings, 24 sensor codes** | Separate CSV/Power BI Import source, **not** Dataverse monitoring rows |
 
-Use the solution object list and app version information rather than assuming everything is published because an editor saved successfully. Do **not** turn On any Off flow, change an approval recipient, publish an app, create a new user, edit a role or perform a deployment during this read-only baseline.
+Verify that `INS-INC-0001-P1` links to **INC-0001** and **RUL-0001**, and that `INS-BAL-0002-REORDER` links to **BAL-0002** and **RUL-0003**. Open the related parent using the saved Lookup picker; text that merely resembles a record name does not count.
 
-**Checkpoint F16-01:** Current published evidence or an explicit **Not Verified** label exists for each of the six app experiences. Record this privately; publish no tenant GUIDs.
+Inspect **Schema → Keys**. In the earlier verified training review, **16 of 24 tables had Active alternate keys and eight did not**. A clean duplicate-code scan on the latter tables establishes *current sample uniqueness*, not **Dataverse-enforced uniqueness**. Do not add or change keys just for a closing demonstration.
 
-### S16.02 — Reconcile the final fictional datasets and business links
+**Checkpoint F16-02:** The initial CSV counts, current tenant counts, extra practice record, real Lookups and key-coverage gap are reconciled without deleting or rewriting records.
 
-Open the [public synthetic data library](./data/README.md), then inspect the same records in Dataverse through saved forms or read-only queries. Keep the difference between the **original CSV baseline** and the current learning tenant visible.
+### S16.03 — Prepare a private verification log and a privacy-safe capture
 
-| Data family | Published starting data / reference | Required relationship or caveat |
-| --- | --- | --- |
-| Campus / Halls | **1 / 2** | Data Hall holds real Lookup to Campus |
-| Departments / Employees | **6 / 20** | Employee-to-Department and manager hierarchy are fictional business records |
-| Assets / Sensors | **100 / 24** | Asset belongs to Hall; Sensor points to existing Asset |
-| Alarms / Incidents | **120 / 200** | Saved source Lookups and status/priority fields |
-| Work orders | **500 rows in** [work-orders.csv](./data/work-orders.csv) | Additional training row may make actual Dataverse count **501**; do not delete it automatically |
-| Supporting operations | **2 Vendors / 3 Spare Parts / 3 Balances / 2 Handovers** in the practice scenario | Real spare/department/hall relationships; manually maintained reorder flags |
-| Capacity | **2 Baselines / 20 Rack Plans / 3 Allocations / 2 Requests** | Capacity requests do not automatically consume rack capacity |
-| Reviewed insights | **3 Rules / 2 Knowledge Articles / 3 Insights** | Insight's Rule/Incident/Work Order/Inventory Balance links must resolve |
-| Monitoring CSVs | **50,000 readings across 24 Sensor Codes** | Used in Power BI Desktop Import, not inserted as Dataverse readings |
+Download [Part 16 Final Verification](./quality/Part-16-Final-Verification.csv). It is a **twelve-case public learner template** with every test initially **Not Run**. Make a **private working copy** and record for each case: **Pass, Fail, Blocked or Not Run**, actual behavior and a non-sensitive evidence reference. Do not upload your private completed CSV to GitHub.
 
-Inspect real **many-to-one** Lookups by following a child record to its parent. Check **INS-INC-0001-P1 → INC-0001 / RUL-0001** and **INS-BAL-0002-REORDER → BAL-0002 / RUL-0003**, if those records still exist. Some tables have Active alternate keys and others only currently unique codes; do not represent a duplicate-free sample as universally enforced key uniqueness.
+Before recording or sharing images, remove or crop the browser address bar, signed-in identity, institutional context, environment identifiers, connection-owner data, real email addresses, private exports and local user paths. **Power Apps Play may show a “developer environment” banner**; crop it carefully only when the resulting image honestly communicates the screen. Never crop out an app error or warning to imply success.
 
-**Checkpoint F16-02:** Count differences and any broken links are documented. Original synthetic source records are left intact.
+Use only the **published Play version** when labelling an image as a published app screenshot. A manually drawn architecture diagram or presentation mockup must not be passed off as an authentic app capture. If no actual redacted capture or screen recording has been made, mark the capture check **Not Run** and the recording/presentation-evidence check **Blocked**. An editable PowerPoint draft does not establish that a real capture exists.
 
-### S16.03 — Prepare a privacy-safe demonstration session
-
-Use an authorized learning user and save a **private working copy** of the [Part 16 Final Verification Template](./quality/Part-16-Final-Verification.csv), initially twelve **Not Run** cases. Record **Pass / Fail / Blocked / Not Run**, actual observation and a sanitized evidence reference after each step. The GitHub template itself remains blank for learners.
-
-Before capturing screenshots or recording video, hide personal profile menus, environment IDs, browser URL bars containing private paths, institutional details, connection references, actual recipients, Power Automate authentication errors with identifiers and original export details. Prefer content cropping over unreliable automated blur. Use test-only fictional data; never open user credentials or real notifications in the recording.
-
-If a tab shows unsaved changes, compare the saved/published app metadata **before** choosing Save. Do not publish a modified app to improve the recording. Separate **read-only demonstration** from any later approved write-capable test.
-
-**Checkpoint F16-03:** The evidence capture frame is free of private identifiers, and the chosen published-app version is identified.
+**Checkpoint F16-03:** The capture is genuinely privacy-reviewed **or** its absence is explicitly recorded. Nothing private was published.
 
 ### S16.04 — Review the reference architecture and its actual boundaries
 
