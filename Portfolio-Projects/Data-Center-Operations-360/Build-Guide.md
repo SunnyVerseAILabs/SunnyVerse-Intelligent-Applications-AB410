@@ -2492,9 +2492,9 @@ You now have a connected **Supporting Operations Hub** for fictional vendor coor
 
 ## Part 12 — Plan Data Hall Rack Capacity and Power Headroom
 
-Our fictional **Pacific Resilience Campus** already contains **Data Hall 01** and **Data Hall 02**, 100 registered assets and **20 existing Server Rack assets**. Supporting Operations is now connected to equipment and data-hall context. In this chapter, we will create a **planning** layer, then build **DC Capacity Planner**, a desktop Canvas App for rack-space reservations, power budgets, conflict checks and fictional planning requests.
+Part 11 connected shift operations to suppliers, spares and work orders. Now we continue in **the same solution** with capacity planning: the fictional **Pacific Resilience Campus** contains **Data Hall 01** and **Data Hall 02**, 100 assets and 20 existing Server Rack assets. You will build the four planning registers and the **DC Capacity Planner** desktop Canvas App, linking rack positions, planned power, reservations and requests without duplicating the equipment register.
 
-Use only an authorized learning environment. Confirm the column settings, choices, relationships, formulas and results in your own saved solution before moving on. The fictional planning records must not be used for real infrastructure decisions.
+Use only an authorized learning environment and fictitious records. Verify saved metadata, field types, row relationships and the **published app version** before completing the chapter. The calculations represent a training planning model, never real facility telemetry or an authenticated capacity reservation.
 
 We will create four small planning tables, reusing the existing Data Hall, Asset and Employee references:
 
@@ -2538,7 +2538,7 @@ Inside the solution choose **New → Table**, using the advanced table settings 
 | Table schema target | `svrg_DCHallPlanningBaseline` |
 | Primary-name schema target | `svrg_BaselineName` |
 
-Add the business columns. Set their saved description, required level, data type, limits, behavior, defaults and actual schema as shown. Use `Done` for each and **Save table** if offered.
+Add the business columns. Set their saved description, required level, data type, limits, behavior, defaults and actual schema as shown. Use `Done` for each and **Save table** if offered. After the table is created, reopen **Baseline Name → Edit column** and explicitly set **Business required** if the creation dialog saved Optional. Verify that setting again after saving; repeat this primary-name verification on the other three new tables.
 
 | Exact display name / CSV header | Target schema | Type / Required | Other properties and meaning |
 | --- | --- | --- | --- |
@@ -2579,7 +2579,7 @@ Add the following. The last two columns are Lookups, created *after* the regular
 | --- | --- | --- | --- |
 | Rack Plan Name | `svrg_RackPlanName` | Primary Text / Business required | Existing primary name; no duplicate |
 | Rack Plan Code | `svrg_RackPlanCode` | Text / Business required | Max 24; Searchable Yes; match rack asset code in this training set |
-| Total Rack Units | `svrg_TotalRackUnits` | Whole number / Business required | Minimum 1; maximum 52; training default 42 |
+| Total Rack Units | `svrg_TotalRackUnits` | Whole number / Business required | Minimum 1; maximum 52; **no column default—enter 42 explicitly per Rack Plan record/import row** |
 | Rack Power Budget kW | `svrg_RackPowerBudgetkW` | Decimal / Business required | Precision 2; minimum 0; training budget 20.00 |
 | Planning Status | `svrg_PlanningStatus` | **Local single Choice** / Business required | `Available`, `Hold`, `Retired`; no default |
 | Active | `svrg_Active` | Yes/No / Optional | Default Yes |
@@ -2587,7 +2587,7 @@ Add the following. The last two columns are Lookups, created *after* the regular
 | Asset | `svrg_Asset` | **Lookup to DC Asset** / Business required | Reuse an existing Server Rack row; verified relationship |
 | Data Hall | `svrg_DataHall` | **Lookup to DC Data Hall** / Business required | Must agree with that Asset's Data Hall |
 
-Create the **DC Rack Plan Code Key** on Rack Plan Code; wait for Active. Do **not** create a second asset register and do not rely on a plain text Asset Code in place of the relationship. The single-select status is a **local Choice**, not a shared global option set. Save its labels in the given order and retain the generated numeric values.
+Create the **DC Rack Plan Code Key** on Rack Plan Code; wait for Active. In the verified authoring pattern, Whole Number fields do not provide an editable column default; keep the saved column without a default and enter **42** in every training row. Do not confuse the record value with a Dataverse column default. Do **not** create a second asset register and do not rely on a plain text Asset Code in place of the relationship. The single-select status is a **local Choice**, not a shared global option set. Save its labels in the given order and retain the generated numeric values.
 
 For this lesson, 20 Rack Plans correspond to the 20 existing Server Rack assets. The linked practice CSV has the same **display-name headers** as the new table, with Asset and Data Hall represented by existing primary names for lookup mapping. Rack 013 (Standby) and Rack 019 (Under Maintenance) start on **Hold**. The other 18 start on **Available**. This holds training reservations away from assets not in service.
 
@@ -2632,7 +2632,7 @@ Create **DC Capacity Request** / **DC Capacity Requests**, Standard / Organizati
 | Preferred Rack Plan | `svrg_PreferredRackPlan` | Lookup to DC Rack Plan / Optional | Candidate rack, not an actual reservation |
 | Requested By Employee | `svrg_RequestedByEmployee` | Lookup to DC Employee Profile / Optional | Fictional directory context only |
 
-Create the **DC Capacity Request Code Key** on Request Code, wait until Active. A `Planned` state is a manual exercise label, not an enterprise approval. A request does **not** subtract space or power: only allocations with `Capacity Reserved = Yes` do so. Do not create a new cloud flow or send an approval message in Part 12.
+Create the **DC Capacity Request Code Key** on Request Code and inspect **Keys** until its status is **Active**. It may show **Pending** during the background index operation; do not insert duplicate-prone records or create another key while that operation runs. A `Planned` state is a manual exercise label, not an enterprise approval. A request does **not** subtract space or power: only allocations with `Capacity Reserved = Yes` do so. Do not create a new cloud flow or send an approval message in Part 12.
 
 ### S12.06 — Create and verify the nine real Lookup relationships
 
@@ -2650,7 +2650,7 @@ Open each **current table → Schema → Relationships → New relationship → 
 | DC Capacity Request | Preferred Rack Plan / `svrg_PreferredRackPlan` | DC Rack Plan | Optional |
 | DC Capacity Request | Requested By Employee / `svrg_RequestedByEmployee` | DC Employee Profile | Optional |
 
-This design adds **nine** new Lookups. Verify all nine. The three links associated with Allocation are created only after both Rack Plan and Capacity Request exist; this is why the table creation order precedes the relationships. Likewise, the Baseline Data Hall link is created **here once**, not earlier in S12.02. When a builder has already created a correct Lookup, inspect and reuse it rather than duplicating it.
+This design adds **nine** new Lookups. Verify all nine by reopening each relationship and a sample referenced record. Match existing parent records by their saved primary names, or resolve their real record IDs before a supported API upsert; **a plain business code in a CSV is not itself an automatically resolved Dataverse Lookup**. The three links associated with Allocation are created only after both Rack Plan and Capacity Request exist; this is why the table creation order precedes the relationships. Likewise, the Baseline Data Hall link is created **here once**, not earlier in S12.02. When a builder has already created a correct Lookup, inspect and reuse it rather than duplicating it.
 
 **Cross-reference rule:** The Hall on a Rack Plan must match the Hall on its linked Asset; the Hall on an Allocation must match its Rack Plan's Hall; the Hall on a Request must match its preferred Rack if one is selected. Required Lookups alone do not enforce these equality rules; verify them in the form and sample tests, and treat server-side validation as a future enterprise hardening task.
 
@@ -2664,7 +2664,7 @@ Rack Plan Name,Rack Plan Code,Total Rack Units,Rack Power Budget kW,Planning Sta
 
 This 20-row original synthetic dataset corresponds to the existing Server Rack assets. Its headers use Dataverse display names, but the two Lookup columns still require explicit reference mapping. Download the linked CSV before importing.
 
-Open **DC Rack Plan → Import from CSV** in a Dataverse import experience that supports Lookup Reference mapping, select `rack-plans.csv`, and use **Review Mapping**. Match Text, Whole Number, Decimal and Boolean columns by their exact display names. Map Planning Status labels to the existing local Choice options. For the **Asset** Lookup, choose `DC Asset → Asset Name`; source values are `Server Rack 001` … `Server Rack 020`. For **Data Hall**, choose `DC Data Hall → Hall Name`; source values are Data Hall 01/02. Do not point either lookup at a GUID field or free-text column. If the wizard cannot set Lookup References, do not force the import—use a supported import route or enter the 20 records through the editor with real pickers.
+Open **DC Rack Plan → Import from CSV** in a Dataverse import experience that supports Lookup Reference mapping, select `rack-plans.csv`, and use **Review Mapping**. If the designer cannot reliably resolve Lookup references from a business code, **stop before importing**. Resolve the existing Asset and Hall records to their actual Dataverse IDs using an authorized supported data tool and load the same rows by the Active Rack Plan Code alternate key with proper Lookup bindings, or use the standard record form and actual Lookup picker. After importing, reread every row and its referenced parents; do not assume that a successful import status proves correct relationships. Match Text, Whole Number, Decimal and Boolean columns by their exact display names. Map Planning Status labels to the existing local Choice options. For the **Asset** Lookup, choose `DC Asset → Asset Name`; source values are `Server Rack 001` … `Server Rack 020`. For **Data Hall**, choose `DC Data Hall → Hall Name`; source values are Data Hall 01/02. Do not point either lookup at a GUID field or free-text column. If the wizard cannot set Lookup References, do not force the import—use a supported import route or enter the 20 records through the editor with real pickers.
 
 Use one creation method only, and verify count before rerunning. Inspect the 20 rows after a completed import and select three references from the grid: Rack 001 → Server Rack 001 → Hall 01, Rack 002 → Server Rack 002 → Hall 02, and Rack 019 → Server Rack 019 → Hall 01 with **Planning Status = Hold**. Check Rack 013 is also on Hold. Every Total Rack Units value is 42 and every **planning** budget is 20.00 kW.
 
@@ -2699,7 +2699,7 @@ At the starting state: Hall 01 = **2,350 − 1,800 − 100 − (4 + 3) = 443 kW*
 
 ### S12.09 — Build the DC Capacity Planner desktop Canvas App
 
-Inside **Solutions → SunnyVerse Data Center Operations 360**, choose **New → App → Canvas app** (or New app within the solution). Name it exactly **DC Capacity Planner** and select **Tablet / landscape**. In **Data**, connect these existing Dataverse tables: `DC Hall Planning Baselines`, `DC Rack Plans`, `DC Rack Allocations`, `DC Capacity Requests`, `DC Data Halls`, and `DC Assets`. Also connect `DC Employee Profiles` only if the optional request-originator field is shown in an app form. Select Classic Label, Button, Text input, Gallery and Form controls when available; **Classic inputs use `.Text`**. Modern inputs can use `.Value`—do not mix the two without adjusting formulas.
+Inside **Solutions → SunnyVerse Data Center Operations 360**, choose **New → App → Canvas app** (or New app within the solution). Name it exactly **DC Capacity Planner** and select **Tablet / landscape**. In **Data**, connect these existing Dataverse tables: `DC Hall Planning Baselines`, `DC Rack Plans`, `DC Rack Allocations`, `DC Capacity Requests`, `DC Data Halls`, and `DC Assets`. Also connect `DC Employee Profiles` only if the optional request-originator field is shown in an app form. Insert the documented Classic Label, Button, Text input, Gallery and Form controls; the authoring studio may already choose Classic controls by default. **Classic text inputs use `.Text`**, whereas Modern inputs may use `.Value`. If an Insert operation does not create the control, verify the Tree view before retrying. Supported paste-as-code can add compatible **controls inside an existing blank screen**; it does not paste a complete `Screen` object. Avoid unescaped colon-space sequences in inline YAML text and place longer formulas in multiline blocks when pasting. For Classic forms, leave unsupported pasted properties such as `Columns` at their saved defaults rather than forcing them.
 
 Use the same restrained navy / teal visual language as the previously published Command Center. Functional formulas come first. In **App → OnStart**, set:
 
@@ -2707,13 +2707,16 @@ Use the same restrained navy / teal visual language as the previously published 
 Set(varCapacityNavy, ColorValue("#123A56"));
 Set(varCapacityTeal, ColorValue("#147D86"));
 Set(varCapacityBg, ColorValue("#F3F7FA"));
+Set(varRack, First('DC Rack Plans'));
 Set(varRack, Blank());
+Set(varHall, First('DC Data Halls'));
 Set(varHall, Blank());
+Set(varRequest, First('DC Capacity Requests'));
 Set(varRequest, Blank());
 Set(varAllocationValid, false)
 ```
 
-Run **App → Run OnStart** once after adding the formula, if the editor offers that command. Do not count on OnStart rerunning on every screen navigation. Set each screen **Fill = varCapacityBg**. Use a meaningful text label for every status, not color alone.
+Assign each record variable from a **typed Dataverse table** before clearing it to Blank. This establishes a record type that later formulas can use; a blank-only assignment can leave Power Fx without enough type information. These first-row assignments do not create or edit any record. Run **App → Run OnStart** once after adding the formula, if the editor offers that command. Do not count on OnStart rerunning on every screen navigation. Set each screen **Fill = varCapacityBg**. Use a meaningful text label for every status, not color alone.
 
 Create and rename six blank screens in Tree view:
 
@@ -2756,11 +2759,11 @@ Choose `scrRackDetail` in Tree view and set **OnVisible** to:
 Refresh('DC Rack Allocations');
 ClearCollect(
     colRackReservations,
-    Filter('DC Rack Allocations', 'Rack Plan' = varRack && 'Capacity Reserved' = true)
+    Filter('DC Rack Allocations', 'Rack Plan'.'DC Rack Plan' = varRack.'DC Rack Plan' && 'Capacity Reserved' = 'Capacity Reserved (DC Rack Allocations)'.Yes)
 )
 ```
 
-This code is a **small-data client collection**. It is appropriate for validating only the published training scale after confirming no delegation warning affects the filtered results. `ClearCollect` is not a server-side lock or full-dataset query. If more racks or allocations are introduced later, replace this pattern with a validated delegable/server-side calculation.
+This code is a **small-data client collection**. It is appropriate for validating only the published training scale after confirming no delegation warning affects the filtered results. `ClearCollect` is not a server-side lock or full-dataset query. Compare the Lookup **primary key** (`'Rack Plan'.'DC Rack Plan'`) to the selected Rack Plan ID rather than comparing entire records; this avoids nondeterministic record equality and supports the intended delegable filter. In this form, the Yes/No **Capacity Reserved** value is exposed as a typed Choice, so use `'Capacity Reserved (DC Rack Allocations)'.Yes` in formulas rather than an untyped Boolean. If more racks or allocations are introduced later, replace this pattern with a validated delegable/server-side calculation.
 
 For the selected Rack display labels, set **Text** to the formulas:
 
@@ -2773,7 +2776,7 @@ For the selected Rack display labels, set **Text** to the formulas:
 | `lblRackBudgetKW` | `"Budget kW: " & Text(varRack.'Rack Power Budget kW', "0.00")` |
 | `lblRackReservedKW` | `"Reserved kW: " & Text(Sum(colRackReservations, 'Power Reserved kW'), "0.00")` |
 | `lblRackFreeKW` | `"Unreserved kW: " & Text(varRack.'Rack Power Budget kW' - Sum(colRackReservations, 'Power Reserved kW'), "0.00")` |
-| `galRackAllocations.Items` | `Filter('DC Rack Allocations', 'Rack Plan' = varRack)` |
+| `galRackAllocations.Items` | `Filter('DC Rack Allocations', 'Rack Plan'.'DC Rack Plan' = varRack.'DC Rack Plan')` |
 | `btnRackDetailBack.OnSelect` | `Navigate(scrRackBrowse, ScreenTransition.Fade)` |
 
 `Sum(colRackReservations, ...)` totals only saved allocations explicitly marked `Capacity Reserved = Yes`. A request record does not appear here. **Free U count does not promise a contiguous block**: racks can have holes between placements. A separate interval-overlap check follows.
@@ -2794,7 +2797,7 @@ Inspect the actual related Data Hall field in IntelliSense. If the lookup expans
 
 ### S12.11 — Configure the allocation form and the conflict-check action
 
-Open `scrAllocationEdit` and insert **Edit form**, rename it `frmAllocation`, set **DataSource = 'DC Rack Allocations'** and **Item = Defaults('DC Rack Allocations')** for new-only exercises. Add cards for Allocation Name, Allocation Code, Start U, Units Reserved, Power Reserved kW, Allocation Status, Capacity Reserved, Requested On, Allocation Notes, Rack Plan, Data Hall and Related Request. Select each numeric card's inner **Classic Text input** and rename it `txtAllocStartU`, `txtAllocUnits` or `txtAllocPowerKw`. Keep its parent DataCard's `Update` property as the appropriately typed `Value(txtAlloc...Text)`; do not accidentally submit numeric strings. Keep the Lookup cards as typed Dataverse record pickers and the Choice card as an Option Set—not a text box.
+Open `scrAllocationEdit` and insert **Edit form**, rename it `frmAllocation`, set **DataSource = 'DC Rack Allocations'** and **Item = Defaults('DC Rack Allocations')** for new-only exercises. Add cards for Allocation Name, Allocation Code, Start U, Units Reserved, Power Reserved kW, Allocation Status, Capacity Reserved, Requested On, Allocation Notes, Rack Plan, Data Hall and Related Request. Select each numeric card's inner **Classic Text input** and rename it `txtAllocStartU`, `txtAllocUnits` or `txtAllocPowerKw`. Keep its parent DataCard's `Update` property as the appropriately typed `Value(txtAlloc...Text)`; do not accidentally submit numeric strings. Keep the Lookup cards as typed Dataverse record pickers and the Choice card as an Option Set—not a text box. For this Dataverse form, set the **Capacity Reserved** card's typed `Default` and `Update` using the saved option set (for this project, `'Capacity Reserved (DC Rack Allocations)'.Yes` for consuming reservations), not literal `true`; verify whether a newly generated card uses the same option-set identifier.
 
 For this **new-only Reserved allocation** exercise, bind the typed Lookup cards to the rack chosen on `scrRackDetail`. Unlock the **Rack Plan** data card and set its **Update** to `varRack`; unlock **Data Hall** and set its **Update** to `varRack.'Data Hall'`. Keep a read-only label showing each selected record, and prevent the user from choosing a different rack or hall on this screen. Verify that the cards submit Dataverse records, not text. Keep the **Allocation Status** and **Capacity Reserved** cards in the form: set their **Update** to the typed **Reserved** local Choice (choose the actual enum member using IntelliSense) and Boolean `true`, respectively. Do not use the text string `"Reserved"` for a Choice field. Test all four typed updates by saving and reopening one valid sample row before adding more. For later changes from Reserved to Released or Cancelled, use the standard Dataverse form after applying the appropriate manual Capacity Reserved flag.
 
@@ -2852,7 +2855,7 @@ Set `varAllocationValid` to **false** before every new form session. In the **On
 Set(varAllocationValid, false)
 ```
 
-The Rack Plan and Data Hall form cards must submit the selected `varRack` and its related hall as typed Lookup records. If these field values or the Choice update cannot be verified after the first save, disable Save and keep this screen read-only; enter valid sample rows with a supported Dataverse form until the bindings are corrected.
+The Rack Plan and Data Hall form cards must submit the selected `varRack` and its related hall as typed Lookup records. In some editor/view configurations, a locked Lookup card may show blank display text even though the saved reference is valid; show the selected Rack/Hall in a separate read-only title and confirm the actual Lookup bindings by reopening the saved Dataverse record. A blank display label is not proof of a blank stored relationship. If these field values or the Choice update cannot be verified after the first save, disable Save and keep this screen read-only; enter valid sample rows with a supported Dataverse form until the bindings are corrected.
 
 Set `btnSaveAllocation.DisplayMode` to `If(varAllocationValid, DisplayMode.Edit, DisplayMode.Disabled)` and `btnSaveAllocation.OnSelect` to:
 
@@ -2876,7 +2879,7 @@ Navigate(scrRackDetail, ScreenTransition.Fade)
 
 Set `frmAllocation.OnFailure` to `Notify(frmAllocation.Error, NotificationType.Error)`, `btnCancelAllocation.OnSelect` to `ResetForm(frmAllocation); Set(varAllocationValid, false); Navigate(scrRackDetail, ScreenTransition.Fade)`, and `frmAllocation.Item` to `Defaults('DC Rack Allocations')` if keeping this as a new-only form. Invalidate the validation flag whenever a reservation-related input changes and re-run validation before using Save. The Save button requires the latest successful check but does not prevent concurrent or external writes; do not present it as a transaction-safe booking operation.
 
-A Canvas App query and form submission are **not an atomic booking transaction**. Concurrent makers can pass the same pre-check and still save overlapping reservations. This must be stated in the lesson and in its portfolio evidence. For a real solution, use a server-side enforcement design, concurrency rules and tests before calling a slot reserved.
+A Canvas App query and form submission are **not an atomic booking transaction**. Include that limitation in the success message and learner demonstration, and keep client-side validation distinct from server-side enforcement. Concurrent makers can pass the same pre-check and still save overlapping reservations. This must be stated in the lesson and in its portfolio evidence. For a real solution, use a server-side enforcement design, concurrency rules and tests before calling a slot reserved.
 
 ### S12.12 — Capacity requests, negative tests and publish
 
@@ -2907,7 +2910,7 @@ Perform these deterministic checks using the records from S12.08. **Do not write
 | Date and identity | Capacity Requests | No real Entra approval/sign-off inferred from fictional employee |
 | Idempotency | Rerun demo after save | No duplicate Rack Plan/Allocation Codes; alternate keys Active |
 
-**Publish sequence:** Use **App checker** to inspect formula errors and warnings. Reopen the saved tables and confirm Lookup targets, local Choices and Active alternate keys. In the Canvas editor select **Save**, wait for saved confirmation, then **Publish** the app, and **Play** the published version. Navigate through all six screens, inspect gallery selections, open real related records, save one valid controlled request, and review whether new allocations appear after Refresh. If the browser warns of unsaved changes despite publishing, inspect the app's saved version status, whether any pending edits remain, and the last app publish history; do not assume the warning alone proves a loss of Dataverse data.
+**Publish sequence:** Use **App checker** to inspect **Formulas**, **Accessibility**, **Performance**, and **Data source** categories separately. Zero formula errors alone does not mean the app is free of accessibility, performance or data-source findings. Resolve or explicitly document each remaining category before claiming a production-quality implementation.  Reopen the saved tables and confirm Lookup targets, local Choices and Active alternate keys. In the Canvas editor select **Save**, wait for saved confirmation, then **Publish** the app, and **Play** the published version. Navigate through all six screens, inspect gallery selections, open real related records, save one valid controlled request, and review whether new allocations appear after Refresh. If the browser warns of unsaved changes despite publishing, inspect the app's saved version status, whether any pending edits remain, and the last app publish history; do not assume the warning alone proves a loss of Dataverse data.
 
 **Safe ending:** Restore any temporary allocation or request changes to the initial sample if they were only for test; the three baseline allocations remain as originally entered. No real equipment action, procurement request, data center power measurement or automated reservation was produced. Preserve the output as a fictional portfolio learning exercise. If a code formula or permission fails, fix and re-test that operation before declaring Part 12 complete.
 
@@ -2915,7 +2918,7 @@ Perform these deterministic checks using the records from S12.08. **Do not write
 
 After completing and verifying the exercises, you have a **DC Capacity Planner** grounded in the existing two data halls and 20 Server Rack assets. It separates facility *design rating*, manually declared *planning baseline*, rack *unit space*, rack *planning power budget*, committed *allocation* and uncommitted *request*. The four Dataverse planning tables and one Canvas App show how these concerns fit together without pretending they are live monitoring or transaction-safe DCIM reservations.
 
-Before marking Part 12 complete, verify each Lookup after reopening its record, inspect the app checker and delegation warnings, and play the exact saved and published app version. This learner chapter describes reproducible steps; it does not certify that a particular Power Platform environment has completed them.
+Before marking Part 12 complete, verify all four primary names are Business required, all four alternate keys are Active, and all nine Lookup targets are correct. Confirm 20 rack plans, two baselines, three starting allocations and two capacity requests after removing temporary test rows; then inspect all App checker categories, delegation warnings and the exact saved/published app version. If the authoring environment reports 0 formula errors but leaves accessibility, performance or data-source findings, record them as outstanding rather than silently calling the application fully validated. A blank visual label on an allocation form must be cross-checked against its saved Lookup fields. Client-side overlap checks cannot eliminate simultaneous conflicting writes. This learner chapter describes reproducible steps; it does not certify that a particular Power Platform environment has completed them.
 
 **Microsoft Learn references:**
 
