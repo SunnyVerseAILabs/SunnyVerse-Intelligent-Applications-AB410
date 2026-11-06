@@ -2934,9 +2934,9 @@ Before marking Part 12 complete, verify all four primary names are Business requ
 
 ## Part 13 — Build Monitoring and Operational Intelligence with Power BI
 
-Part 12 separated planned rack capacity from real equipment load. We will now build a **Power BI Desktop analytical report** from original fictional operating data. This is a reporting layer, not a new Power App, an automated facility monitoring system, or an approval workflow. You will combine **50,000 synthetic readings** with the existing **24 DC Sensor records**, 100 Assets, two Data Halls and the previously published Alarm, Incident and Work Order files.
+Part 12 delivered a fictional rack-capacity planning layer. We now add a separate **Power BI Desktop operational-intelligence report**, connecting measurements to known equipment without confusing planning assumptions with observed values. This is a reporting layer, not a new Power App, an automated facility monitoring system, or an approval workflow. You will combine **50,000 synthetic readings** with the existing **24 DC Sensor records**, 100 Assets, two Data Halls and the previously published Alarm, Incident and Work Order files.
 
-The work uses **Power BI Desktop Import mode** and the published CSV files. This route does not require creating 50,000 Dataverse rows, configuring a premium SQL connection or obtaining an on-premises gateway. Optional publication to Power BI Service depends on the permissions and licenses in your own environment. No new Dataverse table, cloud flow, physical-device connection or automatic data refresh is required here.
+The work uses **Power BI Desktop Import mode** and the published CSV files. You can complete it through the Folder/Text-CSV interface or by editing a transparent Power BI Project (PBIP) whose Power Query M steps and TMDL model you inspect before opening in Desktop. Power BI Desktop remains responsible for refresh, query execution, visual evaluation and save verification. This route does not require creating 50,000 Dataverse rows, configuring a premium SQL connection or obtaining an on-premises gateway. Optional publication to Power BI Service depends on the permissions and licenses in your own environment. No new Dataverse table, cloud flow, physical-device connection or automatic data refresh is required here.
 
 | Dataset / source | Expected rows | What it represents |
 | --- | ---: | --- |
@@ -2956,7 +2956,7 @@ Open the existing **SunnyVerse Data Center Operations 360** solution in your aut
 
 On your own development computer, open **Power BI Desktop**. Create a blank report using **Home → New**, when offered, and save it as `DC360-Operations-Intelligence.pbix` in a local training folder. Desktop is sufficient for this lesson. If Power BI Desktop is not installed or your computer is managed, use the institution-approved install/access route; do not bypass device or tenant policy. Never place private account identifiers or institutional data in the public repository.
 
-Before import, create a local folder such as `DC360-Learning/monitoring` and place **only the ten published `monitoring-readings-*.csv` files** there. Keep the other six dimension and operation CSVs in a separate `DC360-Learning/reference` folder. Do not put the entire GitHub repository into the monitoring folder, because the Folder connector would otherwise combine unrelated CSV schemas.
+Before import, create a local folder such as `DC360-Learning/monitoring` and place **only the ten published `monitoring-readings-*.csv` files** there. If using the source-controlled PBIP files, update the example local `C:\DC360-Learning` Power Query paths to the folder on your computer **before refresh**; the path is an illustrative placeholder and is not a shared network location. Keep the other six dimension and operation CSVs in a separate `DC360-Learning/reference` folder. Do not put the entire GitHub repository into the monitoring folder, because the Folder connector would otherwise combine unrelated CSV schemas.
 
 **Checkpoint 1 — Prepared:** One existing solution, a locally saved blank PBIX, and ten monitoring batches in a dedicated folder. Do not claim that Power BI Service sharing or refresh is available yet.
 
@@ -2984,9 +2984,9 @@ The fixed complete dataset contains **49,517 Normal**, **290 High** and **193 Lo
 
 ### S13.03 — Import and combine the ten readings files
 
-In Power BI Desktop choose **Home → Get data → More → File → Folder → Connect** (or **Get data → Folder**). Choose the local `DC360-Learning/monitoring` folder containing only ten reading CSVs. Select **Combine & Transform Data**, inspect the sample file preview, and choose the CSV data table. The Folder connector builds a sample-file transformation and combines files with matching columns. Open **Transform data** if the preview is already open.
+In Power BI Desktop choose **Home → Get data → More → File → Folder → Connect** (or **Get data → Folder**). Choose the local `DC360-Learning/monitoring` folder containing only ten reading CSVs. Select **Combine & Transform Data**, inspect the sample file preview, and choose the CSV data table. The Folder connector builds sample-file helper queries and combines files with matching columns. Those helper queries do **not** count as extra loaded model tables. Alternatively, in an authorized PBIP project, define one M query using `Folder.Files`, filter to the ten reading CSVs, parse each CSV with `Csv.Document`, promote its headers and expand all rows. Power BI Desktop must still execute and refresh the resulting query. Open **Transform data** if the preview is already open.
 
-In **Power Query Editor**, rename the final combined table/query **Fact Monitoring Readings**. Ensure that *Use First Row as Headers* is applied once, not once again after already promoted headers. Remove unnecessary generated `Source.Name` or `Extension` columns only after using them to confirm that all ten files participated. Do not accidentally remove Reading ID, Sensor Code or Threshold State.
+In **Power Query Editor**, rename the final combined table/query **Fact Monitoring Readings**. Ensure that *Use First Row as Headers* is applied once, not once again after already promoted headers. Keep the `Source.Name` column in the final **Fact Monitoring Readings** query so you can audit which files contributed rows, detect a duplicated batch, and distinguish a data-source problem from a semantic-model problem. Remove unused technical columns such as `Extension` only when unnecessary. The ten source filenames must be present in `Source.Name` with 5,000 rows each. Do not accidentally remove Reading ID, Sensor Code or Threshold State.
 
 Select each column and confirm its icon/type: `Reading ID` Text, `Recorded At UTC` Date/Time, `Sensor Code` Text, `Reading Value` Decimal Number, and `Threshold State` Text. Change **Using Locale** only if your computer interprets the unambiguous `yyyy-MM-dd HH:mm:ss` dates incorrectly. These values represent UTC as written; if you later combine them with local timestamps, perform an explicit, documented time-zone conversion rather than silently changing their meaning.
 
@@ -2994,7 +2994,7 @@ Select **Transform → Count Rows** on a *duplicated reference/query* or use the
 
 | Check | Correct result |
 | --- | --- |
-| Combined files | Ten `monitoring-readings-01.csv` through `-10.csv` |
+| Combined files / `Source.Name` | Ten `monitoring-readings-01.csv` through `-10.csv`, **5,000 rows from each** |
 | Data rows | **50,000** |
 | Unique Reading ID | **50,000** |
 | Distinct Sensor Code | **24** |
@@ -3032,11 +3032,11 @@ Choose **Get data → Text/CSV** for the existing `alarms.csv`, `incidents.csv` 
 | **Fact Incident** | `Reported At` | `Source Asset` | 200; New, Assigned, In Progress, Resolved, Closed |
 | **Fact Work Order** | `Requested On`, `Due On`, optional `Completed On` | `Asset` | 500; Planned, Assigned, In Progress, On Hold, Completed, Cancelled |
 
-Keep optional blank dates as **null**, not the current date or zero. Choose valid date/time conversions for the `...Z` source timestamps. Inspect any optional `Related Alarm`, `Related Incident`, `Related Inspection` or engineer names but **do not** pretend they are authenticated user identities or a verified causal join. Relationship creation is a separate step; importing a Text column never creates a Dataverse Lookup.
+Before date conversion, replace blank CSV strings `""` with **null**, for example with a Power Query `Table.ReplaceValue` step across the relevant columns. A conversion of an empty string to Date/Time can fail; null stays null. For timestamp text that ends with **`Z`**, parse it as `DateTimeZone`, explicitly change to **UTC** using `DateTimeZone.SwitchZone(..., 0)`, then remove the zone with `DateTimeZone.RemoveZone` only if the report needs a UTC-clock-time `datetime` column. Example: `DateTimeZone.RemoveZone(DateTimeZone.SwitchZone(DateTimeZone.FromText("2026-09-01T08:00:00Z"), 0))`. A naive local Date/Time conversion can silently shift a UTC clock. Inspect any optional `Related Alarm`, `Related Incident`, `Related Inspection` or engineer names but **do not** pretend they are authenticated user identities or a verified causal join. Relationship creation is a separate step; importing a Text column never creates a Dataverse Lookup.
 
 Check representative records against the existing CSV file values: `ALM-0001`, `INC-0001` and `WO-0001`. The files are synthetic historical snapshots, not a continuous live stream and not automatically refreshed from the Power Apps tenant.
 
-**Checkpoint 5 — All seven data tables:** 50,000 readings + 24 sensors + 100 assets + 2 halls + 120 alarms + 200 incidents + 500 work orders, without duplicate load queries.
+**Checkpoint 5 — All seven **loaded model tables** (Power Query may also contain un-loaded helper queries):** 50,000 readings + 24 sensors + 100 assets + 2 halls + 120 alarms + 200 incidents + 500 work orders, without duplicate load queries.
 
 ### S13.06 — Build an unambiguous star-like relationship model
 
@@ -3055,7 +3055,7 @@ Set the relationship to **Active** where it does not introduce an ambiguous path
 
 In **Data view** inspect Dim Sensor's 24 distinct Sensor Codes, Dim Asset's 100 Asset Names and Dim Data Hall's two Hall Names. In **Model view** confirm each is on the unique **1** side of its relationship. If Power BI offers a many-to-many relationship because a key is duplicated, investigate the duplicate in the source rather than accepting many-to-many to silence the warning. Do not enable Both-direction filters as a general workaround.
 
-**Checkpoint 6 — Semantic model:** Six intended active, single-direction relationships and no ambiguous loops. Filtering one hall should restrict its Assets, Sensors and Reading rows.
+**Checkpoint 6 — Semantic model:** Six intended active, single-direction relationships and no ambiguous loops. Filtering one hall should restrict its Assets, Sensors and Reading rows. The fixed practice dataset yields **12 sensors, 25,000 readings, 60 alarms, 100 incidents and 250 work orders for Hall 01**; Hall 02 also contains 25,000 readings. These are fictional reporting checks, not live telemetry.
 
 ### S13.07 — Create explicit Power BI DAX measures and validate units
 
@@ -3086,7 +3086,7 @@ COUNTROWS(
         VALUES('Fact Monitoring Readings'[Sensor Code]),
         VALUES('Dim Sensor'[Sensor Code])
     )
-)
+) + 0
 
 Average Reading (Selected Metric) =
 IF(
@@ -3105,7 +3105,7 @@ IF(
 )
 ```
 
-Set **Out of Range Rate** format to **Percentage**, two decimals. Put the Average and Peak measures on pages with **Metric Type and Unit filters**. A blended average across kW, degrees Celsius and volts is dimensionally meaningless, so these measures deliberately show Blank unless one metric type and unit are selected. Even among matching units, average only when metric meaning agrees—Output Power and Electrical Power are not automatically the same operational KPI.
+Set **Out of Range Rate** format to **Percentage**, two decimals. The `+ 0` in Sensor Key Mismatches ensures that `COUNTROWS` over an empty `EXCEPT` table shows numeric **0** rather than **BLANK**. Without it, a report can display blank even though there are no unmatched Sensor Codes. Put the Average and Peak measures on pages with **Metric Type and Unit filters**. A blended average across kW, degrees Celsius and volts is dimensionally meaningless, so these measures deliberately show Blank unless one metric type and unit are selected. Even among matching units, average only when metric meaning agrees—Output Power and Electrical Power are not automatically the same operational KPI.
 
 Create one explicit source-to-flag quality measure. The related Sensor thresholds apply to each reading through the active Sensor relationship:
 
@@ -3176,7 +3176,7 @@ CALCULATE(
 
 Expected unfiltered checks: Monitoring Rows **50,000**, Monitored Sensors **24**, High **290**, Low **193**, Normal **49,517**, Out of Range **483**, Sensor Key Mismatches **0**, Threshold Flag Mismatches **0**, Alarm Rows **120**, Actionable Alarms **60**, Critical Alarms **30**, Incident Rows **200**, Active Incidents **120**, P1 Incidents **50**, Work Order Rows **500**, Open Work Orders **334**, Completed Work Orders **83**. Measures react to filter context, so verify these totals with **all slicers cleared**.
 
-**Checkpoint 7 — DAX:** Every measure saves without syntax errors. Out-of-range readings and formal alarm counts remain distinct.
+**Checkpoint 7 — DAX:** All 20 source measures save without syntax errors. If selecting Unit = `kW` alone still spans both **Output Power** and **Electrical Power**, the guarded Average and Peak measures should show BLANK rather than mixing distinct metrics. Out-of-range readings and formal alarm counts remain distinct.
 
 ### S13.08 — Create the Executive Operations Overview report page
 
@@ -3197,7 +3197,7 @@ Create these visuals through **Visualizations**, add the exact fields/measures a
 | Slicer | `Dim Data Hall[Hall Name]` | Restrict all connected fact tables by Hall through the Asset dimension |
 | Slicer | `Dim Sensor[Unit]` | Make the measurement domain visible |
 
-Use an explanatory Text box such as: **“Synthetic historical snapshots; threshold exceptions do not create Dataverse alarms, and planned headroom is not measured usage.”** Do not imply the report tracks currently running equipment. Clear all slicers for the initial evidence screenshot.
+Use an explanatory Text box such as: **“Synthetic historical snapshots; threshold exceptions do not create Dataverse alarms, and planned headroom is not measured usage.”** Do not imply the report tracks currently running equipment. Clear all slicers **and chart selections/cross-highlighting** for the initial evidence screenshot. Selecting a chart segment can silently filter other cards and change a peak even when a slicer appears unchanged. Click the same segment again or clear selections before comparing baseline numbers.
 
 ### S13.09 — Add the Monitoring and Environmental Trends page
 
@@ -3212,7 +3212,7 @@ Add a new page using the **+** control or **Insert → New page** and rename it 
 | Stacked column chart | Axis `Dim Sensor[Sensor Code]`, Legend `Fact Monitoring Readings[Threshold State]`, Y `[Monitoring Rows]` | Shows high/normal/low counts, not severity of alarms |
 | Table | Reading ID, timestamp, Sensor Code, Reading Value, Threshold State plus related Metric Type/Unit | Filter to High or Low for an inspectable anomaly list |
 
-Add threshold reference labels using related `Dim Sensor[Minimum Acceptable]` and `Maximum Acceptable` fields when a single sensor is selected. If using a constant line, make sure the current sensor threshold is actually scalar; do not display a threshold borrowed from the first sensor when multiple distinct thresholds are selected.
+Add **`Dim Sensor[Minimum Acceptable]` and `Dim Sensor[Maximum Acceptable]` columns to the exceptions table**, where each reading is shown alongside its sensor's own limits. This works even when the line chart cannot bind an individual dynamic threshold to each sensor. Do not insert an arbitrary fixed constant line across multiple sensors. For a single selected sensor, add a dynamic reference line only when its current visual supports that data binding and you have tested the actual scalar. **Clear chart cross-highlighting** before validating the peak, average or exception example.
 
 Drill into **DC-SEN-001** and confirm `RDG-000001` is a High example with value **560.00 kW** against a fictional maximum of 500.00 kW. A high sample is synthetic data, not a power-safety event. Verify that selecting Data Hall 01/02 changes the filtered sensor/readings population appropriately.
 
@@ -3248,25 +3248,25 @@ Perform the following checks in the final loaded model before publishing or capt
 | Missing sensor | In a **temporary copied** file, replace one Sensor Code with `BAD-SENSOR` | Sensor Key Mismatches > 0; restore original source |
 | Threshold inconsistency | In a **temporary copied** row, change Normal to High without changing the value | Threshold Flag Mismatches > 0; restore original source |
 
-**Do not modify the checked-in source CSVs** for negative tests. Use separate local test copies, refresh a temporary report copy, then restore the clean inputs. Do not delete or recreate existing Dataverse rows to simulate telemetry failures. If a model visual contradicts a known row count, inspect file folder scope, Power Query Applied Steps, type conversions, relationship direction and filter context before saying the report is complete.
+**Do not modify the checked-in source CSVs** for negative tests. Use separate local test copies. One safe method is to add a **temporary test table/query to an unsaved Power BI Desktop session**, run the duplicate/missing-sensor/flag checks, and **close without saving**. Alternatively use a copy of the PBIX/PBIP and restore the original files afterward. Reopen the baseline PBIX and verify exactly 50,000 rows after each test. Never carry a temporary test folder or test query into the published learning model. Do not delete or recreate existing Dataverse rows to simulate telemetry failures. If a model visual contradicts a known row count, inspect file folder scope, Power Query Applied Steps, type conversions, relationship direction and filter context before saying the report is complete.
 
 ### S13.12 — Save, verify, and optionally publish the Power BI report
 
-Save the completed report as **`DC360-Operations-Intelligence.pbix`** in the authorized local working folder. Reopen it to verify that the seven queries, six relationships, DAX measures and five report pages survived. Select **Refresh** in Desktop and confirm row counts and measures match the unfiltered baseline. Document any performance warnings, invalid transforms, disabled relationships or source-path dependencies as actual findings.
+Save the completed report as **`DC360-Operations-Intelligence.pbix`** in the authorized local working folder. Reopen it to verify that the seven queries, six relationships, DAX measures and five report pages survived. Select **Refresh** in Desktop and confirm row counts and measures match the unfiltered baseline. Document any performance warnings, invalid transforms, disabled relationships or source-path dependencies as actual findings. If using a PBIP project, check the `.pbip`, report definitions, semantic-model `.tmdl` files and saved `.pbix` separately. A saved script alone does not prove that Desktop visuals rendered and refreshed.
 
-Power BI Desktop can build and save this report **without publishing**. If your institution permits publication, check the signed-in Power BI account, workspace and actual sharing license first. Publishing to a personal workspace does **not** automatically authorize organization-wide distribution, embedding, anonymous public sharing or scheduled refresh. If publishing is blocked, keep the validated local PBIX and explain the limitation rather than fabricating an online report. Do not publish reports containing tenant-specific secrets, real facility telemetry, private university data or credentials.
+Power BI Desktop can build and save this report **without publishing**. For source control, publish only a **reviewed, path-sanitized PBIP source project**: exclude `.pbi/localSettings.json`, `.pbi/cache.abf`, temporary negative-test CSVs, private user paths and credential-bearing files. A sanitized project uses illustrative paths such as `C:\DC360-Learning` which the learner must replace before refresh. Do not upload an unreviewed PBIX or raw machine snapshot to a public repository. If your institution permits publication, check the signed-in Power BI account, workspace and actual sharing license first. Publishing to a personal workspace does **not** automatically authorize organization-wide distribution, embedding, anonymous public sharing or scheduled refresh. If publishing is blocked, keep the validated local PBIX and explain the limitation rather than fabricating an online report. Do not publish reports containing tenant-specific secrets, real facility telemetry, private university data or credentials.
 
 | Final verification | Expected |
 | --- | --- |
-| Data model | Seven queries, six single-direction relationships |
+| Data model | Seven **loaded model tables** (plus optional helper queries), six active single-direction relationships |
 | Measurements | 50,000 unique readings from 24 existing sensors |
 | Additional facts | 120 alarms, 200 incidents, 500 work orders |
-| DAX | All measures evaluate, mismatch measures return zero |
+| DAX | All 20 measures evaluate; Sensor Key Mismatches explicitly returns 0 rather than BLANK |
 | Report pages | Executive Overview; Monitoring & Trends; Alarm Operations; Incident Operations; Maintenance Operations |
 | Source provenance | CSV Import mode; no live device connection or unsupported premium Dataverse/SQL dependency |
 | Security | No real identities, tenant URLs, credentials or physical operations data in the public report |
 | Persistence | Saved PBIX reopens, refreshes and retains visual interactions |
-| Publication | Optional and separately verified; a local file alone is **not** a published Power BI service report |
+| Publication | Optional and separately verified; Service sign-in/workspace selection is separate from local PBIX save or GitHub source publication |
 
 ### Finish Part 13
 
