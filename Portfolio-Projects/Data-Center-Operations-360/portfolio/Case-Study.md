@@ -1,57 +1,78 @@
 # Data Center Operations 360 — Portfolio Case Study
 
-[Project home](../README.md) · [Build Guide](../Build-Guide.md) · [Architecture](./Architecture.md) · [Demonstration](./Demo-Walkthrough.md) · [Evidence index](./Evidence-Matrix.md)
+[Project home](../README.md) · [Complete Build Guide](../Build-Guide.md) · [Architecture](./Architecture.md) · [Demonstration](./Demo-Walkthrough.md) · [Evidence](./Evidence-Matrix.md) · [Presentation Storyboard](./Presentation-Storyboard.md)
 
-**SunnyVerse AI Labs — independent educational build.** This project models a fictional data center operated by **SunnyVerse Renewable Group**. It is an original Power Platform learning environment, not a deployed facility-control system, and is not affiliated with or endorsed by Microsoft.
+**SunnyVerse AI Labs — independent fictional engineering project.** The teaching enterprise is **SunnyVerse Renewable Group**. The project uses Microsoft Power Platform and Power BI Desktop to demonstrate connected data modeling, app development, workflow controls, analytics and evidence-led quality engineering. It is **not a live data center system or an enterprise-production deployment**.
 
-## The problem
+## The engineering problem
 
-A fictional operations team needs consistent registers for equipment, alarms, incidents, maintenance, changes, shift handovers, spare parts and capacity requests. Records must be connected so staff can trace an operational question to its source and review it without relying on disconnected spreadsheets. The learning objective is to demonstrate *cross-application solution engineering*, not to claim real-time instrumentation, automated electrical operations or production deployment.
+Fictional facilities operations span equipment assets, sensor context, alarms, incidents, maintenance work, change/risk decisions, vendor/spare records, shift reviews and rack-capacity planning. Disconnected data makes it difficult to trace an incident to its source or see what work and review followed. The design objective is a coherent set of linked business records with focused user experiences, visible decision boundaries and reproducible synthetic reporting.
 
-## What the project demonstrates
+## Solution overview
 
-| Capability | Implemented design / learning evidence | Important qualification |
+| Layer | Components and value | What must not be inferred |
 | --- | --- | --- |
-| Data architecture | Dataverse campus, halls, departments, employees, assets, sensors, incidents, work orders, changes, suppliers, capacity, rules and reviews | Sample records are fictional; some tables have no alternate key |
-| Canvas experiences | **DC Operations Command Center**, **DC FieldOps**, **DC Capacity Planner** | Capacity checks are client-side, not transaction-safe reservations |
-| Model-driven experiences | **DC Asset & Maintenance Manager**, **DC Change & Risk Manager**, **DC Supporting Operations Hub** | The Hub also exposes intelligence/knowledge views; access depends on roles |
-| Workflow examples | Solution-aware Power Automate notification/approval and rules-first insight actions | Flow states must be verified. Two distinct flow records share the DC08 notice display name |
-| Analytics | Power BI Desktop report from 50,000 synthetic readings and existing source CSVs | The report uses Import mode, not live telemetry or 50,000 Dataverse monitoring rows |
-| Engineering | Solution and App checker inspection, UAT matrix, dependency review, unmanaged solution export | Development export is not a successful target import or enterprise deployment |
+| **Dataverse** | Relational operational and planning registers; Choices, required columns, real Lookups and selected alternate keys | Every business-code column has an enforced key, or the data are live facility records |
+| **Three Canvas apps** | DC Operations Command Center, DC FieldOps, DC Capacity Planner | Capacity validation is an atomic conflict-free booking transaction |
+| **Three model-driven apps** | DC Asset & Maintenance Manager, DC Change & Risk Manager, DC Supporting Operations Hub | Choice-based mock approval is an authenticated safety sign-off |
+| **Power Automate** | Five distinct solution flow records for prior notification/approval examples and a guarded insight demonstration | All flows are On, or two same-name DC08 flows are the same record |
+| **Power BI Desktop** | 50,000 synthetic readings, seven loaded tables, six relationships, twenty DAX measures, five report pages | Live Dataverse telemetry ingestion or Power BI Service publication |
+| **Engineering evidence** | Checker inspections, UAT, dependencies, private unmanaged source export, public verification templates | Successful target import, complete accessibility remediation or tested least-privilege deployment |
 
-## Data and scale
+## Fixed reproducible learning scale
 
-The published synthetic data includes **1 campus**, **2 data halls**, **6 departments**, **20 fictional employees**, **100 assets**, **24 sensor-register entries**, **120 alarms**, **200 incidents**, **500 starting maintenance work-order rows**, and **50,000 monitoring readings** packaged as ten CSV batches. A subsequent practice record can make a learner's actual Dataverse work-order count **501**; that does not alter the starting CSV.
+| Source | Published initial data or training sample |
+| --- | ---: |
+| Campuses / Data Halls / Departments | 1 / 2 / 6 |
+| Employee Profiles / Assets / Sensors | 20 / 100 / 24 |
+| Alarms / Incidents | 120 / 200 |
+| Work orders in original CSV | **500** |
+| Vendor / Spare Part / Inventory Balance / Shift Handover | 2 / 3 / 3 / 2 |
+| Hall Baseline / Rack Plan / Allocation / Capacity Request | 2 / 20 / 3 / 2 |
+| Intelligence Rule / Knowledge Article / Operational Insight | 3 / 2 / 3 |
+| Synthetic monitoring readings | **50,000** in ten CSV files |
 
-Part 12 adds **20 rack plans** and a distinct planning model for rack units, power budgets and capacity requests. Part 14 adds three human-reviewable rules, two knowledge entries and three insight examples. The portfolio evidence separates **source data**, **previously reported app tests**, and **freshly collected demonstration evidence**; these should never be represented as the same kind of proof.
+A maker-reported final review observed **501 Work Order rows in the learning environment** because an additional **WO-TRAIN-01** practice row remained. The **500-row published CSV** is unchanged. Keeping that distinction is an example of data-lineage discipline, not a data error that automatically needs deleting.
 
-## Architecture and decisions
+## End-to-end experiences that were reported as tested
 
-The solution intentionally separates **transactional Dataverse records** from **high-volume synthetic monitoring data in CSV/Power BI Desktop**. Dataverse Lookups link operational entities. Canvas apps support focused task-oriented experiences; model-driven apps expose relational registers, views and main forms. Flow examples are solution-aware, with connection references and a documented approval boundary. A rules-first insight example links findings to original source records and requires human review rather than triggering physical or unsupervised actions.
+The final maker-reported read-only Play walkthrough verified **all six apps' saved/published versions** at the time of testing. In **Operations Command Center**, Home displayed 200 incidents, 120 alarms and 100 assets, and the search found existing **INC-0001**. **FieldOps** showed the incident list and two inspections. **Capacity Planner** displayed both hall baselines with modeled headroom **443 / 495 kW** and the 20 Rack Plans.
 
-See the [architecture and trust-boundary diagram](./Architecture.md) for exact data flow and what is *not* integrated.
+In the model-driven applications, **Active Work Orders** displayed **335 filtered rows** and real Asset Lookups; the Change & Risk app showed a fictional Approved change and Rejected change; the Supporting Operations Hub showed its Shift, Inventory and Intelligence navigation, with Reviewed knowledge separated from Approved knowledge by the view filters.
 
-## Validation and limitations
+**Known Capacity Planner UI limitation:** Rack 013 was confirmed **Hold in Dataverse**, but Hold **was not visible** on the inspected Rack Detail screen. Reserved U and reserved kW were **blank instead of 0** in that screen. The underlying record was not rewritten. The separate overlap-validation path can submit data and was not exercised during the read-only closing test. These are outstanding UI/testing limitations.
 
-The implementation handoff reported a saved/published solution with **three Canvas apps**, **three model-driven apps**, **24 organization-owned Dataverse tables**, and **five solution flows** (with duplicate DC08 display names). These are **maker-supplied implementation observations**, not a fresh, independent tenant audit performed for this case study.
+## Workflow and analytics evidence
 
-The Part 15 private engineering review reported **13 Pass, 5 Not Run, 0 Fail** across 18 UAT cases. The five remaining cases concern Play-mode navigation, a potentially writing capacity-overlap test, and a repeat Power BI Desktop check. Solution checker reported **148 Medium issues**, including **143 Canvas accessibility findings** in the Capacity Planner; no High or Critical findings were reported. Least-privilege role-separated testing, live Monitor timings, atomic reservation conflict handling and target-environment solution import remain unverified or incomplete. The project is therefore suitable as a **bounded learning/portfolio demonstration**, **not an enterprise production-ready deployment**.
+Five distinct Power Automate flows were identified. Two share the display name **DC08 Incident Status Notice**: the older has **four** historical succeeded runs; the later has **zero**. **DC08 Inspection Follow-up Notice** has **two**, **DC10 Change Approval** has **six**, and **DC14_Incident_Insight_Demo** has **two**; **14 historical runs in total**. The second DC14 run succeeded while skipping duplicate Insight insertion. The configured Cancelled Terminate branch was **not** exercised.
 
-This case study purposely omits tenant identifiers, connection details, original solution ZIP files, private UAT reports, screenshots containing user information and non-sanitized local paths.
+The Power BI project is reproduced from [ten monitoring CSVs](../data/monitoring/README.md) plus the six operational/dimension reference CSVs. The local Desktop report was verified during an earlier module, and the [sanitized PBIP source](../powerbi/README.md) is public. **Power BI Desktop was not reopened in the latest final walkthrough**, so that final test remained Not Run. The analytical model is **not a real-time sensor pipeline**.
 
-## Review the artifacts
+## Quality assessment and constraints
 
-- [Single cumulative Build Guide — Parts 00–16](../Build-Guide.md)
-- [Synthetic data library](../data/README.md)
-- [Power BI path-sanitized project source](../powerbi/README.md)
-- [Architecture decisions](./Architecture.md)
-- [End-to-end demonstration walkthrough](./Demo-Walkthrough.md)
-- [Evidence status matrix](./Evidence-Matrix.md)
-- [Final presentation storyboard](./Presentation-Storyboard.md)
-- [Public Part 15 UAT *template*](../quality/Part-15-UAT-Matrix.csv)
+The post-export Part 15 review was reported as **13 Pass, 5 Not Run and 0 Fail**. A subsequent Part 16-specific private audit reported **9 Pass, 2 Not Run and 1 Blocked**. The outstanding final cases concern **public-safe captures**, **fresh Power BI Desktop validation**, and a **verified final recorded presentation**. These reported results are not downloadable private UAT files and should not be copied into the public learner templates.
 
-## Reproduce responsibly
+The prior solution check reported **148 Medium findings**, including **143 Capacity Planner accessibility findings**, with no High or Critical findings. The earlier Dataverse key review found **eight of 24 tables without Active alternate keys**, even though the checked business codes were currently duplicate-free. Role-separated non-admin testing, server-atomic rack reservation prevention, flow-identity cleanup, target-environment solution import and production recovery validation are **not complete**.
 
-Use your own authorized Power Platform learning environment; follow Part 00 onward and create the parent records before child Lookups. Import only synthetic files using validated mappings. Do not copy account-specific connection references, export archives or private maker evidence into a public repository. If a feature is disabled by licensing or permissions, document the limitation and retain the supported core.
+The unmanaged development solution package was exported and privately checksum-verified; the original package contains implementation/configuration metadata and is intentionally **not published**. Packaging is **Conditional**, not evidence of a successfully imported or production-ready target solution.
 
-**Portfolio statement:** This project demonstrates multi-app Power Platform solution modeling, traceable fictional operational data, controlled workflow design, analytical reporting and evidence-based quality engineering. It does not claim production-grade resilience, real-world safety authorization or autonomous facility operation.
+**Readiness:** Suitable for an **educational Power Platform demonstration with disclosed conditions**. Not verified enterprise-production ready.
+
+## Public artifacts and reproducibility
+
+- [Cumulative learner Build Guide, Parts 00–16](../Build-Guide.md)
+- [Synthetic practice data and import notes](../data/README.md)
+- [Architecture and trust boundaries](./Architecture.md)
+- [Evidence matrix with provenance categories](./Evidence-Matrix.md)
+- [End-to-end safe demonstration route](./Demo-Walkthrough.md)
+- [12-slide presentation storyboard](./Presentation-Storyboard.md)
+- [Part 16 twelve-check learner template](../quality/Part-16-Final-Verification.csv)
+- [Sanitized Power BI Desktop source](../powerbi/README.md)
+
+Reproduce the build **only in an authorized training environment**, and use synthetic records. The real Power Platform tenant, unpublished app internals, private run results, original source solution ZIP, hash ledger, credential-bearing connections, account identifiers and unredacted images are deliberately outside the public repository.
+
+## Portfolio takeaway
+
+**Built and documented:** relational Dataverse solution design, six complementary application experiences, guarded automation examples, planning/analytics separation and evidence-backed quality engineering. **Not claimed:** current real-time data-center integration, automatic conflict-free capacity booking, production security validation or a completed public video capture.
+
+The project is complete as a **source-first learner portfolio**. Any remaining runtime demonstration and production-hardening work is described separately instead of being silently counted as finished.
